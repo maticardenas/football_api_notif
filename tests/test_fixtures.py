@@ -8,13 +8,15 @@ from unittest.mock import patch, MagicMock
 from freezegun import freeze_time
 
 from src.fixtures_utils import get_next_fixture
+from tests.utils.sample_data_utils import get_sample_data_response
 
 DATA_PATH = Path.cwd().joinpath('data')
 
 
 def test_get_next_fixture():
     # given
-    fixture_response = get_test_fixture_response()
+    fixture_response_json_file = "fixtures_response_sample.json"
+    fixture_response = get_sample_data_response(DATA_PATH, fixture_response_json_file)
 
     # when
     with freeze_time("2021-09-29 18:30:00"):
@@ -31,7 +33,7 @@ def test_get_next_fixture():
 
 
 def get_test_fixture_response() -> Dict[str, Any]:
-    path = DATA_PATH.joinpath("fixtures_response_sample.json")
+    path = DATA_PATH.joinpath()
 
     with path.open(mode='r') as f:
         return json.load(f)["response"]
