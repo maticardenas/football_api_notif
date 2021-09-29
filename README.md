@@ -1,2 +1,3 @@
-# football_api_notif
-Football API consumer and notifications provider in python
+Application to consume Football API endpoints, process its data and send/provide on demand information (mostly to have fun!) using Python.
+
+API -> https://rapidapi.com/api-sports/api/api-football
