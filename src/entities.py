@@ -19,20 +19,49 @@ class MatchScore:
 
 
 @dataclass
+class RemainingTime:
+    days: int
+    hours: int
+    minutes: int
+
+    def __str__(self):
+        suf_faltan = "n" if self.days != 1 else ""
+        suf_dias = "s" if self.days != 1 else ""
+        suf_horas = "s" if self.hours != 1 else ""
+        suf_minutos = "s" if self.minutes != 1 else ""
+
+        return f"Falta{suf_faltan} {self.days} dia{suf_dias}, {self.hours} " \
+               f"hora{suf_horas} y {self.minutes} minuto{suf_minutos}"
+
+@dataclass
 class Fixture:
     utc_date: datetime
     ams_date: str
     bsas_date: str
+    date_diff: int
     referee: str
     match_status: str
     championship: str
     round: str
     home_team: str
     away_team: str
-    # scores: Dict[str, MatchScore]
+
+    def __remaining_time(self) -> RemainingTime:
+        days = self.date_diff//86400
+        hours = (self.date_diff - (days * 86400)) // 3600
+        minutes = (self.date_diff - (days * 86400) - (hours * 3600)) // 60
+
+        return RemainingTime(
+            days,
+            hours,
+            minutes
+        )
 
     def __str__(self):
-        return f"*{DAYS[self.utc_date.weekday()]} {self.utc_date.day}-{self.utc_date.month}-{self.utc_date.year}*\n\n" \
+        remaining_time = self.__remaining_time()
+
+        return f"_{str(remaining_time)} para el partido._\n\n" \
+               f"*{DAYS[self.utc_date.weekday()]} {self.utc_date.day}-{self.utc_date.month}-{self.utc_date.year}*\n\n" \
                f"_Time:_\n\n" \
                f"_UTC_ -> *{str(self.utc_date)[11:16]} HS*\n" \
                f"_Europe_ -> *{self.ams_date[11:16]} HS*\n" \
@@ -42,6 +71,7 @@ class Fixture:
                f"_Round:_ *{self.round}*\n" \
                f"_Referee:_ *{self.referee}*\n" \
                f"_Status:_ *{self.match_status}*\n"
+
 
 @dataclass
 class Championship:
