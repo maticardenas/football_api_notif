@@ -1,13 +1,11 @@
-import json
-import os
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any
-from unittest.mock import patch, MagicMock
+import pytz
 
 from freezegun import freeze_time
 
-from src.fixtures_utils import get_next_fixture
+from src.utils.date_utils import get_date_spanish_text_format
+from src.utils.fixtures_utils import get_next_fixture, date_diff
 from tests.utils.sample_data_utils import get_sample_data_response
 
 DATA_PATH = Path.cwd().joinpath('data')
@@ -31,9 +29,40 @@ def test_get_next_fixture():
     assert next_fixture.referee == 'A.  Woolmer'
     assert next_fixture.round == 'Regular Season - 10'
 
+def test_date_diff():
+    # given
+    date = '2021-09-30T18:45:00+00:00'
 
-def get_test_fixture_response() -> Dict[str, Any]:
-    path = DATA_PATH.joinpath()
+    # when
+    with freeze_time("2021-09-28 18:30:00"):
+        dates_diff = date_diff(date)
 
-    with path.open(mode='r') as f:
-        return json.load(f)["response"]
+    assert dates_diff.days == 2
+
+
+def test_date_conversion():
+    date = '2021-09-29T18:45:00+00:00'
+    utc_date = datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S")
+
+    amsterdam_tz = pytz.timezone('Europe/Amsterdam')
+    bsas_tz = pytz.timezone('America/Argentina/Buenos_Aires')
+
+    local_dt = utc_date.replace(tzinfo=pytz.utc).astimezone(amsterdam_tz)
+    bsas_dt = utc_date.replace(tzinfo=pytz.utc).astimezone(bsas_tz)
+
+    local_definitive_date = amsterdam_tz.normalize(local_dt)
+    bsas_definitive_date = bsas_tz.normalize(bsas_dt)
+
+    assert local_definitive_date
+    assert bsas_definitive_date
+
+
+def test_get_date_spanish_text_format():
+    # given
+    date = datetime.strptime('2021-09-29T18:45:00', "%Y-%m-%dT%H:%M:%S")
+
+    # when
+    formatted_date = get_date_spanish_text_format(date)
+
+    # then
+    assert formatted_date == "Miércoles 29 de Octubre del 2021"

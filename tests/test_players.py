@@ -1,14 +1,6 @@
-import json
-import os
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any
-from unittest.mock import patch, MagicMock
 
-from freezegun import freeze_time
-
-from src.fixtures_utils import get_next_fixture
-from src.players_utils import convert_player_stats, get_str_stats_summary
+from src.utils.players_utils import convert_player_stats
 from tests.utils.sample_data_utils import get_sample_data_response
 
 DATA_PATH = Path.cwd().joinpath('data')

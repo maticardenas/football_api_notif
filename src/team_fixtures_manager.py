@@ -20,7 +20,7 @@ class TeamFixturesManager:
         spanish_format_date = get_date_spanish_text_format(next_team_fixture.utc_date)
 
         for recipient in RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\nTe recuerdo el proximo partido del PSG {Emojis.FRANCE.value}" \
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\nTe recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
                       f" de Lionel Messi {Emojis.GOAT.value}" \
                       f" es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}.\n\n{str(next_team_fixture)}"
 
