@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 import pytz
+import os
 
 from freezegun import freeze_time
 
@@ -8,7 +9,9 @@ from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import get_next_fixture, date_diff
 from tests.utils.sample_data_utils import get_sample_data_response
 
-DATA_PATH = Path.cwd().joinpath('data')
+
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(TESTS_DIR, "data")
 
 
 def test_get_next_fixture():
@@ -21,7 +24,7 @@ def test_get_next_fixture():
         next_fixture = get_next_fixture(fixture_response)
 
     # then
-    assert next_fixture.date == '2021-09-29T18:45:00+00:00'
+    assert next_fixture.utc_date == datetime.strptime(f'2021-09-29T18:45:00+00:00'[:-6], "%Y-%m-%dT%H:%M:%S")
     assert next_fixture.home_team == 'Peterborough'
     assert next_fixture.away_team == 'Bournemouth'
     assert next_fixture.championship == 'Championship'
@@ -59,10 +62,10 @@ def test_date_conversion():
 
 def test_get_date_spanish_text_format():
     # given
-    date = datetime.strptime('2021-09-29T18:45:00', "%Y-%m-%dT%H:%M:%S")
+    date = datetime.strptime('2021-10-29T18:45:00', "%Y-%m-%dT%H:%M:%S")
 
     # when
     formatted_date = get_date_spanish_text_format(date)
 
     # then
-    assert formatted_date == "Miércoles 29 de Octubre del 2021"
+    assert formatted_date == "Viernes 29 de Octubre del 2021"

@@ -1,9 +1,11 @@
+import os
 from pathlib import Path
 
 from src.utils.players_utils import convert_player_stats
 from tests.utils.sample_data_utils import get_sample_data_response
 
-DATA_PATH = Path.cwd().joinpath('data')
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(TESTS_DIR, "data")
 
 
 def test_convert_player_stats():
