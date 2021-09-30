@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Any, Dict, List
 
+from src.api.fixtures_client import FixturesClient
 from src.entities import Fixture
+from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
 
 def get_champions_league_fixtures(all_team_fixtures: Dict[str, Any]) -> List[Dict[str, str]]:
@@ -32,8 +34,13 @@ def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def __convert_fixture_response(fixture_response: Dict[str, Any]) -> Fixture:
+    utc_date = datetime.strptime(fixture_response["fixture"]["date"][:-6], "%Y-%m-%dT%H:%M:%S")
+    ams_date = get_time_in_time_zone(utc_date, TimeZones.AMSTERDAM)
+    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
     return Fixture(
-        fixture_response["fixture"]["date"],
+        utc_date,
+        str(ams_date),
+        str(bsas_date),
         fixture_response["fixture"]["referee"],
         fixture_response["fixture"]["status"]["long"],
         fixture_response["league"]["name"],

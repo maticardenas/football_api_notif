@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
+
+from src.utils.date_utils import DAYS
 
 
 class MatchPhase(Enum):
@@ -17,7 +20,9 @@ class MatchScore:
 
 @dataclass
 class Fixture:
-    date: str
+    utc_date: datetime
+    ams_date: str
+    bsas_date: str
     referee: str
     match_status: str
     championship: str
@@ -27,12 +32,16 @@ class Fixture:
     # scores: Dict[str, MatchScore]
 
     def __str__(self):
-        return f"Date (UTC): {self.date}\n\n" \
-               f"Match: {self.home_team} vs. {self.away_team}\n" \
-               f"Championship: {self.championship}\n" \
-               f"Round: {self.round}\n" \
-               f"Referee: {self.referee}\n" \
-               f"Status: {self.match_status}\n"
+        return f"*{DAYS[self.utc_date.weekday()]} {self.utc_date.day}-{self.utc_date.month}-{self.utc_date.year}*\n\n" \
+               f"_Time:_\n\n" \
+               f"_UTC_ -> *{str(self.utc_date)[11:16]} HS*\n" \
+               f"_Europe_ -> *{self.ams_date[11:16]} HS*\n" \
+               f"_Argentina_ -> *{self.bsas_date[11:16]} HS*\n\n" \
+               f"_Match:_ *{self.home_team} vs. {self.away_team}*\n" \
+               f"_Championship:_ *{self.championship}*\n" \
+               f"_Round:_ *{self.round}*\n" \
+               f"_Referee:_ *{self.referee}*\n" \
+               f"_Status:_ *{self.match_status}*\n"
 
 @dataclass
 class Championship:
@@ -70,14 +79,14 @@ class PlayerStats:
     dribbles_success: int
 
     def __str__(self):
-        return f"Appearances: {self.appearences}\n" \
-               f"Goals: {self.goals}\n" \
-               f"Minutes: {self.minutes}\n" \
-               f"Total Shots: {self.total_shots}\n" \
-               f"Shots on target: {self.shots_on_target}\n\n" \
-               f"Total Passes: {self.total_passes}\n" \
-               f"Key Passes: {self.key_passes}\n" \
-               f"Accuracy: {self.accuracy}\n\n" \
-               f"Dribbles Attempts: {self.dribbles_attempts}\n" \
-               f"Dribbles Success: {self.dribbles_success}"
+        return f"_Appearances:_ *{self.appearences}*\n" \
+               f"_Goals:_ *{self.goals}*\n" \
+               f"_Minutes:_ *{self.minutes}*\n" \
+               f"_Total Shots:_ *{self.total_shots}*\n" \
+               f"_Shots on target:_ *{self.shots_on_target}*\n\n" \
+               f"_Total Passes:_ *{self.total_passes}*\n" \
+               f"_Key Passes:_ *{self.key_passes}*\n" \
+               f"_Accuracy:_ *{self.accuracy}*\n\n" \
+               f"_Dribbles Attempts:_ *{self.dribbles_attempts}*\n" \
+               f"_Dribbles Success:_ *{self.dribbles_success}*"
 

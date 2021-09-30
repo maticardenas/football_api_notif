@@ -34,34 +34,32 @@ def convert_player_stats(stats_response: Dict[str, Any]) -> Dict[str, PlayerStat
     return player_stats
 
 
-def get_all_player_stats() -> str:
-    players_client = PlayersClient()
-
-    messi_stats_response = players_client.get_players_stats_by(2021, 154)
-
-    first_response = messi_stats_response.as_dict["response"][0]
-    player_details = first_response["player"]
+def get_all_player_stats(player_response, team_filter: str) -> str:
+    player_details = player_response["player"]
     player_summary = get_str_player_summary(player_details)
 
-    messi_stats = convert_player_stats(first_response)
-    stats_summary = get_str_stats_summary(messi_stats)
+    messi_stats = convert_player_stats(player_response)
+    stats_summary = get_str_stats_summary(messi_stats, team_filter)
 
-    return f"{player_summary}\n\nStatistics:\n{stats_summary}"
+    return f"{player_summary}\n\n_Statistics:_\n\n{stats_summary}"
 
 
 def get_str_player_summary(player_details: Dict[str, Any]) -> str:
-    return f"Player: {player_details['firstname']} {player_details['lastname']}\n " \
-                     f"Age: {player_details['age']}\n" \
-                     f"Nationality: {player_details['nationality']}\n" \
-                     f"Height: {player_details['height']}\n " \
-                     f"Weight: {player_details['weight']}\n " \
-                     f"Photo: {player_details['photo']}"
+    return f"_Player:_ *{player_details['firstname']} {player_details['lastname']}*\n" \
+                     f"_Age:_ *{player_details['age']}*\n" \
+                     f"_Nationality:_ *{player_details['nationality']}*\n" \
+                     f"_Height:_ *{player_details['height']}*\n" \
+                     f"_Weight:_ *{player_details['weight']}*\n" \
+                     f"_Photo:_ *{player_details['photo']}*"
 
 
-def get_str_stats_summary(stats: Dict[str, PlayerStats]) -> str:
+def get_str_stats_summary(stats: Dict[str, PlayerStats], team_filter: str) -> str:
     player_stats = ""
     for team in stats:
+        if team_filter:
+            if team.lower() != team_filter.lower():
+                continue
         for championship in stats[team]:
-            player_stats += f"Team: {team} - Championship: {championship}\n{str(stats[team][championship])}\n\n"
+            player_stats += f"_Team:_ *{team}* - Championship: *{championship}*\n{str(stats[team][championship])}\n\n"
 
     return player_stats
