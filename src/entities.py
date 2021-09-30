@@ -3,7 +3,6 @@ from datetime import datetime
 from enum import Enum
 
 from src.emojis import Emojis
-from src.utils.date_utils import DAYS
 
 class MatchPhase(Enum):
     HALFTIME: "halftime"
@@ -30,7 +29,7 @@ class RemainingTime:
         suf_horas = "s" if self.hours != 1 else ""
         suf_minutos = "s" if self.minutes != 1 else ""
 
-        return f"Falta{suf_faltan} {self.days} dia{suf_dias}, {self.hours} " \
+        return f"Falta{suf_faltan} {self.days} día{suf_dias}, {self.hours} " \
                f"hora{suf_horas} y {self.minutes} minuto{suf_minutos}"
 
 @dataclass
@@ -60,28 +59,12 @@ class Fixture:
     def __str__(self):
         remaining_time = self.__remaining_time()
 
-        return f"{Emojis.ALARM_CLOCK.value} _{str(remaining_time)} para el partido._\n\n" \
-               f"*{DAYS[self.utc_date.weekday()]} {self.utc_date.day}-{self.utc_date.month}-{self.utc_date.year}*\n\n" \
-               f"_Time:_\n\n" \
-               f"{Emojis.GLOBE.value} -> *{str(self.utc_date)[11:16]} HS*\n" \
-               f"{Emojis.EUROPEAN_UNION.value} -> *{self.ams_date[11:16]} HS*\n" \
-               f"{Emojis.ARGENTINA.value} -> *{self.bsas_date[11:16]} HS*\n\n" \
-               f"{Emojis.SOCCER_BALL.value}: *{self.home_team} vs. {self.away_team}*\n" \
-               f"{Emojis.TROPHY.value}: *{self.championship}*\n" \
-               f"{Emojis.PUSHPIN.value}: *{self.round}*\n" \
-               f"{Emojis.SCALE.value}: *{self.referee}*"
-
-        # return f"_{str(remaining_time)} para el partido._\n\n" \
-        #        f"*{DAYS[self.utc_date.weekday()]} {self.utc_date.day}-{self.utc_date.month}-{self.utc_date.year}*\n\n" \
-        #        f"_Time:_\n\n" \
-        #        f"_UTC_ -> *{str(self.utc_date)[11:16]} HS*\n" \
-        #        f"_Europe_ -> *{self.ams_date[11:16]} HS*\n" \
-        #        f"_Argentina_ -> *{self.bsas_date[11:16]} HS*\n\n" \
-        #        f"_Match:_ *{self.home_team} vs. {self.away_team}*\n" \
-        #        f"_Championship:_ *{self.championship}*\n" \
-        #        f"_Round:_ *{self.round}*\n" \
-        #        f"_Referee:_ *{self.referee}*\n" \
-        #        f"_Status:_ *{self.match_status}*\n"
+        return f"{Emojis.EUROPEAN_UNION.value} *{self.ams_date[11:16]} HS*\n" \
+               f"{Emojis.ARGENTINA.value} *{self.bsas_date[11:16]} HS*\n\n" \
+               f"{Emojis.ALARM_CLOCK.value} _{str(remaining_time)} para el partido._\n\n" \
+               f"{Emojis.SOCCER_BALL.value} *{self.home_team} vs. {self.away_team}*\n" \
+               f"{Emojis.TROPHY.value} *{self.championship}*\n" \
+               f"{Emojis.PUSHPIN.value} *{self.round}*"
 
 
 @dataclass

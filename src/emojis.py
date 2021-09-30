@@ -17,3 +17,4 @@ class Emojis(Enum):
     SCALE = emoji.emojize(":balance_scale:", use_aliases=True)
     GLOBE = emoji.emojize(":globe_with_meridians:", use_aliases=True)
     EUROPEAN_UNION = emoji.emojize(":European_Union:", use_aliases=True)
+    SPIRAL_CALENDAR = emoji.emojize(":spiral_calendar:", use_aliases=True)

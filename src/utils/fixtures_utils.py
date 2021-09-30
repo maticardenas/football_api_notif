@@ -13,7 +13,7 @@ def get_champions_league_fixtures(all_team_fixtures: Dict[str, Any]) -> List[Dic
 def date_diff(date: str) -> datetime:
     return (datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.now())
 
-def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Dict[str, Any]:
+def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Fixture:
     min_fixture = None
     min_diff = 999999999
 
