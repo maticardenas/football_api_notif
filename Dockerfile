@@ -9,9 +9,9 @@ RUN apt-get update \
 && apt-get clean \
 && apt-get install cron -y
 
-ADD football_crontab /etc/cron.d/football_crontab
-RUN chmod 777 /etc/cron.d/football_crontab
-RUN crontab /etc/cron.d/football_crontab
+ADD football_notif_crontab /etc/cron.d/football_notif_crontab
+RUN chmod 777 /etc/cron.d/football_notif_crontab
+RUN crontab /etc/cron.d/football_notif_crontab
 RUN touch /var/log/cron_log.log
 RUN pip install pipenv
 
