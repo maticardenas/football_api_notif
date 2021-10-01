@@ -1,0 +1,2 @@
+30 12 * * * /usr/football_api/dev_scripts/run_notif_notifier_psg.sh >> /var/log/cron_log.log 2>&1
+# Extra valid line
