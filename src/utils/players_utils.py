@@ -1,6 +1,5 @@
 from typing import Dict, Any
 
-from src.api.players_client import PlayersClient
 from src.entities import PlayerStats
 
 

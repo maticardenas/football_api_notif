@@ -1,3 +1,4 @@
+#!/bin/env python
 import sys
 from src.team_fixtures_manager import TeamFixturesManager
 

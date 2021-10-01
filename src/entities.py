@@ -45,7 +45,7 @@ class Fixture:
     home_team: str
     away_team: str
 
-    def __remaining_time(self) -> RemainingTime:
+    def remaining_time(self) -> RemainingTime:
         days = self.date_diff//86400
         hours = (self.date_diff - (days * 86400)) // 3600
         minutes = (self.date_diff - (days * 86400) - (hours * 3600)) // 60
@@ -57,7 +57,7 @@ class Fixture:
         )
 
     def __str__(self):
-        remaining_time = self.__remaining_time()
+        remaining_time = self.remaining_time()
 
         return f"{Emojis.EUROPEAN_UNION.value} *{self.ams_date[11:16]} HS*\n" \
                f"{Emojis.ARGENTINA.value} *{self.bsas_date[11:16]} HS*\n\n" \

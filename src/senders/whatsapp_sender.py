@@ -8,6 +8,9 @@ client = Client(
 )
 
 def send_whatsapp_message(recipient: str, text: str) -> None:
-    client.messages.create(body=text,
-                           from_=f"whatsapp:{TWILIO_WHATSAPP_NUMBER}",
-                           to=f"whatsapp:{recipient}")
+    try:
+        client.messages.create(body=text,
+                               from_=f"whatsapp:{TWILIO_WHATSAPP_NUMBER}",
+                               to=f"whatsapp:{recipient}")
+    except Exception as e:
+        print("what happened!")
