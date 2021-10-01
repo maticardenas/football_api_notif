@@ -24,6 +24,7 @@ COPY ./tests ./tests
 COPY ./Pipfile ./Pipfile
 COPY ./Pipfile.lock ./Pipfile.lock
 COPY next_team_fixture_notifier.py .
+COPY welcome_notifier.py .
 
 RUN python -m pipenv install
 
