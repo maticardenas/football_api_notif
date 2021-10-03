@@ -1,5 +1,7 @@
 #!/bin/env python
 import sys
+
+from src.senders.whatsapp_sender import send_whatsapp_message
 from src.team_fixtures_manager import TeamFixturesManager
 
 if __name__ == "__main__":

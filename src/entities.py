@@ -66,6 +66,15 @@ class Fixture:
                f"{Emojis.TROPHY.value} *{self.championship}*\n" \
                f"{Emojis.PUSHPIN.value} *{self.round}*"
 
+    def email_like_repr(self) -> str:
+        return f"Europa -> {self.ams_date[11:16]} HS\n" \
+                f"Argentina -> {self.bsas_date[11:16]} HS\n\n" \
+                f"{str(self.remaining_time())} para el partido.\n\n" \
+                f"{self.home_team} vs. {self.away_team}\n" \
+                f"{self.championship}\n" \
+                f"{self.round}"
+
+
 
 @dataclass
 class Championship:

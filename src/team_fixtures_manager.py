@@ -1,7 +1,9 @@
+from config.email_notif import EMAIL_RECIPIENTS
 from config.whatsapp_notif import RECIPIENTS
 from src.api.fixtures_client import FixturesClient
 from src.emojis import Emojis
 from src.entities import Fixture
+from src.senders.email_sender import send_email
 from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import get_next_fixture
 from src.senders.whatsapp_sender import send_whatsapp_message
@@ -24,10 +26,18 @@ class TeamFixturesManager:
     @staticmethod
     def _perform_fixture_notification(team_fixture: Fixture) -> None:
         spanish_format_date = get_date_spanish_text_format(team_fixture.utc_date)
+        date_text = f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}" \
+                    if team_fixture.remaining_time().days > 0 else "es HOY!"
 
         for recipient in RECIPIENTS:
             message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\nTe recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
-                      f" de Lionel Messi {Emojis.GOAT.value}" \
-                      f" es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}.\n\n{str(team_fixture)}"
+                      f" de Lionel Messi {Emojis.GOAT.value} {date_text}.\n\n{str(team_fixture)}"
 
             send_whatsapp_message(RECIPIENTS[recipient], message)
+
+        for recipient in EMAIL_RECIPIENTS:
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\nTe recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
+                      f" de Lionel Messi {Emojis.GOAT.value} {date_text}.\n\n{team_fixture.email_like_repr()}"
+
+            send_email(f"{team_fixture.home_team} vs. {team_fixture.away_team}", message, EMAIL_RECIPIENTS[recipient])
+
