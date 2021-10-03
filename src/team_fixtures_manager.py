@@ -23,21 +23,29 @@ class TeamFixturesManager:
         if next_team_fixture.remaining_time().days < 3:
             self._perform_fixture_notification(next_team_fixture)
 
-    @staticmethod
-    def _perform_fixture_notification(team_fixture: Fixture) -> None:
+    def _perform_fixture_notification(self, team_fixture: Fixture) -> None:
         spanish_format_date = get_date_spanish_text_format(team_fixture.utc_date)
+
+        team_intro_text = self._get_team_intro()
+
         date_text = f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}" \
                     if team_fixture.remaining_time().days > 0 else "es HOY!"
 
         for recipient in RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\nTe recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
-                      f" de Lionel Messi {Emojis.GOAT.value} {date_text}.\n\n{str(team_fixture)}"
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n {team_intro_text} {date_text}.\n\n{str(team_fixture)}"
 
             send_whatsapp_message(RECIPIENTS[recipient], message)
 
         for recipient in EMAIL_RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\nTe recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
-                      f" de Lionel Messi {Emojis.GOAT.value} {date_text}.\n\n{team_fixture.email_like_repr()}"
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{team_intro_text} {date_text}.\n\n{team_fixture.email_like_repr()}"
 
             send_email(f"{team_fixture.home_team} vs. {team_fixture.away_team}", message, EMAIL_RECIPIENTS[recipient])
 
+    def _get_team_intro(self) -> str:
+        if self._team_id == "85":
+            return f"Te recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
+                    f" de Lionel Messi {Emojis.GOAT.value}"
+        elif self._team_id == "435":
+            return "Te recuerdo que el proximo partido del River de Marcelo Gallardios"
+        else:
+            return ""
