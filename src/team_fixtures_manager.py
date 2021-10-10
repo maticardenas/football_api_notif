@@ -47,5 +47,7 @@ class TeamFixturesManager:
                     f" de Lionel Messi {Emojis.GOAT.value}"
         elif self._team_id == "435":
             return "Te recuerdo que el proximo partido del River de Marcelo Gallardios"
+        elif self._team_id == "26":
+            return "Te recuedo que el proximo partido de La Scaloneta"
         else:
             return ""
