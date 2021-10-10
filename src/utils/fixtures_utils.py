@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from src.entities import Fixture
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
@@ -13,7 +13,7 @@ def get_champions_league_fixtures(all_team_fixtures: Dict[str, Any]) -> List[Dic
 def date_diff(date: str) -> datetime:
     return (datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.now())
 
-def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Fixture:
+def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
     min_fixture = None
     min_diff = 999999999
 
@@ -29,7 +29,7 @@ def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Fixture:
             min_fixture = fixture
             min_diff = fixture_date_diff
 
-    return __convert_fixture_response(min_fixture, min_diff)
+    return __convert_fixture_response(min_fixture, min_diff) if min_fixture else None
 
 
 def __convert_fixture_response(fixture_response: Dict[str, Any], date_diff: int) -> Fixture:

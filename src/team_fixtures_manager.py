@@ -20,8 +20,9 @@ class TeamFixturesManager:
 
         next_team_fixture = get_next_fixture(team_fixtures.as_dict["response"])
 
-        if next_team_fixture.remaining_time().days < 3:
-            self._perform_fixture_notification(next_team_fixture)
+        if next_team_fixture:
+            if next_team_fixture.remaining_time().days < 3:
+                self._perform_fixture_notification(next_team_fixture)
 
     def _perform_fixture_notification(self, team_fixture: Fixture) -> None:
         spanish_format_date = get_date_spanish_text_format(team_fixture.utc_date)
