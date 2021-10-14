@@ -67,12 +67,12 @@ class Fixture:
                f"{Emojis.PUSHPIN.value} *{self.round}*"
 
     def email_like_repr(self) -> str:
-        return f"Europa -> {self.ams_date[11:16]} HS\n" \
-                f"Argentina -> {self.bsas_date[11:16]} HS\n\n" \
-                f"{str(self.remaining_time())} para el partido.\n\n" \
-                f"{self.home_team} vs. {self.away_team}\n" \
-                f"{self.championship}\n" \
-                f"{self.round}"
+         return f"<p>{Emojis.EUROPEAN_UNION.value} <strong>{self.ams_date[11:16]} HS<br />" \
+               f"{Emojis.ARGENTINA.value} <strong>{self.bsas_date[11:16]} HS</strong><p>" \
+               f"{Emojis.ALARM_CLOCK.value} <em>{str(self.remaining_time())} para el partido.</em><p>" \
+               f"{Emojis.SOCCER_BALL.value} <strong>{self.home_team} vs. {self.away_team}</strong><br />" \
+               f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />" \
+               f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
 
 
 
