@@ -3,14 +3,14 @@ from config.whatsapp_notif import RECIPIENTS
 from src.api.fixtures_client import FixturesClient
 from src.emojis import Emojis
 from src.entities import Fixture
-from src.senders.email_sender import send_email
+from src.senders.email_sender import send_email_html
 from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import get_next_fixture
 from src.senders.whatsapp_sender import send_whatsapp_message
 
 
 class TeamFixturesManager:
-    def __init__(self, season: int, team_id: int) -> None:
+    def __init__(self, season: str, team_id: str) -> None:
         self._season = season
         self._team_id = team_id
         self._fixtures_client = FixturesClient()
@@ -40,15 +40,15 @@ class TeamFixturesManager:
         for recipient in EMAIL_RECIPIENTS:
             message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{team_intro_text} {date_text}.\n\n{team_fixture.email_like_repr()}"
 
-            send_email(f"{team_fixture.home_team} vs. {team_fixture.away_team}", message, EMAIL_RECIPIENTS[recipient])
+            send_email_html(f"{team_fixture.home_team} vs. {team_fixture.away_team}", message, EMAIL_RECIPIENTS[recipient])
 
     def _get_team_intro(self) -> str:
         if self._team_id == "85":
-            return f"Te recuerdo que el proximo partido del PSG {Emojis.FRANCE.value}" \
+            return f"Te recuerdo que el próximo partido del PSG {Emojis.FRANCE.value}" \
                     f" de Lionel Messi {Emojis.GOAT.value}"
         elif self._team_id == "435":
-            return "Te recuerdo que el proximo partido del River de Marcelo Gallardios"
+            return "Te recuerdo que el próximo partido del River de Marcelo Gallardios"
         elif self._team_id == "26":
-            return "Te recuedo que el proximo partido de La Scaloneta"
+            return "Te recuerdo que el próximo partido de La Scaloneta"
         else:
             return ""
