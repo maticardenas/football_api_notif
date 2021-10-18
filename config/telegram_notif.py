@@ -1,0 +1,6 @@
+
+TOKEN = "2049581342:AAE4axz3kZxJfM6j-yy8DqzshrELbfoYexA"
+
+TELEGRAM_RECIPIENTS = {
+    "CrapHeros": "-762963981"
+}
