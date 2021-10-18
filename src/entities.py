@@ -57,11 +57,9 @@ class Fixture:
         )
 
     def __str__(self):
-        remaining_time = self.remaining_time()
-
         return f"{Emojis.EUROPEAN_UNION.value} *{self.ams_date[11:16]} HS*\n" \
                f"{Emojis.ARGENTINA.value} *{self.bsas_date[11:16]} HS*\n\n" \
-               f"{Emojis.ALARM_CLOCK.value} _{str(remaining_time)} para el partido._\n\n" \
+               f"{Emojis.ALARM_CLOCK.value} _{str(self.remaining_time())} para el partido._\n\n" \
                f"{Emojis.SOCCER_BALL.value} *{self.home_team} vs. {self.away_team}*\n" \
                f"{Emojis.TROPHY.value} *{self.championship}*\n" \
                f"{Emojis.PUSHPIN.value} *{self.round}*"
