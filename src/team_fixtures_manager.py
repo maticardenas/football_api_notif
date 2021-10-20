@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from config.email_notif import EMAIL_RECIPIENTS
 from config.telegram_notif import TELEGRAM_RECIPIENTS
 from config.whatsapp_notif import RECIPIENTS
@@ -27,7 +29,7 @@ class TeamFixturesManager:
                 self._perform_fixture_notification(next_team_fixture)
 
     def _perform_fixture_notification(self, team_fixture: Fixture) -> None:
-        spanish_format_date = get_date_spanish_text_format(team_fixture.utc_date)
+        spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
 
         date_text = f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}" \
                     if team_fixture.remaining_time().days > 0 else "es HOY!"

@@ -38,8 +38,8 @@ def __convert_fixture_response(fixture_response: Dict[str, Any], date_diff: int)
     bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
     return Fixture(
         utc_date,
-        str(ams_date),
-        str(bsas_date),
+        ams_date,
+        bsas_date,
         date_diff,
         fixture_response["fixture"]["referee"],
         fixture_response["fixture"]["status"]["long"],

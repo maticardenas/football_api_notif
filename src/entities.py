@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
@@ -35,8 +35,8 @@ class RemainingTime:
 @dataclass
 class Fixture:
     utc_date: datetime
-    ams_date: str
-    bsas_date: str
+    ams_date: datetime
+    bsas_date: datetime
     date_diff: int
     referee: str
     match_status: str
@@ -44,9 +44,14 @@ class Fixture:
     round: str
     home_team: str
     away_team: str
+    is_next_day: str = field(init=False)
+
+
+    def __post_init__(self) -> None:
+        self.is_next_day = "(+1)" if self._is_next_day_in_europe() else ""
 
     def remaining_time(self) -> RemainingTime:
-        days = self.date_diff//86400
+        days = self.date_diff // 86400
         hours = (self.date_diff - (days * 86400)) // 3600
         minutes = (self.date_diff - (days * 86400) - (hours * 3600)) // 60
 
@@ -57,21 +62,23 @@ class Fixture:
         )
 
     def __str__(self):
-        return f"{Emojis.EUROPEAN_UNION.value} *{self.ams_date[11:16]} HS*\n" \
-               f"{Emojis.ARGENTINA.value} *{self.bsas_date[11:16]} HS*\n\n" \
+        return f"{Emojis.EUROPEAN_UNION.value} *{str(self.ams_date)[11:16]} HS {self.is_next_day}*\n" \
+               f"{Emojis.ARGENTINA.value} *{str(self.bsas_date)[11:16]} HS*\n\n" \
                f"{Emojis.ALARM_CLOCK.value} _{str(self.remaining_time())} para el partido._\n\n" \
                f"{Emojis.SOCCER_BALL.value} *{self.home_team} vs. {self.away_team}*\n" \
                f"{Emojis.TROPHY.value} *{self.championship}*\n" \
                f"{Emojis.PUSHPIN.value} *{self.round}*"
 
     def email_like_repr(self) -> str:
-         return f"<p>{Emojis.EUROPEAN_UNION.value} <strong>{self.ams_date[11:16]} HS<br />" \
-               f"{Emojis.ARGENTINA.value} <strong>{self.bsas_date[11:16]} HS</strong><p>" \
+         return f"<p>{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}<br />" \
+               f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong><p>" \
                f"{Emojis.ALARM_CLOCK.value} <em>{str(self.remaining_time())} para el partido.</em><p>" \
                f"{Emojis.SOCCER_BALL.value} <strong>{self.home_team} vs. {self.away_team}</strong><br />" \
                f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />" \
                f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
 
+    def _is_next_day_in_europe(self) -> bool:
+        return self.bsas_date.weekday() != self.ams_date.weekday()
 
 
 @dataclass

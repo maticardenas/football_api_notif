@@ -39,13 +39,16 @@ def test_date_diff():
     with freeze_time("2021-09-28 18:30:00"):
         dates_diff = date_diff(date)
 
+    # then
     assert dates_diff.days == 2
 
 
 def test_date_conversion():
+    # given
     date = '2021-09-29T18:45:00+00:00'
     utc_date = datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S")
 
+    # when
     amsterdam_tz = pytz.timezone('Europe/Amsterdam')
     bsas_tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -55,6 +58,7 @@ def test_date_conversion():
     local_definitive_date = amsterdam_tz.normalize(local_dt)
     bsas_definitive_date = bsas_tz.normalize(bsas_dt)
 
+    # then
     assert local_definitive_date
     assert bsas_definitive_date
 
