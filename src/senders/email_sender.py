@@ -1,10 +1,8 @@
 import smtplib
-
-from config.email_notif import SMTP_SERVER, GMAIL_SENDER, GMAIL_PASSWD
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from config.email_notif import GMAIL_PASSWD, GMAIL_SENDER, SMTP_SERVER
 
 
 def send_email(subject: str, body: str, recipient: str) -> None:
@@ -15,10 +13,12 @@ def send_email(subject: str, body: str, recipient: str) -> None:
     body = f"Subject: {subject} \n\n{body}"
 
     try:
-        server.sendmail(GMAIL_SENDER, [recipient], body.encode('ascii', 'ignore').decode('ascii'))
-        print('email sent')
+        server.sendmail(
+            GMAIL_SENDER, [recipient], body.encode("ascii", "ignore").decode("ascii")
+        )
+        print("email sent")
     except Exception as e:
-        print('error sending mail')
+        print("error sending mail")
 
     server.quit()
 
@@ -29,9 +29,9 @@ def send_email_html(subject: str, body: str, recipient: str) -> None:
     server.starttls()
     server.login(GMAIL_SENDER, GMAIL_PASSWD)
 
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg['To'] = recipient
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["To"] = recipient
 
     html = f"""\
     <html>
@@ -42,21 +42,16 @@ def send_email_html(subject: str, body: str, recipient: str) -> None:
     </html>
     """
 
-    part1 = MIMEText(body, 'plain')
-    part2 = MIMEText(html, 'html')
+    part1 = MIMEText(body, "plain")
+    part2 = MIMEText(html, "html")
 
     msg.attach(part1)
     msg.attach(part2)
 
     try:
         server.sendmail(GMAIL_SENDER, [recipient], msg.as_string())
-        print('email sent')
+        print("email sent")
     except Exception as e:
-        print(f'error sending mail {e}')
+        print(f"error sending mail {e}")
 
     server.quit()
-
-
-
-
-

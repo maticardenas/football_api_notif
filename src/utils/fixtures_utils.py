@@ -1,22 +1,27 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
+
 from src.entities import Fixture
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
 
-def get_champions_league_fixtures(all_team_fixtures: Dict[str, Any]) -> List[Dict[str, str]]:
+def get_champions_league_fixtures(
+    all_team_fixtures: Dict[str, Any]
+) -> List[Dict[str, str]]:
     return [
-        fixture for fixture in all_team_fixtures["response"]
+        fixture
+        for fixture in all_team_fixtures["response"]
         if fixture["league"]["id"] == 2
     ]
 
+
 def date_diff(date: str) -> datetime:
-    return (datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.now())
+    return datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.now()
+
 
 def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
     min_fixture = None
     min_diff = 999999999
-
 
     for fixture in team_fixtures:
         fixture_date_diff = int(date_diff(fixture["fixture"]["date"]).total_seconds())
@@ -32,8 +37,12 @@ def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
     return __convert_fixture_response(min_fixture, min_diff) if min_fixture else None
 
 
-def __convert_fixture_response(fixture_response: Dict[str, Any], date_diff: int) -> Fixture:
-    utc_date = datetime.strptime(fixture_response["fixture"]["date"][:-6], "%Y-%m-%dT%H:%M:%S")
+def __convert_fixture_response(
+    fixture_response: Dict[str, Any], date_diff: int
+) -> Fixture:
+    utc_date = datetime.strptime(
+        fixture_response["fixture"]["date"][:-6], "%Y-%m-%dT%H:%M:%S"
+    )
     ams_date = get_time_in_time_zone(utc_date, TimeZones.AMSTERDAM)
     bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
     return Fixture(

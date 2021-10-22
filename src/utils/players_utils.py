@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 from src.entities import PlayerStats
 
@@ -44,12 +44,14 @@ def get_all_player_stats(player_response, team_filter: str) -> str:
 
 
 def get_str_player_summary(player_details: Dict[str, Any]) -> str:
-    return f"_Player:_ *{player_details['firstname']} {player_details['lastname']}*\n" \
-                     f"_Age:_ *{player_details['age']}*\n" \
-                     f"_Nationality:_ *{player_details['nationality']}*\n" \
-                     f"_Height:_ *{player_details['height']}*\n" \
-                     f"_Weight:_ *{player_details['weight']}*\n" \
-                     f"_Photo:_ *{player_details['photo']}*"
+    return (
+        f"_Player:_ *{player_details['firstname']} {player_details['lastname']}*\n"
+        f"_Age:_ *{player_details['age']}*\n"
+        f"_Nationality:_ *{player_details['nationality']}*\n"
+        f"_Height:_ *{player_details['height']}*\n"
+        f"_Weight:_ *{player_details['weight']}*\n"
+        f"_Photo:_ *{player_details['photo']}*"
+    )
 
 
 def get_str_stats_summary(stats: Dict[str, PlayerStats], team_filter: str) -> str:

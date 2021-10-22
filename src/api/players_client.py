@@ -11,10 +11,7 @@ class PlayersClient(BaseClient):
         self.request = APIRequest()
 
     def get_players_stats_by(self, season: int, player_id: int) -> Dict[str, Any]:
-        params = {
-            "season": season,
-            "id": player_id
-        }
+        params = {"season": season, "id": player_id}
         url = f"{self.base_url}{self.endpoint}"
 
         return self.request.get(url, params, self.headers)
