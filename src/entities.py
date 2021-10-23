@@ -82,8 +82,8 @@ class Fixture:
             f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong><p>"
             f"{Emojis.ALARM_CLOCK.value} <em>{str(self.remaining_time())} para el partido.</em><p>"
             f"{Emojis.SOCCER_BALL.value} "
-            f"<img src='{self.home_team.picture}' width='19' height='19'><strong>{self.home_team.name} vs. "
-            f"{self.away_team.name} <img src='{self.away_team.picture}' width='19' height='19'></strong><br />"
+            f"<img src='{self.home_team.picture}' width='22' height='22'><strong> vs. "
+            f"<img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
         )
