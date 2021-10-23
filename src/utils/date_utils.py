@@ -3,16 +3,7 @@ from enum import Enum
 
 import pytz
 
-
-DAYS = [
-    "Lunes",
-    "Martes",
-    "Miércoles",
-    "Jueves",
-    "Viernes",
-    "Sábado",
-    "Domingo"
-]
+DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
 
 MONTHS = [
     "Enero",
@@ -26,9 +17,10 @@ MONTHS = [
     "Septiembre",
     "Octubre",
     "Noviembre",
-    "Diciembre"
+    "Diciembre",
 ]
 # DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
 
 class TimeZones(Enum):
     AMSTERDAM = "Europe/Amsterdam"
@@ -40,5 +32,8 @@ def get_time_in_time_zone(utc_date: datetime, time_zone: TimeZones) -> datetime:
     required_tz_dt = utc_date.replace(tzinfo=pytz.utc).astimezone(required_tz)
     return required_tz.normalize(required_tz_dt)
 
+
 def get_date_spanish_text_format(date: datetime) -> str:
-    return f"{DAYS[date.weekday()]} {date.day} de {MONTHS[date.month-1]} del {date.year}"
+    return (
+        f"{DAYS[date.weekday()]} {date.day} de {MONTHS[date.month-1]} del {date.year}"
+    )

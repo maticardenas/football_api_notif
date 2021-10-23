@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Any, Dict
 
 import requests
 
@@ -13,15 +13,21 @@ class Response:
 
 
 class APIRequest:
-    def get(self, url: str, params: Dict[Any, Any], headers: Dict[str, str]) -> Response:
+    def get(
+        self, url: str, params: Dict[Any, Any], headers: Dict[str, str]
+    ) -> Response:
         response = requests.get(url, params=params, headers=headers)
         return self.__get_responses(response)
 
-    def post(self, url: str, payload: Dict[Any, Any], headers: Dict[str, str]) -> Response:
+    def post(
+        self, url: str, payload: Dict[Any, Any], headers: Dict[str, str]
+    ) -> Response:
         response = requests.post(url, data=payload, headers=headers)
         return self.__get_responses(response)
 
-    def put(self, url: str, payload: Dict[Any, Any], headers: Dict[str, str]) -> Response:
+    def put(
+        self, url: str, payload: Dict[Any, Any], headers: Dict[str, str]
+    ) -> Response:
         response = requests.put(url, data=payload, headers=headers)
         return self.__get_responses(response)
 
@@ -40,6 +46,4 @@ class APIRequest:
 
         headers = response.headers
 
-        return Response(
-            status_code, text, as_dict, headers
-        )
+        return Response(status_code, text, as_dict, headers)

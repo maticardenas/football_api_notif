@@ -11,10 +11,7 @@ class FixturesClient(BaseClient):
         self.request = APIRequest()
 
     def get_fixtures_by(self, season: int, team_id: int) -> Dict[str, Any]:
-        params = {
-            "season": season,
-            "team": team_id
-        }
+        params = {"season": season, "team": team_id}
         url = f"{self.base_url}{self.endpoint}"
 
         return self.request.get(url, params, self.headers)
