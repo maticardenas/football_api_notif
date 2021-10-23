@@ -1,6 +1,6 @@
 
-TOKEN = "2049581342:AAE4axz3kZxJfM6j-yy8DqzshrELbfoYexA"
+TOKEN = "TELEGRAM_BOT_TOKEN"
 
 TELEGRAM_RECIPIENTS = {
-    "CrapHeros": "-762963981"
+    # RECIPIENTS IN FORMAT DICT { "Name": "Chat_id" }
 }
