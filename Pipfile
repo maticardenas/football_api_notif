@@ -29,6 +29,9 @@ virtualenv = "==20.8.1"
 virtualenv-clone = "==0.5.7"
 PyJWT = "==2.1.0"
 freezegun = "==1.1.0"
+flake8 = "==4.0.1"
+isort = "==5.9.3"
+black = "==21.9b0"
 
 
 [dev-packages]
