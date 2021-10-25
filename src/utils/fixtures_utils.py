@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from deep_translator import GoogleTranslator
 
-from src.entities import Fixture, Team
+from src.entities import Fixture, MatchScore, Team
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
 
@@ -18,7 +18,7 @@ def get_champions_league_fixtures(
 
 
 def date_diff(date: str) -> datetime:
-    return datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.now()
+    return datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.utcnow()
 
 
 def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
@@ -33,6 +33,24 @@ def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
             min_diff = fixture_date_diff
 
         if fixture_date_diff >= 0 and (fixture_date_diff < min_diff):
+            min_fixture = fixture
+            min_diff = fixture_date_diff
+
+    return __convert_fixture_response(min_fixture, min_diff) if min_fixture else None
+
+
+def get_last_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
+    min_fixture = None
+    min_diff = -999999999
+
+    for fixture in team_fixtures:
+        fixture_date_diff = int(date_diff(fixture["fixture"]["date"]).total_seconds())
+
+        if not min_fixture and fixture_date_diff < 0:
+            min_fixture = fixture
+            min_diff = fixture_date_diff
+
+        if fixture_date_diff < 0 and (fixture_date_diff > min_diff):
             min_fixture = fixture
             min_diff = fixture_date_diff
 
@@ -66,6 +84,9 @@ def __convert_fixture_response(
         Team(
             fixture_response["teams"]["away"]["name"],
             fixture_response["teams"]["away"]["logo"],
+        ),
+        MatchScore(
+            fixture_response["goals"]["home"], fixture_response["goals"]["away"]
         ),
     )
 

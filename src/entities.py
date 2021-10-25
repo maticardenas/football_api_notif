@@ -37,11 +37,9 @@ class RemainingTime:
         suf_minutos = "s" if self.minutes != 1 else ""
 
         days_phrase = f"{self.days} día{suf_dias}, " if self.days > 0 else ""
+        hours_phrase = f"{self.hours} día{suf_horas} y " if self.hours > 0 else ""
 
-        return (
-            f"Falta{suf_faltan} {days_phrase}{self.hours} "
-            f"hora{suf_horas} y {self.minutes} minuto{suf_minutos}"
-        )
+        return f"Falta{suf_faltan} {days_phrase}{hours_phrase}{self.minutes} minuto{suf_minutos}"
 
 
 @dataclass
@@ -56,6 +54,7 @@ class Fixture:
     round: str
     home_team: Team
     away_team: Team
+    match_score: MatchScore
     is_next_day: str = field(init=False)
 
     def __post_init__(self) -> None:
@@ -78,14 +77,30 @@ class Fixture:
             f"{Emojis.PUSHPIN.value} *{self.round}*"
         )
 
+    def matched_played_str(self) -> str:
+        return (
+            f"{Emojis.SOCCER_BALL.value} *{self.home_team.name} - {self.match_score.home_score} "
+            f"vs. {self.match_score.away_score} - {self.away_team.name}*\n"
+            f"{Emojis.TROPHY.value} *{self.championship}*\n"
+            f"{Emojis.PUSHPIN.value} *{self.round}*"
+        )
+
     def email_like_repr(self) -> str:
         return (
-            f"{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}<br />"
+            f"<p>{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}<br />"
             f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong><p>"
             f"{Emojis.ALARM_CLOCK.value} <em>{str(self.remaining_time())} para el partido.</em><p>"
             f"{Emojis.SOCCER_BALL.value} "
             f"<img src='{self.home_team.picture}' width='22' height='22'><strong> vs. "
             f"<img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
+            f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+        )
+
+    def matched_played_email_like_repr(self) -> str:
+        return (
+            f"<p><img src='{self.home_team.picture}' width='22' height='22'><strong> - {self.match_score.home_score} vs. "
+            f" {self.match_score.away_score} - <img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
         )

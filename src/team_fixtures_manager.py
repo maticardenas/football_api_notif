@@ -8,7 +8,7 @@ from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.senders.whatsapp_sender import send_whatsapp_message
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import get_next_fixture
+from src.utils.fixtures_utils import get_last_fixture, get_next_fixture
 
 
 class TeamFixturesManager:
@@ -27,6 +27,40 @@ class TeamFixturesManager:
         if next_team_fixture:
             if next_team_fixture.remaining_time().days < 3:
                 self._perform_fixture_notification(next_team_fixture)
+
+    def notify_last_fixture(self) -> None:
+        team_fixtures = self._fixtures_client.get_fixtures_by(
+            self._season, self._team_id
+        )
+
+        last_team_fixture = get_last_fixture(team_fixtures.as_dict["response"])
+
+        if last_team_fixture:
+            if -1 <= last_team_fixture.remaining_time().days <= 0:
+                self._perform_last_fixture_notification(last_team_fixture)
+
+    def _perform_last_fixture_notification(self, team_fixture: Fixture) -> None:
+        # telegram
+        for recipient in TELEGRAM_RECIPIENTS:
+            telegram_message = (
+                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro(True)} "
+                f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_str()}"
+            )
+            send_telegram_message(TELEGRAM_RECIPIENTS[recipient], telegram_message)
+
+        # email
+        for recipient in EMAIL_RECIPIENTS:
+            message = (
+                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
+                f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
+            )
+
+            send_email_html(
+                f"{team_fixture.home_team.name} ({team_fixture.match_score.home_score}) - "
+                f"({team_fixture.match_score.away_score}) {team_fixture.away_team.name}",
+                message,
+                EMAIL_RECIPIENTS[recipient],
+            )
 
     def _perform_fixture_notification(self, team_fixture: Fixture) -> None:
         spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
@@ -56,6 +90,16 @@ class TeamFixturesManager:
                 message,
                 EMAIL_RECIPIENTS[recipient],
             )
+
+    def _get_last_match_team_intro(self, is_group_notification: bool = False) -> str:
+        if self._team_id == "85":
+            return f"El PSG {Emojis.FRANCE.value} de Lionel Messi {Emojis.GOAT.value} jugó ayer"
+        elif self._team_id == "435":
+            return f"El River de Marcelo Gallardios"
+        elif self._team_id == "26":
+            return f"La Scaloneta {Emojis.ARGENTINA.value}"
+        else:
+            return ""
 
     def _get_team_intro(self, is_group_notification: bool = False) -> str:
         pronoun = "Les" if is_group_notification else "Te"

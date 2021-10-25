@@ -10,3 +10,4 @@ if __name__ == "__main__":
 
     team_fixtures_manager = TeamFixturesManager(season, team)
     team_fixtures_manager.notify_next_fixture()
+    team_fixtures_manager.notify_last_fixture()
