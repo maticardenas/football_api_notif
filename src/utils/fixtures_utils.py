@@ -97,7 +97,7 @@ def __teams_contain(fixture_response: Dict[str, Any], text: str) -> bool:
         [
             team_name
             for team_name in [
-                fixture_response["teams"]["away"]["name"],
+                fixture_response["teams"]["home"]["name"],
                 fixture_response["teams"]["away"]["name"],
             ]
             if text in team_name.lower()
