@@ -36,8 +36,10 @@ class RemainingTime:
         suf_horas = "s" if self.hours != 1 else ""
         suf_minutos = "s" if self.minutes != 1 else ""
 
+        days_phrase = f"{self.days} día{suf_dias}, " if self.days > 0 else ""
+
         return (
-            f"Falta{suf_faltan} {self.days} día{suf_dias}, {self.hours} "
+            f"Falta{suf_faltan} {days_phrase}{self.hours} "
             f"hora{suf_horas} y {self.minutes} minuto{suf_minutos}"
         )
 
@@ -78,7 +80,7 @@ class Fixture:
 
     def email_like_repr(self) -> str:
         return (
-            f"<p>{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}<br />"
+            f"{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}<br />"
             f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong><p>"
             f"{Emojis.ALARM_CLOCK.value} <em>{str(self.remaining_time())} para el partido.</em><p>"
             f"{Emojis.SOCCER_BALL.value} "

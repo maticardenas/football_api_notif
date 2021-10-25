@@ -34,24 +34,24 @@ class TeamFixturesManager:
         spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
 
         date_text = (
-            f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}"
+            f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
             if team_fixture.remaining_time().days > 0
             else "es HOY!"
         )
 
         # whatsapp
         for recipient in RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}.\n\n{str(team_fixture)}"
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}\n\n{str(team_fixture)}"
             send_whatsapp_message(RECIPIENTS[recipient], message)
 
         # telegram
         for recipient in TELEGRAM_RECIPIENTS:
-            telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro(True)} {date_text}.\n\n{str(team_fixture)}"
+            telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro(True)} {date_text}\n\n{str(team_fixture)}"
             send_telegram_message(TELEGRAM_RECIPIENTS[recipient], telegram_message)
 
         # email
         for recipient in EMAIL_RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}.\n\n{team_fixture.email_like_repr()}"
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}\n\n{team_fixture.email_like_repr()}"
 
             send_email_html(
                 f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",
