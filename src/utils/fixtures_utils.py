@@ -1,5 +1,7 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+
+from deep_translator import GoogleTranslator
 
 from src.entities import Fixture, Team
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
@@ -45,6 +47,9 @@ def __convert_fixture_response(
     )
     ams_date = get_time_in_time_zone(utc_date, TimeZones.AMSTERDAM)
     bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
+
+    league_name, round_name = __get_translated_league_name_and_round(fixture_response)
+
     return Fixture(
         utc_date,
         ams_date,
@@ -52,8 +57,8 @@ def __convert_fixture_response(
         date_diff,
         fixture_response["fixture"]["referee"],
         fixture_response["fixture"]["status"]["long"],
-        fixture_response["league"]["name"],
-        fixture_response["league"]["round"],
+        league_name,
+        round_name,
         Team(
             fixture_response["teams"]["home"]["name"],
             fixture_response["teams"]["home"]["logo"],
@@ -62,4 +67,39 @@ def __convert_fixture_response(
             fixture_response["teams"]["away"]["name"],
             fixture_response["teams"]["away"]["logo"],
         ),
+    )
+
+
+def __get_translated_league_name_and_round(
+    fixture_response: Dict[str, Any]
+) -> Tuple[str, str]:
+    if __is_team_or_league_for_spanish_translation(fixture_response):
+        google_translator = GoogleTranslator(source="en", target="es")
+        league_name = google_translator.translate(fixture_response["league"]["name"])
+        round_name = google_translator.translate(fixture_response["league"]["round"])
+    else:
+        league_name = fixture_response["league"]["name"]
+        round_name = fixture_response["league"]["round"]
+
+    return (league_name, round_name)
+
+
+def __is_team_or_league_for_spanish_translation(
+    fixture_response: Dict[str, Any]
+) -> bool:
+    return fixture_response["league"][
+        "country"
+    ].lower() == "argentina" or __teams_contain(fixture_response, "argentina")
+
+
+def __teams_contain(fixture_response: Dict[str, Any], text: str) -> bool:
+    return any(
+        [
+            team_name
+            for team_name in [
+                fixture_response["teams"]["away"]["name"],
+                fixture_response["teams"]["away"]["name"],
+            ]
+            if text in team_name.lower()
+        ]
     )
