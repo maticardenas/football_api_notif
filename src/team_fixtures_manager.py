@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from config.email_notif import EMAIL_RECIPIENTS
 from config.telegram_notif import TELEGRAM_RECIPIENTS
 from config.whatsapp_notif import RECIPIENTS
