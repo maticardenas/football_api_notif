@@ -52,7 +52,7 @@ class TeamFixturesManager:
         for recipient in EMAIL_RECIPIENTS:
             message = (
                 f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
-                f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
+                f"jugó ayer! Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
             )
 
             send_email_html(
