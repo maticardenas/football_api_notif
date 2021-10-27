@@ -37,7 +37,7 @@ class RemainingTime:
         suf_minutos = "s" if self.minutes != 1 else ""
 
         days_phrase = f"{self.days} día{suf_dias}, " if self.days > 0 else ""
-        hours_phrase = f"{self.hours} día{suf_horas} y " if self.hours > 0 else ""
+        hours_phrase = f"{self.hours} hora{suf_horas} y " if self.hours > 0 else ""
 
         return f"Falta{suf_faltan} {days_phrase}{hours_phrase}{self.minutes} minuto{suf_minutos}"
 
