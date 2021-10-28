@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from config.email_notif import EMAIL_RECIPIENTS
 from config.telegram_notif import TELEGRAM_RECIPIENTS
 from config.whatsapp_notif import RECIPIENTS
@@ -67,7 +69,7 @@ class TeamFixturesManager:
 
         date_text = (
             f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
-            if team_fixture.remaining_time().days > 0
+            if team_fixture.utc_date != datetime.today()
             else "es HOY!"
         )
 
