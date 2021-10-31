@@ -95,7 +95,7 @@ class TeamFixturesManager:
 
     def _get_last_match_team_intro(self, is_group_notification: bool = False) -> str:
         if self._team_id == "85":
-            return f"El PSG {Emojis.FRANCE.value} de Lionel Messi {Emojis.GOAT.value} jugó ayer"
+            return f"El PSG {Emojis.FRANCE.value} de Lionel Messi {Emojis.GOAT.value}"
         elif self._team_id == "435":
             return f"El River de Marcelo Gallardios"
         elif self._team_id == "26":
