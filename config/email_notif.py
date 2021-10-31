@@ -6,7 +6,7 @@ RECIPIENTS = [
 
 # GMAIL
 
-SMTP_SERVER = smtplib.SMTP('smtp.gmail.com', 587)
+SMTP_SERVER = 'smtp.gmail.com'
 
 GMAIL_SENDER = 'sender_email@gmail.com'
 GMAIL_PASSWD = 'sender_password'
