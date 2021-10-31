@@ -68,9 +68,9 @@ class TeamFixturesManager:
         spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
 
         date_text = (
-            f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
-            if team_fixture.utc_date != datetime.today()
-            else "es HOY!"
+            "es HOY!"
+            if team_fixture.utc_date.day == datetime.today().day
+            else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
         )
 
         # whatsapp
@@ -93,7 +93,7 @@ class TeamFixturesManager:
                 EMAIL_RECIPIENTS[recipient],
             )
 
-    def _get_last_match_team_intro(self, is_group_notification: bool = False) -> str:
+    def _get_last_match_team_intro(self) -> str:
         if self._team_id == "85":
             return f"El PSG {Emojis.FRANCE.value} de Lionel Messi {Emojis.GOAT.value}"
         elif self._team_id == "435":
