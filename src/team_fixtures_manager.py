@@ -141,6 +141,6 @@ class TeamFixturesManager:
         elif self._team_id == "435":
             return f"{pronoun} recuerdo que el próximo partido del River de Marcelo Gallardios"
         elif self._team_id == "26":
-            return f"{pronoun} recuerdo que el próximo partido de La Scaloneta"
+            return f"{pronoun} recuerdo que el próximo partido de La Scaloneta {Emojis.ARGENTINA.value}"
         else:
             return ""
