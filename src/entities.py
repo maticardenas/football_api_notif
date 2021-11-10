@@ -20,8 +20,17 @@ class MatchScore:
 
 @dataclass
 class Team:
+    id: str
     name: str
     picture: str
+
+
+@dataclass
+class Championship:
+    league_id: int
+    name: str
+    country: str
+    logo: str
 
 
 @dataclass
@@ -50,7 +59,7 @@ class Fixture:
     date_diff: int
     referee: str
     match_status: str
-    championship: str
+    championship: Championship
     round: str
     home_team: Team
     away_team: Team
@@ -73,7 +82,7 @@ class Fixture:
             f"{Emojis.ARGENTINA.value} *{str(self.bsas_date)[11:16]} HS*\n\n"
             f"{Emojis.ALARM_CLOCK.value} _{str(self.remaining_time())} para el partido._\n\n"
             f"{Emojis.SOCCER_BALL.value} *{self.home_team.name} vs. {self.away_team.name}*\n"
-            f"{Emojis.TROPHY.value} *{self.championship}*\n"
+            f"{Emojis.TROPHY.value} *{self.championship.name}*\n"
             f"{Emojis.PUSHPIN.value} *{self.round}*"
         )
 
@@ -81,7 +90,7 @@ class Fixture:
         return (
             f"{Emojis.SOCCER_BALL.value} *{self.home_team.name} - {self.match_score.home_score} "
             f"vs. {self.match_score.away_score} - {self.away_team.name}*\n"
-            f"{Emojis.TROPHY.value} *{self.championship}*\n"
+            f"{Emojis.TROPHY.value} *{self.championship.name}*\n"
             f"{Emojis.PUSHPIN.value} *{self.round}*"
         )
 
@@ -93,7 +102,7 @@ class Fixture:
             f"{Emojis.SOCCER_BALL.value} "
             f"<img src='{self.home_team.picture}' width='22' height='22'><strong> vs. "
             f"<img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
-            f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />"
+            f"<img src='{self.championship.logo}' width='22' height='22'> <strong>{self.championship.name}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
         )
 
@@ -101,7 +110,7 @@ class Fixture:
         return (
             f"<p><img src='{self.home_team.picture}' width='22' height='22'><strong> - {self.match_score.home_score} vs. "
             f" {self.match_score.away_score} - <img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
-            f"{Emojis.TROPHY.value} <strong>{self.championship}</strong><br />"
+            f"<img src='{self.championship.logo}' width='25' height='25'> <strong>{self.championship.name}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
         )
 
@@ -110,9 +119,28 @@ class Fixture:
 
 
 @dataclass
-class Championship:
-    name: str
-    country: str
+class TeamStanding:
+    championship: Championship
+    position: int
+    points: int
+    goal_difference: int
+    current_condition: str
+
+    def __str__(self):
+        return (
+            f"{Emojis.CHART_INCREASING.value} Posición: *{self.position}*\n"
+            f"{Emojis.CHECK_MARK.value} Puntos: *{self.points}*\n"
+            f"{Emojis.GOAL_NET.value} Diferencia de gol: *{self.goal_difference}*\n"
+            f"{Emojis.GLOBE_WITH_MERIDIANS.value} Clasificación: *{self.current_condition}*"
+        )
+
+    def email_like_repr(self) -> str:
+        return (
+            f"<br /><br />{Emojis.CHART_INCREASING.value} Posición: <strong>{self.position}</strong><br />"
+            f"{Emojis.CHECK_MARK.value} Puntos: <strong>{self.points}</strong><br />"
+            f"{Emojis.GOAL_NET.value} Diferencia de gol: <strong>{self.goal_difference}</strong><br />"
+            f"{Emojis.GLOBE_WITH_MERIDIANS.value} Clasificación: <strong>{self.current_condition}</strong>"
+        )
 
 
 @dataclass

@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from deep_translator import GoogleTranslator
 
-from src.entities import Fixture, MatchScore, Team
+from src.entities import Championship, Fixture, MatchScore, Team, TeamStanding
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
 
@@ -57,6 +57,28 @@ def get_last_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
     return __convert_fixture_response(min_fixture, min_diff) if min_fixture else None
 
 
+def get_team_standings_for_league(team_standings: dict, league_id: int) -> TeamStanding:
+    for team_standing in team_standings:
+        if team_standing["league"]["id"] == league_id:
+            return __convert_standing_response(team_standing)
+
+
+def __convert_standing_response(team_standing: dict) -> TeamStanding:
+    standing_desc = team_standing["league"]["standings"][0][0]
+    return TeamStanding(
+        Championship(
+            team_standing["league"]["id"],
+            team_standing["league"]["name"],
+            team_standing["league"]["country"],
+            team_standing["league"]["logo"],
+        ),
+        standing_desc["rank"],
+        standing_desc["points"],
+        standing_desc["goalsDiff"],
+        standing_desc["description"],
+    )
+
+
 def __convert_fixture_response(
     fixture_response: Dict[str, Any], date_diff: int
 ) -> Fixture:
@@ -75,13 +97,20 @@ def __convert_fixture_response(
         date_diff,
         fixture_response["fixture"]["referee"],
         fixture_response["fixture"]["status"]["long"],
-        league_name,
+        Championship(
+            fixture_response["league"]["id"],
+            fixture_response["league"]["name"],
+            fixture_response["league"]["country"],
+            fixture_response["league"]["logo"],
+        ),
         round_name,
         Team(
+            fixture_response["teams"]["home"]["id"],
             fixture_response["teams"]["home"]["name"],
             fixture_response["teams"]["home"]["logo"],
         ),
         Team(
+            fixture_response["teams"]["away"]["id"],
             fixture_response["teams"]["away"]["name"],
             fixture_response["teams"]["away"]["logo"],
         ),
