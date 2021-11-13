@@ -13,7 +13,7 @@ from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import (
     get_last_fixture,
     get_next_fixture,
-    get_team_standings_for_league,
+    get_team_standings_for_league, get_image_search,
 )
 
 
@@ -69,7 +69,7 @@ class TeamFixturesManager:
                 f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_str()}\n\n{telegram_standing_message}"
             )
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient], telegram_message, self._team_logo
+                TELEGRAM_RECIPIENTS[recipient], telegram_message, get_image_search(f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}")
             )
 
         # email
@@ -118,8 +118,6 @@ class TeamFixturesManager:
                 message,
                 EMAIL_RECIPIENTS[recipient],
             )
-
-    # def _perform_notifications(self, messages: NotifMessage):
 
     def _get_last_match_team_intro(self) -> str:
         if self._team_id == "85":

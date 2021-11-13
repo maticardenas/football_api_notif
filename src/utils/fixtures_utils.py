@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from deep_translator import GoogleTranslator
 
+from src.api.images_search_client import ImagesSearchClient
 from src.entities import Championship, Fixture, MatchScore, Team, TeamStanding
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
@@ -153,3 +154,10 @@ def __teams_contain(fixture_response: Dict[str, Any], text: str) -> bool:
             if text in team_name.lower()
         ]
     )
+
+
+def get_image_search(query: str) -> str:
+    image_searcher = ImagesSearchClient()
+    images = image_searcher.get_images(query)
+
+    return images.as_dict["value"][0]["contentUrl"]
