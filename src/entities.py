@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
+from typing import List
 
 from src.emojis import Emojis
 
@@ -31,6 +32,12 @@ class Championship:
     name: str
     country: str
     logo: str
+
+
+@dataclass
+class MatchHighlights:
+    url: str
+    embed_url: str
 
 
 @dataclass
@@ -65,6 +72,7 @@ class Fixture:
     away_team: Team
     match_score: MatchScore
     is_next_day: str = field(init=False)
+    highlights: List[MatchHighlights] = field(init=False)
 
     def __post_init__(self) -> None:
         self.is_next_day = "(+1)" if self._is_next_day_in_europe() else ""
