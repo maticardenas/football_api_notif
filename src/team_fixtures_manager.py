@@ -67,12 +67,10 @@ class TeamFixturesManager:
             f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}"
         )
 
-
         # telegram
-        break_line = "\n\n"
-        telegram_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{str(team_standing)}\n"
+        telegram_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
         highlights_text = (
-            f"{Emojis.FILM_PROJECTOR.value} Highlights:\n\n{break_line.join([match_hl.url for match_hl in team_fixture.highlights])}"
+            f"{Emojis.FILM_PROJECTOR.value} <a href='{team_fixture.highlights[0].url}'>HIGHLIGHTS</a>"
             if team_fixture.highlights
             else ""
         )
@@ -80,7 +78,8 @@ class TeamFixturesManager:
         for recipient in TELEGRAM_RECIPIENTS:
             telegram_message = (
                 f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
-                f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_str()}\n\n{telegram_standing_message}\n\n{highlights_text}"
+                f"jugó ayer! \nEste fue el resultado: \n\n{team_fixture.matched_played_telegram_like_repr()}"
+                f"\n\n{telegram_standing_message}\n{highlights_text}"
             )
             send_telegram_message(
                 TELEGRAM_RECIPIENTS[recipient],
