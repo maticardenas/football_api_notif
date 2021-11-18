@@ -13,6 +13,7 @@ from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
                                       get_match_highlights, get_next_fixture,
                                       get_team_standings_for_league)
+from src.utils.message_utils import get_team_intro_messages
 
 
 class TeamFixturesManager:
@@ -68,6 +69,9 @@ class TeamFixturesManager:
         )
 
         # telegram
+        intro_message = get_team_intro_messages(
+            self._team_id, is_group_notification=True
+        )["last_match"]
         telegram_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
         highlights_text = (
             f"{Emojis.FILM_PROJECTOR.value} <a href='{team_fixture.highlights[0].url}'>HIGHLIGHTS</a>"
@@ -77,7 +81,7 @@ class TeamFixturesManager:
 
         for recipient in TELEGRAM_RECIPIENTS:
             telegram_message = (
-                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
+                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} "
                 f"jugó ayer! \nEste fue el resultado: \n\n{team_fixture.matched_played_telegram_like_repr()}"
                 f"\n\n{telegram_standing_message}\n{highlights_text}"
             )
@@ -88,6 +92,7 @@ class TeamFixturesManager:
             )
 
         # email
+        intro_message = get_team_intro_messages(self._team_id)["last_match"]
         match_image_text = f"<img src='{match_image_url}'>"
         email_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}\n"
         highlights_text = (
@@ -98,7 +103,7 @@ class TeamFixturesManager:
 
         for recipient in EMAIL_RECIPIENTS:
             message = (
-                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
+                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} "
                 f"jugó ayer!<br /><br />{match_image_text}<br /><br />Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
                 f"<br /><br />{email_standing_message}<br /><br />{highlights_text}"
             )
@@ -123,47 +128,27 @@ class TeamFixturesManager:
         )
 
         # whatsapp
-        for recipient in RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}\n\n{str(team_fixture)}"
-            send_whatsapp_message(RECIPIENTS[recipient], message)
+        # for recipient in RECIPIENTS:
+        #     intro_message = get_team_intro_messages(self._team_id)["next_match"]
+        #     message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} {date_text}\n\n{str(team_fixture)}"
+        #     send_whatsapp_message(RECIPIENTS[recipient], message)
 
         # telegram
         for recipient in TELEGRAM_RECIPIENTS:
-            telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro(True)} {date_text}\n\n{str(team_fixture)}"
+            intro_message = get_team_intro_messages(
+                self._team_id, is_group_notification=True
+            )["next_match"]
+            telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} {date_text}\n\n{team_fixture.telegram_like_repr()}"
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient], telegram_message, self._team_logo
+                TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
             )
 
         # email
         for recipient in EMAIL_RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
-
+            intro_message = get_team_intro_messages(self._team_id)["next_match"]
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} {date_text}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
             send_email_html(
                 f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",
                 message,
                 EMAIL_RECIPIENTS[recipient],
             )
-
-    def _get_last_match_team_intro(self) -> str:
-        if self._team_id == "85":
-            return f"El PSG {Emojis.FRANCE.value} de Lionel Messi {Emojis.GOAT.value}"
-        elif self._team_id == "435":
-            return f"El River de Marcelo Gallardios"
-        elif self._team_id == "26":
-            return f"La Scaloneta {Emojis.ARGENTINA.value}"
-        else:
-            return ""
-
-    def _get_team_intro(self, is_group_notification: bool = False) -> str:
-        pronoun = "Les" if is_group_notification else "Te"
-        if self._team_id == "85":
-            return (
-                f"{pronoun} recuerdo que el próximo partido del PSG {Emojis.FRANCE.value}"
-                f" de Lionel Messi {Emojis.GOAT.value}"
-            )
-        elif self._team_id == "435":
-            return f"{pronoun} recuerdo que el próximo partido del River de Marcelo Gallardios"
-        elif self._team_id == "26":
-            return f"{pronoun} recuerdo que el próximo partido de La Scaloneta {Emojis.ARGENTINA.value}"
-        else:
-            return ""
