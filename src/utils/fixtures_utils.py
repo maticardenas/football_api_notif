@@ -6,8 +6,14 @@ from deep_translator import GoogleTranslator
 
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
-from src.entities import (Championship, Fixture, MatchHighlights, MatchScore,
-                          Team, TeamStanding)
+from src.entities import (
+    Championship,
+    Fixture,
+    MatchHighlights,
+    MatchScore,
+    Team,
+    TeamStanding,
+)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 

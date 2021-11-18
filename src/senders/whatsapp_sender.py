@@ -1,7 +1,10 @@
 from twilio.rest import Client
 
-from config.whatsapp_notif import (TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN,
-                                   TWILIO_WHATSAPP_NUMBER)
+from config.whatsapp_notif import (
+    TWILIO_ACCOUNT_SID,
+    TWILIO_ACCOUNT_TOKEN,
+    TWILIO_WHATSAPP_NUMBER,
+)
 
 client = Client(username=TWILIO_ACCOUNT_SID, password=TWILIO_ACCOUNT_TOKEN)
 

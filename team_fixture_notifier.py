@@ -1,7 +1,7 @@
 #!/bin/env python
 import sys
-from src.team_fixtures_manager import TeamFixturesManager
 
+from src.team_fixtures_manager import TeamFixturesManager
 
 if __name__ == "__main__":
     season = sys.argv[1]
