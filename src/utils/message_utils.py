@@ -1,5 +1,7 @@
 from src.emojis import Emojis
 
+TEAMS_ALIASES = {"85": ["PSG"]}
+
 
 def get_team_intro_messages(team_id: str, is_group_notification: bool = False) -> str:
     pronoun = "Les" if is_group_notification else "Te"

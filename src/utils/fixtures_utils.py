@@ -9,6 +9,11 @@ from src.api.videos_search_client import VideosSearchClient
 from src.entities import (Championship, Fixture, MatchHighlights, MatchScore,
                           Team, TeamStanding)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
+from src.utils.message_utils import TEAMS_ALIASES
+
+
+def get_team_aliases(team_id: str) -> list:
+    return TEAMS_ALIASES.get(team_id, [])
 
 
 def get_champions_league_fixtures(
@@ -93,6 +98,8 @@ def __convert_fixture_response(
     bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
 
     league_name, round_name = __get_translated_league_name_and_round(fixture_response)
+    home_team_id = fixture_response["teams"]["home"]["id"]
+    away_team_id = fixture_response["teams"]["away"]["id"]
 
     return Fixture(
         utc_date,
@@ -109,14 +116,16 @@ def __convert_fixture_response(
         ),
         round_name,
         Team(
-            fixture_response["teams"]["home"]["id"],
+            home_team_id,
             fixture_response["teams"]["home"]["name"],
             fixture_response["teams"]["home"]["logo"],
+            get_team_aliases(str(home_team_id)),
         ),
         Team(
-            fixture_response["teams"]["away"]["id"],
+            away_team_id,
             fixture_response["teams"]["away"]["name"],
             fixture_response["teams"]["away"]["logo"],
+            get_team_aliases(str(away_team_id)),
         ),
         MatchScore(
             fixture_response["goals"]["home"], fixture_response["goals"]["away"]
@@ -173,15 +182,29 @@ def get_match_highlights(fixture: Fixture) -> List[MatchHighlights]:
     match_highlights = []
 
     for match in latest_videos.as_dict:
-        if (
-            fixture.home_team.name.lower() in match["title"].lower()
-            or fixture.away_team.name.lower() in match["title"].lower()
+        if is_corresponding_match_highlights(
+            fixture.home_team, fixture.away_team, match["title"]
         ):
             if -3 <= date_diff(match["date"]).days <= 0:
                 match_highlights = search_highlights_videos(match)
                 break
 
     return [convert_match_highlights(highlights) for highlights in match_highlights]
+
+
+def is_corresponding_match_highlights(
+    home_team: Team, away_team: Team, match_title: str
+) -> bool:
+    return (
+        home_team.name.lower() in match_title.lower()
+        or away_team.name.lower() in match_title.lower()
+        or any(
+            [
+                team_alias.lower() == match_title.lower()
+                for team_alias in home_team.aliases + away_team.aliases
+            ]
+        )
+    )
 
 
 def convert_match_highlights(highlights: dict) -> MatchHighlights:
