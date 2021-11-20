@@ -29,3 +29,10 @@ class FixturesClient(BaseClient):
         url = f"{self.base_url}{endpoint}"
 
         return self.request.get(url, params, self.headers)
+
+    def get_line_up(self, fixture_id: int, team_id: int) -> Dict[str, Any]:
+        endpoint = "/v3/fixtures/lineups"
+        params = {"fixture": fixture_id, "team": team_id}
+        url = f"{self.base_url}{endpoint}"
+
+        return self.request.get(url, params, self.headers)
