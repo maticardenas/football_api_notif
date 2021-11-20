@@ -4,16 +4,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from deep_translator import GoogleTranslator
 
+from src.api.fixtures_client import FixturesClient
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
-from src.entities import (
-    Championship,
-    Fixture,
-    MatchHighlights,
-    MatchScore,
-    Team,
-    TeamStanding,
-)
+from src.entities import (Championship, Fixture, LineUp, MatchHighlights,
+                          MatchScore, Player, Team, TeamStanding)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 
@@ -36,7 +31,9 @@ def date_diff(date: str) -> datetime:
     return datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S") - datetime.utcnow()
 
 
-def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
+def get_next_fixture(
+    team_fixtures: List[Dict[str, Any]], team_id: str
+) -> Optional[Fixture]:
     min_fixture = None
     min_diff = 999999999
 
@@ -51,7 +48,11 @@ def get_next_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
             min_fixture = fixture
             min_diff = fixture_date_diff
 
-    return __convert_fixture_response(min_fixture, min_diff) if min_fixture else None
+    return (
+        __convert_fixture_response(min_fixture, min_diff, team_id)
+        if min_fixture
+        else None
+    )
 
 
 def get_last_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
@@ -95,7 +96,7 @@ def __convert_standing_response(team_standing: dict) -> TeamStanding:
 
 
 def __convert_fixture_response(
-    fixture_response: Dict[str, Any], date_diff: int
+    fixture_response: Dict[str, Any], date_diff: int, team_id: str
 ) -> Fixture:
     utc_date = datetime.strptime(
         fixture_response["fixture"]["date"][:-6], "%Y-%m-%dT%H:%M:%S"
@@ -136,6 +137,7 @@ def __convert_fixture_response(
         MatchScore(
             fixture_response["goals"]["home"], fixture_response["goals"]["away"]
         ),
+        get_line_up(fixture_response["fixture"]["id"], team_id),
     )
 
 
@@ -222,4 +224,35 @@ def convert_match_highlights(highlights: dict) -> MatchHighlights:
 def search_highlights_videos(match_response):
     return [
         video for video in match_response["videos"] if video["title"] == "Highlights"
+    ]
+
+
+def get_line_up(fixture_id: str, team_id: str) -> Optional[LineUp]:
+    fixture_client = FixturesClient()
+
+    response = fixture_client.get_line_up(fixture_id, team_id)
+    json_response = response.as_dict["response"]
+
+    line_up = None
+
+    if json_response:
+        start_xi = json_response[0]["startXI"]
+        line_up = LineUp(
+            formation=json_response[0]["formation"],
+            goalkeeper=get_players(start_xi, "G")[0],
+            defenders=get_players(start_xi, "D"),
+            midfielders=get_players(start_xi, "M"),
+            forward_strikers=get_players(start_xi, "F"),
+        )
+
+    return line_up
+
+
+def get_players(start_xi: dict, position: str) -> List[Player]:
+    return [
+        Player(
+            player["player"]["id"], player["player"]["name"], player["player"]["pos"]
+        )
+        for player in start_xi
+        if player["player"]["pos"] == position
     ]
