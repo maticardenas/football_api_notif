@@ -48,7 +48,7 @@ class TeamFixturesManager:
             self._season, self._team_id
         )
 
-        last_team_fixture = get_last_fixture(team_fixtures.as_dict["response"])
+        last_team_fixture = get_last_fixture(team_fixtures.as_dict["response"], self._team_id)
 
         if last_team_fixture:
             last_team_fixture.highlights = get_match_highlights(last_team_fixture)
