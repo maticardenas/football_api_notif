@@ -185,6 +185,8 @@ class Fixture:
             f" {self.match_score.away_score} - <img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"<img src='{self.championship.logo}' width='25' height='25'> <strong>{self.championship.name}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+            f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:<p>"
+            f"{self.line_up_email_message()}"
         )
 
     def matched_played_telegram_like_repr(self) -> str:
@@ -192,7 +194,9 @@ class Fixture:
             f"<strong>{Emojis.SOCCER_BALL.value} {self.home_team.name} - {self.match_score.home_score} vs. "
             f" {self.match_score.away_score} - {self.away_team.name}</strong>\n"
             f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
-            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>\n\n"
+            f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:\n\n"
+            f"{self.line_up_message()}"
         )
 
     def _is_next_day_in_europe(self) -> bool:
