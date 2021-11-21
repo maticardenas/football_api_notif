@@ -184,7 +184,7 @@ class Fixture:
             f"<p><img src='{self.home_team.picture}' width='22' height='22'><strong> - {self.match_score.home_score} vs. "
             f" {self.match_score.away_score} - <img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"<img src='{self.championship.logo}' width='25' height='25'> <strong>{self.championship.name}</strong><br />"
-            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong><br /><br />"
             f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:<p>"
             f"{self.line_up_email_message()}"
         )

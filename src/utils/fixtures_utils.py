@@ -248,19 +248,23 @@ def get_youtube_highlights_videos(
 
     options_selected = 0
 
-    for item in json_response["items"]:
-        title = item["snippet"]["title"]
-        if all(
-            [
-                team_name.lower() in title.lower()
-                for team_name in [home_team.name, team_name.name]
-            ]
-        ):
-            video_highlights.append(item["url"])
-            options_selected += 1
+    try:
+        for item in json_response["items"]:
+            title = item["snippet"]["title"]
+            if all(
+                    [
+                        team_name.lower() in title.lower()
+                        for team_name in [home_team.name, team_name.name]
+                    ]
+            ):
+                video_highlights.append(item["url"])
+                options_selected += 1
 
-        if options_selected >= number_of_options:
-            break
+            if options_selected >= number_of_options:
+                break
+    except:
+        print("There was an issue retrieving video highlights")
+
 
     return video_highlights
 
