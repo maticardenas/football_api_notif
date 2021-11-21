@@ -7,6 +7,7 @@ from deep_translator import GoogleTranslator
 from src.api.fixtures_client import FixturesClient
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
+from src.api.youtube_search_client import YoutubeSearchClient
 from src.entities import (Championship, Fixture, LineUp, MatchHighlights,
                           MatchScore, Player, Team, TeamStanding)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
@@ -55,7 +56,9 @@ def get_next_fixture(
     )
 
 
-def get_last_fixture(team_fixtures: List[Dict[str, Any]], team_id: str) -> Optional[Fixture]:
+def get_last_fixture(
+    team_fixtures: List[Dict[str, Any]], team_id: str
+) -> Optional[Fixture]:
     min_fixture = None
     min_diff = -999999999
 
@@ -70,7 +73,11 @@ def get_last_fixture(team_fixtures: List[Dict[str, Any]], team_id: str) -> Optio
             min_fixture = fixture
             min_diff = fixture_date_diff
 
-    return __convert_fixture_response(min_fixture, min_diff, team_id) if min_fixture else None
+    return (
+        __convert_fixture_response(min_fixture, min_diff, team_id)
+        if min_fixture
+        else None
+    )
 
 
 def get_team_standings_for_league(team_standings: dict, league_id: int) -> TeamStanding:
@@ -225,6 +232,37 @@ def search_highlights_videos(match_response):
     return [
         video for video in match_response["videos"] if video["title"] == "Highlights"
     ]
+
+
+def get_youtube_highlights_videos(
+    home_team: Team, away_team: Team, number_of_options=3
+) -> List[str]:
+    youtube_client = YoutubeSearchClient()
+    response = youtube_client.search_videos_by_keywords(
+        [home_team.name, away_team.name, "hihglights"], "es", "ar"
+    )
+
+    json_response = response.as_dict
+
+    video_highlights = []
+
+    options_selected = 0
+
+    for item in json_response["items"]:
+        title = item["snippet"]["title"]
+        if all(
+            [
+                team_name.lower() in title.lower()
+                for team_name in [home_team.name, team_name.name]
+            ]
+        ):
+            video_highlights.append(item["url"])
+            options_selected += 1
+
+        if options_selected >= number_of_options:
+            break
+
+    return video_highlights
 
 
 def get_line_up(fixture_id: str, team_id: str) -> Optional[LineUp]:
