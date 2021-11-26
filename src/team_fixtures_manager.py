@@ -8,12 +8,14 @@ from src.entities import Fixture, TeamStanding
 from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
-                                      get_next_fixture,
-                                      get_team_standings_for_league,
-                                      get_youtube_highlights_videos)
-from src.utils.message_utils import (get_highlights_text,
-                                     get_team_intro_messages)
+from src.utils.fixtures_utils import (
+    get_image_search,
+    get_last_fixture,
+    get_next_fixture,
+    get_team_standings_for_league,
+    get_youtube_highlights_videos,
+)
+from src.utils.message_utils import get_highlights_text, get_team_intro_messages
 
 
 class TeamFixturesManager:
@@ -63,7 +65,9 @@ class TeamFixturesManager:
             ):
                 self._perform_line_up_confirmed_notification(next_team_fixture)
             else:
-                print(f"There is still no line up for the match of {next_team_fixture.home_team} vs {next_team_fixture.away_team}")
+                print(
+                    f"There is still no line up for the match of {next_team_fixture.home_team} vs {next_team_fixture.away_team}"
+                )
                 print(str(next_team_fixture.remaining_time()))
 
     def notify_last_fixture(self) -> None:
