@@ -1,8 +1,11 @@
 from typing import Any, Dict, List
 
-from config.rapidapi import (X_RAPIDAPI_IMG_SEARCH_HOST, X_RAPIDAPI_KEY,
-                             X_RAPIDAPI_VIDEO_SEARCH_HOST,
-                             X_YOUTUBE_SEARCH_HOST)
+from config.rapidapi import (
+    X_RAPIDAPI_IMG_SEARCH_HOST,
+    X_RAPIDAPI_KEY,
+    X_RAPIDAPI_VIDEO_SEARCH_HOST,
+    X_YOUTUBE_SEARCH_HOST,
+)
 from src.api.base_client import BaseClient
 from src.request import APIRequest
 
