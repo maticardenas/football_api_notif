@@ -7,8 +7,10 @@ def send_telegram_message(
 ) -> None:
     telegram_client = TelegramClient(TOKEN)
     if photo:
-        telegram_client.send_photo(chat_id, photo_url=photo, text=message)
+        response = telegram_client.send_photo(chat_id, photo_url=photo, text=message)
     elif video:
-        telegram_client.send_video(chat_id, video_url=video, text=message)
+        response = telegram_client.send_video(chat_id, video_url=video, text=message)
     else:
-        telegram_client.send_message(chat_id, message)
+        response = telegram_client.send_message(chat_id, message)
+
+    print(f"TELEGRAM MESSAGE SENT RESPONSE: {response.status_code}\n{response.text}")
