@@ -8,14 +8,12 @@ from src.entities import Fixture, TeamStanding
 from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import (
-    get_image_search,
-    get_last_fixture,
-    get_next_fixture,
-    get_team_standings_for_league,
-    get_youtube_highlights_videos,
-)
-from src.utils.message_utils import get_highlights_text, get_team_intro_messages
+from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
+                                      get_next_fixture,
+                                      get_team_standings_for_league,
+                                      get_youtube_highlights_videos)
+from src.utils.message_utils import (get_highlights_text,
+                                     get_team_intro_messages)
 
 
 class TeamFixturesManager:
@@ -99,17 +97,21 @@ class TeamFixturesManager:
         )
 
         # telegram
+        team_standing_msg = (
+            f"{Emojis.RED_EXCLAMATION_MARK.value} Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
+            if team_standing
+            else ""
+        )
         intro_message = get_team_intro_messages(
             self._team_id, is_group_notification=True
         )["last_match"]
-        telegram_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
         highlights_text = get_highlights_text(team_fixture.highlights)
 
         for recipient in TELEGRAM_RECIPIENTS:
             telegram_message = (
                 f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} "
                 f"jugó ayer! \nEste fue el resultado: \n\n{team_fixture.matched_played_telegram_like_repr()}"
-                f"\n\n{telegram_standing_message}\n{highlights_text}"
+                f"\n\n{team_standing_msg}\n{highlights_text}"
             )
             send_telegram_message(
                 TELEGRAM_RECIPIENTS[recipient],
@@ -119,8 +121,15 @@ class TeamFixturesManager:
 
         # email
         intro_message = get_team_intro_messages(self._team_id)["last_match"]
+        team_standing_email_msg = (
+            f"Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}"
+            if team_standing
+            else ""
+        )
         match_image_text = f"<img src='{match_image_url}'>"
-        email_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}\n"
+        email_standing_message = (
+            f"{Emojis.RED_EXCLAMATION_MARK.value}{team_standing_email_msg}\n"
+        )
         highlights_text = get_highlights_text(team_fixture.highlights, email=True)
 
         for recipient in EMAIL_RECIPIENTS:
