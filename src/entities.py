@@ -261,3 +261,24 @@ class PlayerStats:
             f"_Dribbles Attempts:_ *{self.dribbles_attempts}*\n"
             f"_Dribbles Success:_ *{self.dribbles_success}*"
         )
+
+
+
+@dataclass
+class Country:
+    name: str
+    emoji: Emojis
+
+@dataclass
+class CovidStats:
+    country: Country
+    new_cases: str
+    new_deaths: str
+    new_recovered: str
+    total_population: str
+
+    def __str__(self):
+        return f"{self.country.emoji.value}\n\n{Emojis.FACE_WITH_MEDICAL_MASK.value} New Cases: <strong>{self.new_cases}</strong>\n" \
+               f"{Emojis.SKULL.value} New Deaths: <strong>{self.new_deaths}</strong>\n" \
+               f"{Emojis.FLEXED_BICEPS.value} New Recovered: <strong>{self.new_recovered}</strong>\n" \
+               f"{Emojis.FAMILY.value} Total Population: <strong>{self.total_population}</strong>"
