@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 from config.covid_config import COVID_COUNTRIES
@@ -20,9 +21,12 @@ class CovidManager:
 
         self.perform_stats_telegram_notification(stats)
 
+
+
+
     def perform_stats_telegram_notification(self, stats: List[CovidStats]):
         covid_image_url = get_image_search(
-            f"COVID today"
+            f"COVID in {random.choice([covid_stat.country.name for covid_stat in stats])}"
         )
 
         telegram_message = f"{Emojis.MICROBE.value} Datos de COVID-19 del día: \n\n"
