@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from config.rapidapi import (X_RAPIDAPI_KEY, X_WORLDOMETERS_HOST)
+from config.rapidapi import X_RAPIDAPI_KEY, X_WORLDOMETERS_HOST
 from src.request import APIRequest
 
 
