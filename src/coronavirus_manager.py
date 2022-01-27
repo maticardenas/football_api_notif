@@ -3,7 +3,7 @@ from typing import List
 
 from config.covid_config import COVID_COUNTRIES
 from config.email_notif import EMAIL_RECIPIENTS
-from config.telegram_notif import TELEGRAM_RECIPIENTS
+from config.telegram_notif import COVID_TELEGRAM_RECIPIENTS
 from src.emojis import Emojis
 from src.entities import CovidStats
 from src.senders.email_sender import send_email_html
@@ -32,9 +32,9 @@ class CovidManager:
         for stat in stats:
             telegram_message += f"{str(stat)}\n\n"
 
-        for recipient in TELEGRAM_RECIPIENTS:
+        for recipient in COVID_TELEGRAM_RECIPIENTS:
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient],
+                COVID_TELEGRAM_RECIPIENTS[recipient],
                 telegram_message,
                 covid_image_url,
             )
