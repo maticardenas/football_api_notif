@@ -42,3 +42,5 @@ class Emojis(Enum):
     MICROBE = emoji.emojize(":microbe:", use_aliases=True)
     FACE_WITH_MEDICAL_MASK = emoji.emojize(":face_with_medical_mask:", use_aliases=True)
     TELEVISION = emoji.emojize(":television:", use_aliases=True)
+    BLUE_CIRCLE = emoji.emojize(":blue_circle:", use_aliases=True)
+    YELLOW_CIRCLE = emoji.emojize(":yellow_circle:", use_aliases=True)
