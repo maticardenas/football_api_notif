@@ -1,6 +1,8 @@
 from typing import List
 
+from config.telegram_notif import FOOTBALL_TELEGRAM_SUBSCRIPTIONS
 from src.emojis import Emojis
+from src.entities import Fixture
 
 TEAMS_ALIASES = {"85": ["PSG"]}
 
@@ -24,7 +26,7 @@ def get_team_intro_messages(team_id: str, is_group_notification: bool = False) -
         "451": {
             "next_match": f"{pronoun} recuerdo el próximo partido de La Battaglieta {Emojis.BLUE_CIRCLE.value}{Emojis.YELLOW_CIRCLE.value}",
             "last_match": f"La Battaglieta {Emojis.BLUE_CIRCLE.value}{Emojis.YELLOW_CIRCLE.value}",
-        }
+        },
     }
 
     return switch.get(team_id)
@@ -40,3 +42,7 @@ def get_highlights_text(highlights: List[str], email: bool = False) -> str:
         highlight_number += 1
 
     return highlights_text
+
+
+def is_subscripted_for_team(telegram_recipient: str, team_id) -> bool:
+    return team_id in FOOTBALL_TELEGRAM_SUBSCRIPTIONS[telegram_recipient]
