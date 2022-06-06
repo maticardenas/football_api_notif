@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from config.email_notif import EMAIL_RECIPIENTS
+from config.notif_config import NEXT_MATCH_THRESHOLD, LAST_MATCH_THRESHOLD_DAYS
 from config.telegram_notif import FOOTBALL_TELEGRAM_RECIPIENTS
 from src.api.fixtures_client import FixturesClient
 from src.emojis import Emojis
@@ -35,7 +36,7 @@ class TeamFixturesManager:
             )
 
         if next_team_fixture:
-            if next_team_fixture.remaining_time().days < 3:
+            if next_team_fixture.remaining_time().days < NEXT_MATCH_THRESHOLD:
                 self._perform_fixture_notification(next_team_fixture)
 
     def notify_fixture_line_up_update(self) -> None:
@@ -80,7 +81,7 @@ class TeamFixturesManager:
                 team_standings.as_dict["response"],
                 last_team_fixture.championship.league_id,
             )
-            if -1 <= last_team_fixture.remaining_time().days <= 0:
+            if -1 <= last_team_fixture.remaining_time().days <= LAST_MATCH_THRESHOLD_DAYS:
                 last_team_fixture.highlights = get_youtube_highlights_videos(
                     last_team_fixture.home_team, last_team_fixture.away_team
                 )
