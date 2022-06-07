@@ -2,19 +2,21 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from config.email_notif import GMAIL_PASSWD, GMAIL_SENDER, SMTP_SERVER
+from config.notif_config import NotifConfig
 
 
 def send_email(subject: str, body: str, recipient: str) -> None:
-    server = smtplib.SMTP(SMTP_SERVER, 587)
+    server = smtplib.SMTP(NotifConfig.SMTP_SERVER, 587)
     server.ehlo()
     server.starttls()
-    server.login(GMAIL_SENDER, GMAIL_PASSWD)
+    server.login(NotifConfig.GMAIL_SENDER, NotifConfig.GMAIL_PASSWD)
     body = f"Subject: {subject} \n\n{body}"
 
     try:
         server.sendmail(
-            GMAIL_SENDER, [recipient], body.encode("ascii", "ignore").decode("ascii")
+            NotifConfig.GMAIL_SENDER,
+            [recipient],
+            body.encode("ascii", "ignore").decode("ascii"),
         )
         print("email sent")
     except Exception as e:
@@ -24,10 +26,10 @@ def send_email(subject: str, body: str, recipient: str) -> None:
 
 
 def send_email_html(subject: str, body: str, recipient: str) -> None:
-    server = smtplib.SMTP(SMTP_SERVER, 587)
+    server = smtplib.SMTP(NotifConfig.SMTP_SERVER, 587)
     server.ehlo()
     server.starttls()
-    server.login(GMAIL_SENDER, GMAIL_PASSWD)
+    server.login(NotifConfig.GMAIL_SENDER, NotifConfig.GMAIL_PASSWD)
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
@@ -49,7 +51,7 @@ def send_email_html(subject: str, body: str, recipient: str) -> None:
     msg.attach(part2)
 
     try:
-        server.sendmail(GMAIL_SENDER, [recipient], msg.as_string())
+        server.sendmail(NotifConfig.GMAIL_SENDER, [recipient], msg.as_string())
         print("email sent")
     except Exception as e:
         print(f"error sending mail {e}")

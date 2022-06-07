@@ -1,16 +1,16 @@
 from typing import Any, Dict
 
-from config.rapidapi import X_RAPIDAPI_KEY, X_WORLDOMETERS_HOST
+from config.notif_config import NotifConfig
 from src.request import APIRequest
 
 
 class WorldometersClient:
     def __init__(self) -> None:
         super().__init__()
-        self.base_url = f"https://{X_WORLDOMETERS_HOST}"
+        self.base_url = f"https://{NotifConfig.X_WORLDOMETERS_HOST}"
         self.headers = {
-            "x-rapidapi-host": X_WORLDOMETERS_HOST,
-            "x-rapidapi-key": X_RAPIDAPI_KEY,
+            "x-rapidapi-host": NotifConfig.X_WORLDOMETERS_HOST,
+            "x-rapidapi-key": NotifConfig.X_RAPIDAPI_KEY,
         }
         self.request = APIRequest()
 

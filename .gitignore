@@ -102,12 +102,11 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+football_notifier.env
 .venv
 .config
 env/
 venv/
-config/
 ENV/
 env.bak/
 venv.bak/
