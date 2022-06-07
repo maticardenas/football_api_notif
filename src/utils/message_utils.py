@@ -1,9 +1,7 @@
 from typing import List
 
 from config.config_entities import TelegramRecipient
-from config.telegram_notif import FOOTBALL_TELEGRAM_SUBSCRIPTIONS
 from src.emojis import Emojis
-from src.entities import Fixture
 
 TEAMS_ALIASES = {"85": ["PSG"]}
 
