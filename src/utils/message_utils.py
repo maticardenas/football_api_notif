@@ -1,3 +1,5 @@
+from typing import List
+
 from src.emojis import Emojis
 
 TEAMS_ALIASES = {"85": ["PSG"]}
@@ -22,3 +24,14 @@ def get_team_intro_messages(team_id: str, is_group_notification: bool = False) -
     }
 
     return switch.get(team_id)
+
+
+def get_highlights_text(highlights: List[str], email: bool = False) -> str:
+    endline = "<br />" if email else "\n"
+    highlights_text = ""
+    highlight_number = 1
+
+    for highlight in highlights:
+        highlights_text += f"{Emojis.FILM_PROJECTOR.value} <a href='{highlight}'>HIGHLIGHTS [{highlight_number}]</a>{endline}"
+
+    return highlights_text

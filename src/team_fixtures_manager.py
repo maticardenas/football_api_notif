@@ -2,18 +2,18 @@ from datetime import datetime
 
 from config.email_notif import EMAIL_RECIPIENTS
 from config.telegram_notif import TELEGRAM_RECIPIENTS
-from config.whatsapp_notif import RECIPIENTS
 from src.api.fixtures_client import FixturesClient
 from src.emojis import Emojis
 from src.entities import Fixture, TeamStanding
 from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
-from src.senders.whatsapp_sender import send_whatsapp_message
 from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
-                                      get_match_highlights, get_next_fixture,
-                                      get_team_standings_for_league)
-from src.utils.message_utils import get_team_intro_messages
+                                      get_next_fixture,
+                                      get_team_standings_for_league,
+                                      get_youtube_highlights_videos)
+from src.utils.message_utils import (get_highlights_text,
+                                     get_team_intro_messages)
 
 
 class TeamFixturesManager:
@@ -48,10 +48,14 @@ class TeamFixturesManager:
             self._season, self._team_id
         )
 
-        last_team_fixture = get_last_fixture(team_fixtures.as_dict["response"], self._team_id)
+        last_team_fixture = get_last_fixture(
+            team_fixtures.as_dict["response"], self._team_id
+        )
 
         if last_team_fixture:
-            last_team_fixture.highlights = get_match_highlights(last_team_fixture)
+            last_team_fixture.highlights = get_youtube_highlights_videos(
+                last_team_fixture.home_team, last_team_fixture.away_team
+            )
 
             team_standings = self._fixtures_client.get_standings_by(
                 self._season, self._team_id
@@ -78,11 +82,7 @@ class TeamFixturesManager:
             self._team_id, is_group_notification=True
         )["last_match"]
         telegram_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
-        highlights_text = (
-            f"{Emojis.FILM_PROJECTOR.value} <a href='{team_fixture.highlights[0].url}'>HIGHLIGHTS</a>"
-            if team_fixture.highlights
-            else ""
-        )
+        highlights_text = get_highlights_text(team_fixture.highlights)
 
         for recipient in TELEGRAM_RECIPIENTS:
             telegram_message = (
@@ -100,11 +100,7 @@ class TeamFixturesManager:
         intro_message = get_team_intro_messages(self._team_id)["last_match"]
         match_image_text = f"<img src='{match_image_url}'>"
         email_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}\n"
-        highlights_text = (
-            f"{Emojis.FILM_PROJECTOR.value} Highlights:<br /><br />{'<br /><br />'.join([match_hl.url for match_hl in team_fixture.highlights])}"
-            if team_fixture.highlights
-            else ""
-        )
+        highlights_text = get_highlights_text(team_fixture.highlights, email=True)
 
         for recipient in EMAIL_RECIPIENTS:
             message = (

@@ -108,7 +108,7 @@ class Fixture:
     match_score: MatchScore
     line_up: Optional[LineUp]
     is_next_day: str = field(init=False)
-    highlights: List[MatchHighlights] = field(init=False)
+    highlights: List[str] = field(init=False)
 
     def __post_init__(self) -> None:
         self.is_next_day = "(+1)" if self._is_next_day_in_europe() else ""
