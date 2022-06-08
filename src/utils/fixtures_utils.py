@@ -2,6 +2,7 @@ import re
 import urllib
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.error import HTTPError
 
 from deep_translator import GoogleTranslator
 
@@ -207,7 +208,12 @@ def get_image_search(query: str) -> str:
 
 
 def is_url_reachable(url: str) -> bool:
-    response_code = urllib.request.urlopen(url).getcode()
+    try:
+        response_code = urllib.request.urlopen(url).getcode()
+    except HTTPError:
+        print(f"The image url {url} is NOT reachable.")
+        return False
+
     return response_code == 200
 
 
