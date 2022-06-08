@@ -8,8 +8,16 @@ from src.api.fixtures_client import FixturesClient
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
 from src.api.youtube_search_client import YoutubeSearchClient
-from src.entities import (Championship, Fixture, LineUp, MatchHighlights,
-                          MatchScore, Player, Team, TeamStanding)
+from src.entities import (
+    Championship,
+    Fixture,
+    LineUp,
+    MatchHighlights,
+    MatchScore,
+    Player,
+    Team,
+    TeamStanding,
+)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 
@@ -251,11 +259,10 @@ def get_youtube_highlights_videos(
     try:
         for item in json_response["items"]:
             title = item["snippet"]["title"]
-            if all(
-                [
-                    team_name.lower() in title.lower()
-                    for team_name in [home_team.name, away_team.name]
-                ]
+            home_team_words = home_team.name.split(" ")
+            away_team_words = away_team.name.split(" ")
+            if any(ht_word in title for ht_word in home_team_words) and any(
+                at_word in title for at_word in away_team_words
             ):
                 video_highlights.append(item["url"])
                 options_selected += 1
