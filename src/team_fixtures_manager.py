@@ -23,11 +23,6 @@ class TeamFixturesManager:
         self._season = season
         self._team_id = team_id
         self._fixtures_client = FixturesClient()
-        self._team_logo = self._get_team_logo()
-
-    def _get_team_logo(self) -> str:
-        team_info = self._fixtures_client.get_team_information(self._team_id)
-        return team_info.as_dict["response"][0]["team"]["logo"]
 
     def notify_next_fixture(self) -> None:
         team_fixtures = self._fixtures_client.get_fixtures_by(
