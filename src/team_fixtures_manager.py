@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from config.email_notif import EMAIL_RECIPIENTS
-from config.telegram_notif import TELEGRAM_RECIPIENTS
+from config.telegram_notif import FOOTBALL_TELEGRAM_RECIPIENTS
 from src.api.fixtures_client import FixturesClient
 from src.emojis import Emojis
 from src.entities import Fixture, TeamStanding
@@ -107,14 +107,14 @@ class TeamFixturesManager:
         )["last_match"]
         highlights_text = get_highlights_text(team_fixture.highlights)
 
-        for recipient in TELEGRAM_RECIPIENTS:
+        for recipient in FOOTBALL_TELEGRAM_RECIPIENTS:
             telegram_message = (
                 f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} "
                 f"jugó ayer! \nEste fue el resultado: \n\n{team_fixture.matched_played_telegram_like_repr()}"
                 f"\n\n{team_standing_msg}\n{highlights_text}"
             )
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient],
+                FOOTBALL_TELEGRAM_RECIPIENTS[recipient],
                 telegram_message,
                 match_image_url,
             )
@@ -165,13 +165,13 @@ class TeamFixturesManager:
         #     send_whatsapp_message(RECIPIENTS[recipient], message)
 
         # telegram
-        for recipient in TELEGRAM_RECIPIENTS:
+        for recipient in FOOTBALL_TELEGRAM_RECIPIENTS:
             intro_message = get_team_intro_messages(
                 self._team_id, is_group_notification=True
             )["next_match"]
             telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} {date_text}\n\n{team_fixture.telegram_like_repr()}"
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
+                FOOTBALL_TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
             )
 
         # email
@@ -190,11 +190,11 @@ class TeamFixturesManager:
         match_image_text = f"<img src='{match_image_url}'>"
 
         # telegram
-        for recipient in TELEGRAM_RECIPIENTS:
+        for recipient in FOOTBALL_TELEGRAM_RECIPIENTS:
             intro_message = f"Se actualizó la alineación para {match_teams}:"
             telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message}\n\n{team_fixture.telegram_like_repr()}"
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
+                FOOTBALL_TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
             )
 
         # email
