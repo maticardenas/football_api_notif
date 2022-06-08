@@ -252,10 +252,10 @@ def get_youtube_highlights_videos(
         for item in json_response["items"]:
             title = item["snippet"]["title"]
             if all(
-                    [
-                        team_name.lower() in title.lower()
-                        for team_name in [home_team.name, team_name.name]
-                    ]
+                [
+                    team_name.lower() in title.lower()
+                    for team_name in [home_team.name, team_name.name]
+                ]
             ):
                 video_highlights.append(item["url"])
                 options_selected += 1
@@ -264,7 +264,6 @@ def get_youtube_highlights_videos(
                 break
     except:
         print("There was an issue retrieving video highlights")
-
 
     return video_highlights
 

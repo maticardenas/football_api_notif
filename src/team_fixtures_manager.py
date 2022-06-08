@@ -43,6 +43,26 @@ class TeamFixturesManager:
             if next_team_fixture.remaining_time().days < 3:
                 self._perform_fixture_notification(next_team_fixture)
 
+    def notify_fixture_line_up_update(self) -> None:
+        team_fixtures = self._fixtures_client.get_fixtures_by(
+            self._season, self._team_id
+        )
+
+        next_team_fixture = None
+
+        if "response" in team_fixtures.as_dict:
+            next_team_fixture = get_next_fixture(
+                team_fixtures.as_dict["response"], self._team_id
+            )
+
+        if next_team_fixture:
+            if (
+                next_team_fixture.remaining_time().days < 1
+                and next_team_fixture.remaining_time().hours < 3
+                and next_team_fixture.line_up
+            ):
+                self._perform_line_up_confirmed_notification(next_team_fixture)
+
     def notify_last_fixture(self) -> None:
         team_fixtures = self._fixtures_client.get_fixtures_by(
             self._season, self._team_id
@@ -148,6 +168,29 @@ class TeamFixturesManager:
         for recipient in EMAIL_RECIPIENTS:
             intro_message = get_team_intro_messages(self._team_id)["next_match"]
             message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message} {date_text}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
+            send_email_html(
+                f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",
+                message,
+                EMAIL_RECIPIENTS[recipient],
+            )
+
+    def _perform_line_up_confirmed_notification(self, team_fixture: Fixture) -> None:
+        match_teams = f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}"
+        match_image_url = get_image_search(match_teams)
+        match_image_text = f"<img src='{match_image_url}'>"
+
+        # telegram
+        for recipient in TELEGRAM_RECIPIENTS:
+            intro_message = f"Se actualizó la alineación para {match_teams}:"
+            telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message}\n\n{team_fixture.telegram_like_repr()}"
+            send_telegram_message(
+                TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
+            )
+
+        # email
+        for recipient in EMAIL_RECIPIENTS:
+            intro_message = get_team_intro_messages(self._team_id)["next_match"]
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
             send_email_html(
                 f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",
                 message,
