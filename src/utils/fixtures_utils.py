@@ -1,4 +1,5 @@
 import re
+import urllib
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -195,7 +196,19 @@ def get_image_search(query: str) -> str:
     image_searcher = ImagesSearchClient()
     images = image_searcher.get_images(query)
 
-    return images.as_dict["value"][0]["contentUrl"]
+    json_response = images.as_dict
+
+    for image in json_response["value"]:
+        url = image["contentUrl"]
+        if is_url_reachable(url):
+            return url
+
+    return ""
+
+
+def is_url_reachable(url: str) -> bool:
+    response_code = urllib.request.urlopen(url).getcode()
+    return response_code == 200
 
 
 def get_match_highlights(fixture: Fixture) -> List[MatchHighlights]:
