@@ -54,7 +54,7 @@ class TeamFixturesManager:
                 team_standings.as_dict["response"],
                 last_team_fixture.championship.league_id,
             )
-            if -5 <= last_team_fixture.remaining_time().days <= 0:
+            if -1 <= last_team_fixture.remaining_time().days <= 0:
                 self._perform_last_fixture_notification(
                     last_team_fixture, team_league_standing
                 )
