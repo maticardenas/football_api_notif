@@ -21,6 +21,10 @@ def get_team_intro_messages(team_id: str, is_group_notification: bool = False) -
             "next_match": f"{pronoun} recuerdo que el próximo partido de La Scaloneta {Emojis.ARGENTINA.value}",
             "last_match": f"La Scaloneta {Emojis.ARGENTINA.value}",
         },
+        "451": {
+            "next_match": f"{pronoun} recuerdo el próximo partido de La Battaglieta {Emojis.BLUE_CIRCLE.value}{Emojis.YELLOW_CIRCLE.value}",
+            "last_match": f"La Battaglieta {Emojis.BLUE_CIRCLE.value}{Emojis.YELLOW_CIRCLE.value}",
+        }
     }
 
     return switch.get(team_id)
