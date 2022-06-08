@@ -44,3 +44,4 @@ class Emojis(Enum):
     TELEVISION = emoji.emojize(":television:", use_aliases=True)
     BLUE_CIRCLE = emoji.emojize(":blue_circle:", use_aliases=True)
     YELLOW_CIRCLE = emoji.emojize(":yellow_circle:", use_aliases=True)
+    PIRATE_FLAG = emoji.emojize(":pirate_flag:", use_aliases=True)

@@ -2,21 +2,28 @@ from datetime import datetime
 
 from config.email_notif import EMAIL_RECIPIENTS
 from config.notif_config import LAST_MATCH_THRESHOLD_DAYS, NEXT_MATCH_THRESHOLD
-from config.telegram_notif import (FOOTBALL_TELEGRAM_RECIPIENTS,
-                                   FOOTBALL_TELEGRAM_SUBSCRIPTIONS)
+from config.telegram_notif import (
+    FOOTBALL_TELEGRAM_RECIPIENTS,
+    FOOTBALL_TELEGRAM_SUBSCRIPTIONS,
+)
 from src.api.fixtures_client import FixturesClient
 from src.emojis import Emojis
 from src.entities import Fixture, TeamStanding
 from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
-                                      get_next_fixture,
-                                      get_team_standings_for_league,
-                                      get_youtube_highlights_videos)
-from src.utils.message_utils import (get_highlights_text,
-                                     get_team_intro_messages,
-                                     is_subscripted_for_team)
+from src.utils.fixtures_utils import (
+    get_image_search,
+    get_last_fixture,
+    get_next_fixture,
+    get_team_standings_for_league,
+    get_youtube_highlights_videos,
+)
+from src.utils.message_utils import (
+    get_highlights_text,
+    get_team_intro_messages,
+    is_subscripted_for_team,
+)
 
 
 class TeamFixturesManager:
@@ -83,7 +90,11 @@ class TeamFixturesManager:
                 team_standings.as_dict["response"],
                 last_team_fixture.championship.league_id,
             )
-            if -1 <= last_team_fixture.remaining_time().days <= LAST_MATCH_THRESHOLD_DAYS:
+            if (
+                -1
+                <= last_team_fixture.remaining_time().days
+                <= LAST_MATCH_THRESHOLD_DAYS
+            ):
                 last_team_fixture.highlights = get_youtube_highlights_videos(
                     last_team_fixture.home_team, last_team_fixture.away_team
                 )
@@ -124,7 +135,6 @@ class TeamFixturesManager:
                     telegram_message,
                     match_image_url,
                 )
-
 
         # email
         intro_message = get_team_intro_messages(self._team_id)["last_match"]
@@ -177,13 +187,15 @@ class TeamFixturesManager:
                 intro_message = get_team_intro_messages(
                     self._team_id, is_group_notification=True
                 )["next_match"]
-                telegram_message = f"{Emojis.WAVING_HAND.value}Hola " \
-                                   f"{recipient}!\n\n{intro_message} {date_text}\n\n{team_fixture.telegram_like_repr()}"
-                send_telegram_message(
-                    FOOTBALL_TELEGRAM_RECIPIENTS[recipient], telegram_message,
-                    photo=match_image_url
+                telegram_message = (
+                    f"{Emojis.WAVING_HAND.value}Hola "
+                    f"{recipient}!\n\n{intro_message} {date_text}\n\n{team_fixture.telegram_like_repr()}"
                 )
-
+                send_telegram_message(
+                    FOOTBALL_TELEGRAM_RECIPIENTS[recipient],
+                    telegram_message,
+                    photo=match_image_url,
+                )
 
         # email
         for recipient in EMAIL_RECIPIENTS:
@@ -205,7 +217,9 @@ class TeamFixturesManager:
             intro_message = f"Se actualizó la alineación para {match_teams}:"
             telegram_message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{intro_message}\n\n{team_fixture.telegram_like_repr()}"
             send_telegram_message(
-                FOOTBALL_TELEGRAM_RECIPIENTS[recipient], telegram_message, photo=match_image_url
+                FOOTBALL_TELEGRAM_RECIPIENTS[recipient],
+                telegram_message,
+                photo=match_image_url,
             )
 
         # email
