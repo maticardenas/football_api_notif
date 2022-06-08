@@ -284,8 +284,8 @@ def get_youtube_highlights_videos(
 
             if options_selected >= number_of_options:
                 break
-    except:
-        print("There was an issue retrieving video highlights")
+    except Exception as e:
+        print(f"There was an issue retrieving video highlights. Error: {e}")
 
     return video_highlights
 
