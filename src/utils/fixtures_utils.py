@@ -280,8 +280,12 @@ def get_youtube_highlights_videos(
             title = item["snippet"]["title"]
             home_team_words = home_team.name.lower().split(" ")
             away_team_words = away_team.name.lower().split(" ")
-            if any(ht_word in title.lower() for ht_word in home_team_words) and any(
-                at_word in title.lower() for at_word in away_team_words
+            if (
+                any(ht_word in title.lower() for ht_word in home_team_words)
+                or any(alias.lower() in title.lower() for alias in home_team.aliases)
+            ) and (
+                any(at_word in title.lower() for at_word in away_team_words)
+                or any(alias.lower() in title.lower() for alias in away_team.aliases)
             ):
                 video_highlights.append(item["url"])
                 options_selected += 1
