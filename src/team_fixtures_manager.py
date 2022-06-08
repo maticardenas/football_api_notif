@@ -10,9 +10,13 @@ from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.senders.whatsapp_sender import send_whatsapp_message
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
-                                      get_match_highlights, get_next_fixture,
-                                      get_team_standings_for_league)
+from src.utils.fixtures_utils import (
+    get_image_search,
+    get_last_fixture,
+    get_match_highlights,
+    get_next_fixture,
+    get_team_standings_for_league,
+)
 from src.utils.message_utils import get_team_intro_messages
 
 
