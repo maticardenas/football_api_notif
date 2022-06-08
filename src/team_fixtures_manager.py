@@ -142,7 +142,7 @@ class TeamFixturesManager:
         match_image_url = get_image_search(
             f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}"
         )
-        match_image_text = f"<img src='{match_image_url}'>"
+        match_image_text = f"<img width='100%' height='100%' src='{match_image_url}'>"
         date_text = (
             "es HOY!"
             if team_fixture.utc_date.day == datetime.today().day
