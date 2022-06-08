@@ -263,11 +263,11 @@ class PlayerStats:
         )
 
 
-
 @dataclass
 class Country:
     name: str
     emoji: Emojis
+
 
 @dataclass
 class CovidStats:
@@ -278,7 +278,22 @@ class CovidStats:
     total_population: str
 
     def __str__(self):
-        return f"{self.country.emoji.value}\n\n{Emojis.FACE_WITH_MEDICAL_MASK.value} New Cases: <strong>{self.new_cases}</strong>\n" \
-               f"{Emojis.SKULL.value} New Deaths: <strong>{self.new_deaths}</strong>\n" \
-               f"{Emojis.FLEXED_BICEPS.value} New Recovered: <strong>{self.new_recovered}</strong>\n" \
-               f"{Emojis.FAMILY.value} Total Population: <strong>{self.total_population}</strong>"
+        return (
+            f"{self.country.emoji.value}\n\n{Emojis.FACE_WITH_MEDICAL_MASK.value} New Cases: <strong>{self.new_cases}</strong>\n"
+            f"{Emojis.SKULL.value} New Deaths: <strong>{self.new_deaths}</strong>\n"
+            f"{Emojis.FLEXED_BICEPS.value} New Recovered: <strong>{self.new_recovered}</strong>\n"
+            f"{Emojis.FAMILY.value} Total Population: <strong>{self.total_population}</strong>"
+        )
+
+    def email_like_repr(self) -> str:
+        return (
+            f"{self.country.emoji.value}<br /><br />"
+            f"{Emojis.FACE_WITH_MEDICAL_MASK.value} New Cases: <"
+            f"strong>{self.new_cases}</strong><br />"
+            f"{Emojis.SKULL.value} New Deaths: <strong>"
+            f"{self.new_deaths}</strong><br />"
+            f"{Emojis.FLEXED_BICEPS.value} New Recovered: <strong>"
+            f"{self.new_recovered}</strong><br />"
+            f"{Emojis.FAMILY.value} Total Population: <strong>"
+            f"{self.total_population}</strong>"
+        )

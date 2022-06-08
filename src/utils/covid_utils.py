@@ -1,5 +1,5 @@
 from src.api.worldometers_covid import WorldometersClient
-from src.entities import CovidStats, Country
+from src.entities import Country, CovidStats
 
 
 def get_country_stats(country: dict):
@@ -16,5 +16,5 @@ def get_country_stats(country: dict):
         new_cases=new_cases if new_cases else "Not Available :(",
         new_deaths=new_deaths if new_deaths else "Not Available :(",
         new_recovered=new_recovered if new_recovered else "Not Available :(",
-        total_population=json_response["data"]["Population"]
+        total_population=json_response["data"]["Population"],
     )
