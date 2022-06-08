@@ -5,7 +5,7 @@ from src.api.base_client import BaseClient
 from src.request import APIRequest
 
 
-class ImagesSearchClient(BaseClient):
+class ImagesSearchClient:
     def __init__(self) -> None:
         super().__init__()
         self.base_url = f"https://{X_RAPIDAPI_IMG_SEARCH_HOST}"

@@ -24,3 +24,4 @@ class Emojis(Enum):
     CHECK_MARK = emoji.emojize(":check_mark:", use_aliases=True)
     GOAL_NET = emoji.emojize(":goal_net:", use_aliases=True)
     GLOBE_WITH_MERIDIANS = emoji.emojize(":globe_with_meridians:", use_aliases=True)
+    FILM_PROJECTOR = emoji.emojize(":film_projector:", use_aliases=True)
