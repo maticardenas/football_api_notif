@@ -24,6 +24,7 @@ class Team:
     id: str
     name: str
     picture: str
+    aliases: list
 
 
 @dataclass
