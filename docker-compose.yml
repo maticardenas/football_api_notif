@@ -7,3 +7,12 @@ services:
       - "8000:8000"
     env_file:
       - football_notifier.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_DB=notifier_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
