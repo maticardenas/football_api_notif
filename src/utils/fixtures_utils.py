@@ -1,10 +1,13 @@
+import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 from deep_translator import GoogleTranslator
 
 from src.api.images_search_client import ImagesSearchClient
-from src.entities import Championship, Fixture, MatchScore, Team, TeamStanding
+from src.api.videos_search_client import VideosSearchClient
+from src.entities import (Championship, Fixture, MatchHighlights, MatchScore,
+                          Team, TeamStanding)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 
 
@@ -161,3 +164,33 @@ def get_image_search(query: str) -> str:
     images = image_searcher.get_images(query)
 
     return images.as_dict["value"][0]["contentUrl"]
+
+
+def get_match_highlights(fixture: Fixture) -> List[MatchHighlights]:
+    videos_search_client = VideosSearchClient()
+    latest_videos = videos_search_client.search_football_videos()
+
+    match_highlights = []
+
+    for match in latest_videos.as_dict:
+        if (
+            fixture.home_team.name.lower() in match["title"].lower()
+            or fixture.away_team.name.lower() in match["title"].lower()
+        ):
+            if -3 <= date_diff(match["date"]).days <= 0:
+                match_highlights = search_highlights_videos(match)
+                break
+
+    return [convert_match_highlights(highlights) for highlights in match_highlights]
+
+
+def convert_match_highlights(highlights: dict) -> MatchHighlights:
+    url_match = re.search("http.*?'", highlights["embed"])
+    highlights_url = highlights["embed"][url_match.span()[0] : url_match.span()[1] - 1]
+    return MatchHighlights(highlights_url, highlights["embed"])
+
+
+def search_highlights_videos(match_response):
+    return [
+        video for video in match_response["videos"] if video["title"] == "Highlights"
+    ]

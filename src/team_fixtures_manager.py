@@ -10,11 +10,9 @@ from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.senders.whatsapp_sender import send_whatsapp_message
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import (
-    get_last_fixture,
-    get_next_fixture,
-    get_team_standings_for_league, get_image_search,
-)
+from src.utils.fixtures_utils import (get_image_search, get_last_fixture,
+                                      get_match_highlights, get_next_fixture,
+                                      get_team_standings_for_league)
 
 
 class TeamFixturesManager:
@@ -47,13 +45,16 @@ class TeamFixturesManager:
         last_team_fixture = get_last_fixture(team_fixtures.as_dict["response"])
 
         if last_team_fixture:
+            last_team_fixture.highlights = get_match_highlights(last_team_fixture)
+
             team_standings = self._fixtures_client.get_standings_by(
                 self._season, self._team_id
             )
             team_league_standing = get_team_standings_for_league(
-                team_standings.as_dict["response"], last_team_fixture.championship.league_id
+                team_standings.as_dict["response"],
+                last_team_fixture.championship.league_id,
             )
-            if -1 <= last_team_fixture.remaining_time().days <= 0:
+            if -5 <= last_team_fixture.remaining_time().days <= 0:
                 self._perform_last_fixture_notification(
                     last_team_fixture, team_league_standing
                 )
@@ -61,24 +62,46 @@ class TeamFixturesManager:
     def _perform_last_fixture_notification(
         self, team_fixture: Fixture, team_standing: TeamStanding
     ) -> None:
+
+        match_image_url = get_image_search(
+            f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}"
+        )
+
+
         # telegram
+        break_line = "\n\n"
         telegram_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{str(team_standing)}\n"
+        highlights_text = (
+            f"{Emojis.FILM_PROJECTOR.value} Highlights:\n\n{break_line.join([match_hl.url for match_hl in team_fixture.highlights])}"
+            if team_fixture.highlights
+            else ""
+        )
+
         for recipient in TELEGRAM_RECIPIENTS:
             telegram_message = (
                 f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
-                f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_str()}\n\n{telegram_standing_message}"
+                f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_str()}\n\n{telegram_standing_message}\n\n{highlights_text}"
             )
             send_telegram_message(
-                TELEGRAM_RECIPIENTS[recipient], telegram_message, get_image_search(f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}")
+                TELEGRAM_RECIPIENTS[recipient],
+                telegram_message,
+                match_image_url,
             )
 
         # email
+        match_image_text = f"<img src='{match_image_url}'>"
         email_standing_message = f"{Emojis.RED_EXCLAMATION_MARK.value}Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}\n"
+        highlights_text = (
+            f"{Emojis.FILM_PROJECTOR.value} Highlights:<br /><br />{'<br /><br />'.join([match_hl.url for match_hl in team_fixture.highlights])}"
+            if team_fixture.highlights
+            else ""
+        )
+
         for recipient in EMAIL_RECIPIENTS:
             message = (
                 f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
-                f"jugó ayer! Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
-                f"<br /><br />{email_standing_message}"
+                f"jugó ayer!<br /><br />{match_image_text}<br /><br />Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
+                f"<br /><br />{email_standing_message}<br /><br />{highlights_text}"
             )
 
             send_email_html(
@@ -90,7 +113,10 @@ class TeamFixturesManager:
 
     def _perform_fixture_notification(self, team_fixture: Fixture) -> None:
         spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
-
+        match_image_url = get_image_search(
+            f"{team_fixture.home_team.name} vs {team_fixture.away_team.name}"
+        )
+        match_image_text = f"<img src='{match_image_url}'>"
         date_text = (
             "es HOY!"
             if team_fixture.utc_date.day == datetime.today().day
@@ -111,7 +137,7 @@ class TeamFixturesManager:
 
         # email
         for recipient in EMAIL_RECIPIENTS:
-            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}\n\n{team_fixture.email_like_repr()}"
+            message = f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_team_intro()} {date_text}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
 
             send_email_html(
                 f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",
