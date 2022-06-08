@@ -1,11 +1,14 @@
 import os
 from datetime import datetime
+from unittest.mock import MagicMock, Mock
 
 import pytz
 from freezegun import freeze_time
 
+from src.entities import Team
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import date_diff, get_next_fixture
+from src.utils.fixtures_utils import (date_diff, get_next_fixture,
+                                      get_youtube_highlights_videos)
 from tests.utils.sample_data_utils import get_sample_data_response
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,15 +22,15 @@ def test_get_next_fixture():
 
     # when
     with freeze_time("2021-09-29 18:30:00"):
-        next_fixture = get_next_fixture(fixture_response)
+        next_fixture = get_next_fixture(fixture_response, "435")
 
     # then
     assert next_fixture.utc_date == datetime.strptime(
         f"2021-09-29T18:45:00+00:00"[:-6], "%Y-%m-%dT%H:%M:%S"
     )
-    assert next_fixture.home_team == "Peterborough"
-    assert next_fixture.away_team == "Bournemouth"
-    assert next_fixture.championship == "Championship"
+    assert next_fixture.home_team.name == "Peterborough"
+    assert next_fixture.away_team.name == "Bournemouth"
+    assert next_fixture.championship.name == "Championship"
     assert next_fixture.match_status == "Not Started"
     assert next_fixture.referee == "A.  Woolmer"
     assert next_fixture.round == "Regular Season - 10"
@@ -74,3 +77,13 @@ def test_get_date_spanish_text_format():
 
     # then
     assert formatted_date == "Viernes 29 de Octubre del 2021"
+
+
+def test_get_highlights_videos():
+    # given
+    home_team = Team(1, "River", "picture", [])
+    away_team = Team(2, "Patronato", "picture", [])
+
+    video_highlights = get_youtube_highlights_videos(home_team, away_team)
+
+    print(video_highlights)
