@@ -122,6 +122,14 @@ class Fixture:
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
         )
 
+    def matched_played_telegram_like_repr(self) -> str:
+        return (
+            f"<strong>{Emojis.SOCCER_BALL.value} {self.home_team.name} - {self.match_score.home_score} vs. "
+            f" {self.match_score.away_score} - {self.away_team.name}</strong>\n"
+            f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+        )
+
     def _is_next_day_in_europe(self) -> bool:
         return self.bsas_date.weekday() != self.ams_date.weekday()
 
@@ -150,6 +158,12 @@ class TeamStanding:
             f"{Emojis.GLOBE_WITH_MERIDIANS.value} Clasificación: <strong>{self.current_condition}</strong>"
         )
 
+    def telegram_like_repr(self) -> str:
+        return (
+                f"{Emojis.CHART_INCREASING.value} Posición: <strong>{self.position}</strong>\n"
+                f"{Emojis.CHECK_MARK.value} Puntos: <strong>{self.points}</strong>\n"
+                f"{Emojis.GOAL_NET.value} Diferencia de gol: <strong>{self.goal_difference}</strong>"
+        )
 
 @dataclass
 class Player:

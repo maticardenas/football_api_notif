@@ -14,7 +14,7 @@ class TelegramClient(BaseClient):
 
     def send_message(self, chat_id: str, msg: str) -> Dict[str, Any]:
         endpoint = f"/bot{self._token}/sendMessage"
-        params = {"chat_id": chat_id, "text": msg, "parse_mode": "markdown"}
+        params = {"chat_id": chat_id, "text": msg}
         url = f"{self.base_url}{endpoint}"
 
         return self.request.post(url, params, self.headers)
@@ -32,7 +32,24 @@ class TelegramClient(BaseClient):
             "chat_id": chat_id,
             "photo": photo,
             "caption": text,
-            "parse_mode": "markdown",
+            "parse_mode": "HTML",
+        }
+        url = f"{self.base_url}{endpoint}"
+
+        return self.request.post(url, params, self.headers)
+
+    def send_video(
+        self,
+        chat_id: str,
+        video_url: str,
+        text: Optional[str] = "",
+    ) -> Dict[str, Any]:
+        endpoint = f"/bot{self._token}/sendVideo"
+        params = {
+            "chat_id": chat_id,
+            "video": video_url,
+            # "caption": text,
+            # "parse_mode": "markdown",
         }
         url = f"{self.base_url}{endpoint}"
 
