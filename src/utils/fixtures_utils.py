@@ -55,7 +55,7 @@ def get_next_fixture(
     )
 
 
-def get_last_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
+def get_last_fixture(team_fixtures: List[Dict[str, Any]], team_id: str) -> Optional[Fixture]:
     min_fixture = None
     min_diff = -999999999
 
@@ -70,7 +70,7 @@ def get_last_fixture(team_fixtures: List[Dict[str, Any]]) -> Optional[Fixture]:
             min_fixture = fixture
             min_diff = fixture_date_diff
 
-    return __convert_fixture_response(min_fixture, min_diff) if min_fixture else None
+    return __convert_fixture_response(min_fixture, min_diff, team_id) if min_fixture else None
 
 
 def get_team_standings_for_league(team_standings: dict, league_id: int) -> TeamStanding:
