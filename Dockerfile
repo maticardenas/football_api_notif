@@ -7,7 +7,8 @@ USER root
 RUN apt-get update \
 && apt-get install gcc -y \
 && apt-get clean \
-&& apt-get install cron -y
+&& apt-get install cron -y \
+&& apt-get install bash
 
 ADD football_notif_crontab /etc/cron.d/football_notif_crontab
 RUN chmod 777 /etc/cron.d/football_notif_crontab
