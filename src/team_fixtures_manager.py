@@ -62,6 +62,9 @@ class TeamFixturesManager:
                 and next_team_fixture.line_up
             ):
                 self._perform_line_up_confirmed_notification(next_team_fixture)
+            else:
+                print(f"There is still no line up for the match of {next_team_fixture.home_team} vs {next_team_fixture.away_team}")
+                print(str(next_team_fixture.remaining_time()))
 
     def notify_last_fixture(self) -> None:
         team_fixtures = self._fixtures_client.get_fixtures_by(
