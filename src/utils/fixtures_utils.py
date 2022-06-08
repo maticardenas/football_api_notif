@@ -284,14 +284,15 @@ def get_line_up(fixture_id: str, team_id: str) -> Optional[LineUp]:
     line_up = None
 
     if json_response:
-        start_xi = json_response[0]["startXI"]
-        line_up = LineUp(
-            formation=json_response[0]["formation"],
-            goalkeeper=get_players(start_xi, "G")[0],
-            defenders=get_players(start_xi, "D"),
-            midfielders=get_players(start_xi, "M"),
-            forward_strikers=get_players(start_xi, "F"),
-        )
+        if "startXI" in json_response[0]:
+            start_xi = json_response[0]["startXI"]
+            line_up = LineUp(
+                formation=json_response[0]["formation"],
+                goalkeeper=get_players(start_xi, "G")[0],
+                defenders=get_players(start_xi, "D"),
+                midfielders=get_players(start_xi, "M"),
+                forward_strikers=get_players(start_xi, "F"),
+            )
 
     return line_up
 
