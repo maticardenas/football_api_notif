@@ -254,7 +254,7 @@ def get_youtube_highlights_videos(
             if all(
                 [
                     team_name.lower() in title.lower()
-                    for team_name in [home_team.name, team_name.name]
+                    for team_name in [home_team.name, away_team.name]
                 ]
             ):
                 video_highlights.append(item["url"])
