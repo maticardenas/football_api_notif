@@ -10,8 +10,16 @@ from src.api.fixtures_client import FixturesClient
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
 from src.api.youtube_search_client import YoutubeSearchClient
-from src.entities import (Championship, Fixture, LineUp, MatchHighlights,
-                          MatchScore, Player, Team, TeamStanding)
+from src.entities import (
+    Championship,
+    Fixture,
+    LineUp,
+    MatchHighlights,
+    MatchScore,
+    Player,
+    Team,
+    TeamStanding,
+)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 
