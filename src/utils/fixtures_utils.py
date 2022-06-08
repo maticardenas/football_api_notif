@@ -99,7 +99,7 @@ def __convert_fixture_response(
         fixture_response["fixture"]["status"]["long"],
         Championship(
             fixture_response["league"]["id"],
-            fixture_response["league"]["name"],
+            league_name,
             fixture_response["league"]["country"],
             fixture_response["league"]["logo"],
         ),
