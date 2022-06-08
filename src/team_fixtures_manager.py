@@ -32,7 +32,10 @@ class TeamFixturesManager:
             self._season, self._team_id
         )
 
-        next_team_fixture = get_next_fixture(team_fixtures.as_dict["response"])
+        next_team_fixture = None
+
+        if "response" in team_fixtures.as_dict:
+            next_team_fixture = get_next_fixture(team_fixtures.as_dict["response"])
 
         if next_team_fixture:
             if next_team_fixture.remaining_time().days < 3:
