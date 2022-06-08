@@ -25,3 +25,11 @@ class Emojis(Enum):
     GOAL_NET = emoji.emojize(":goal_net:", use_aliases=True)
     GLOBE_WITH_MERIDIANS = emoji.emojize(":globe_with_meridians:", use_aliases=True)
     FILM_PROJECTOR = emoji.emojize(":film_projector:", use_aliases=True)
+    GLOVES = emoji.emojize(":gloves:", use_aliases=True)
+    JOYSTICK = emoji.emojize(":joystick:", use_aliases=True)
+    SHIELD = emoji.emojize(":shield:", use_aliases=True)
+    MAGIC_WAND = emoji.emojize(":magic_wand:", use_aliases=True)
+    SCORING = emoji.emojize(
+        ":person_playing_handball_dark_skin_tone:", use_aliases=True
+    )
+    LIGHT_BULB = emoji.emojize(":light_bulb:", use_aliases=True)
