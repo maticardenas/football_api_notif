@@ -239,7 +239,7 @@ def get_youtube_highlights_videos(
 ) -> List[str]:
     youtube_client = YoutubeSearchClient()
     response = youtube_client.search_videos_by_keywords(
-        [home_team.name, away_team.name, "hihglights"], "es", "ar"
+        [home_team.name, away_team.name, "highlights"], "es", "ar"
     )
 
     json_response = response.as_dict

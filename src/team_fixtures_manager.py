@@ -76,10 +76,6 @@ class TeamFixturesManager:
         )
 
         if last_team_fixture:
-            last_team_fixture.highlights = get_youtube_highlights_videos(
-                last_team_fixture.home_team, last_team_fixture.away_team
-            )
-
             team_standings = self._fixtures_client.get_standings_by(
                 self._season, self._team_id
             )
@@ -88,6 +84,9 @@ class TeamFixturesManager:
                 last_team_fixture.championship.league_id,
             )
             if -1 <= last_team_fixture.remaining_time().days <= 0:
+                last_team_fixture.highlights = get_youtube_highlights_videos(
+                    last_team_fixture.home_team, last_team_fixture.away_team
+                )
                 self._perform_last_fixture_notification(
                     last_team_fixture, team_league_standing
                 )
