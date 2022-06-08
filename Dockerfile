@@ -26,6 +26,7 @@ COPY ./Pipfile ./Pipfile
 COPY ./Pipfile.lock ./Pipfile.lock
 COPY team_fixture_notifier.py .
 COPY covid_notifier.py .
+COPY football_notifier.env .
 
 RUN python -m pipenv install
 
