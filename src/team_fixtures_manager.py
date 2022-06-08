@@ -154,7 +154,7 @@ class TeamFixturesManager:
         match_image_text = f"<img width='100%' height='100%' src='{match_image_url}'>"
         date_text = (
             "es HOY!"
-            if team_fixture.utc_date.day == datetime.today().day
+            if team_fixture.bsas_date.day == datetime.today().day
             else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
         )
 
