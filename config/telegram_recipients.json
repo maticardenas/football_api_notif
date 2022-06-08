@@ -1,0 +1,7 @@
+[
+    {
+        "name": "RecipientName",
+        "telegram_id": "telegram-chat-id",
+        "team_subscriptions": ["85", "435", "26"]
+    }
+]
