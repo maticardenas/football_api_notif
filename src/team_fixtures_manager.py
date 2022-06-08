@@ -45,7 +45,7 @@ class TeamFixturesManager:
         # telegram
         for recipient in TELEGRAM_RECIPIENTS:
             telegram_message = (
-                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro(True)} "
+                f"{Emojis.WAVING_HAND.value}Hola {recipient}!\n\n{self._get_last_match_team_intro()} "
                 f"jugó ayer! Este fué el resultado: \n\n{team_fixture.matched_played_str()}"
             )
             send_telegram_message(TELEGRAM_RECIPIENTS[recipient], telegram_message)
