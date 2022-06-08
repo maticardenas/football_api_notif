@@ -45,14 +45,14 @@ class TeamFixturesManager:
         )
 
         last_team_fixture = get_last_fixture(team_fixtures.as_dict["response"])
-        team_standings = self._fixtures_client.get_standings_by(
-            self._season, self._team_id
-        )
-        team_league_standing = get_team_standings_for_league(
-            team_standings.as_dict["response"], last_team_fixture.championship.league_id
-        )
 
         if last_team_fixture:
+            team_standings = self._fixtures_client.get_standings_by(
+                self._season, self._team_id
+            )
+            team_league_standing = get_team_standings_for_league(
+                team_standings.as_dict["response"], last_team_fixture.championship.league_id
+            )
             if -1 <= last_team_fixture.remaining_time().days <= 0:
                 self._perform_last_fixture_notification(
                     last_team_fixture, team_league_standing
