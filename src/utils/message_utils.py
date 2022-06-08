@@ -33,5 +33,6 @@ def get_highlights_text(highlights: List[str], email: bool = False) -> str:
 
     for highlight in highlights:
         highlights_text += f"{Emojis.FILM_PROJECTOR.value} <a href='{highlight}'>HIGHLIGHTS [{highlight_number}]</a>{endline}"
+        highlight_number += 1
 
     return highlights_text
