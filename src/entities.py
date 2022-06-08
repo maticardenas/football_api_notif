@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from src.emojis import Emojis
 
@@ -42,6 +42,40 @@ class MatchHighlights:
 
 
 @dataclass
+class Player:
+    id: int
+    name: str
+    pos: str
+
+
+@dataclass
+class LineUp:
+    formation: str
+    goalkeeper: Player
+    defenders: List[Player]
+    midfielders: List[Player]
+    forward_strikers: List[Player]
+
+    def __str__(self):
+        return (
+            f"{Emojis.JOYSTICK.value} <strong>{self.formation}</strong>\n\n"
+            f"{Emojis.GLOVES.value} <strong>{self.goalkeeper.name}</strong>\n"
+            f"{Emojis.SHIELD.value} <strong>{', '.join([defender.name for defender in self.defenders])} </strong>\n"
+            f"{Emojis.MAGIC_WAND.value} <strong>{', '.join([midfielder.name for midfielder in self.midfielders])}</strong>\n"
+            f"{Emojis.SCORING.value} <strong>{', '.join([strike.name for strike in self.forward_strikers])}</strong>\n"
+        )
+
+    def email_like_repr(self):
+        return (
+            f"{Emojis.JOYSTICK.value} <strong>{self.formation}</strong><br /><br />"
+            f"{Emojis.GLOVES.value} <strong>{self.goalkeeper.name}</strong><br />"
+            f"{Emojis.SHIELD.value} <strong> {', '.join([defender.name for defender in self.defenders])} </strong><br />"
+            f"{Emojis.MAGIC_WAND.value} <strong> {', '.join([midfielder.name for midfielder in self.midfielders])}</strong><br />"
+            f"{Emojis.SCORING.value} <strong> {', '.join([strike.name for strike in self.forward_strikers])}</strong><br />"
+        )
+
+
+@dataclass
 class RemainingTime:
     days: int
     hours: int
@@ -72,6 +106,7 @@ class Fixture:
     home_team: Team
     away_team: Team
     match_score: MatchScore
+    line_up: Optional[LineUp]
     is_next_day: str = field(init=False)
     highlights: List[MatchHighlights] = field(init=False)
 
@@ -112,7 +147,9 @@ class Fixture:
             f"<img src='{self.home_team.picture}' width='22' height='22'><strong> vs. "
             f"<img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"<img src='{self.championship.logo}' width='22' height='22'> <strong>{self.championship.name}</strong><br />"
-            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong><p>"
+            f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:<p>"
+            f"{self.line_up_email_message()}"
         )
 
     def telegram_like_repr(self) -> str:
@@ -123,7 +160,23 @@ class Fixture:
             f"{Emojis.SOCCER_BALL.value} "
             f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong>\n"
             f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
-            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>\n\n"
+            f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
+            f"{self.line_up_message()}"
+        )
+
+    def line_up_message(self) -> str:
+        return (
+            str(self.line_up)
+            if self.line_up
+            else f"<strong>Todavía no disponible :(</strong>"
+        )
+
+    def line_up_email_message(self) -> str:
+        return (
+            self.line_up.email_like_repr()
+            if self.line_up
+            else f"Todavía no disponible :("
         )
 
     def matched_played_email_like_repr(self) -> str:
@@ -176,16 +229,6 @@ class TeamStanding:
             f"{Emojis.CHECK_MARK.value} Puntos: <strong>{self.points}</strong>\n"
             f"{Emojis.GOAL_NET.value} Diferencia de gol: <strong>{self.goal_difference}</strong>"
         )
-
-
-@dataclass
-class Player:
-    name: str
-    age: str
-    nationality: str
-    team: str
-    height: str
-    weight: str
 
 
 @dataclass
