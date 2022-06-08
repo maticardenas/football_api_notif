@@ -41,3 +41,4 @@ class Emojis(Enum):
     FLEXED_BICEPS = emoji.emojize(":flexed_biceps:", use_aliases=True)
     MICROBE = emoji.emojize(":microbe:", use_aliases=True)
     FACE_WITH_MEDICAL_MASK = emoji.emojize(":face_with_medical_mask:", use_aliases=True)
+    TELEVISION = emoji.emojize(":television:", use_aliases=True)
