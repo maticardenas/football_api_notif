@@ -114,6 +114,17 @@ class Fixture:
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
         )
 
+    def telegram_like_repr(self) -> str:
+        return (
+            f"{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}</strong>\n"
+            f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong>\n\n"
+            f"{Emojis.ALARM_CLOCK.value} {str(self.remaining_time())} para el partido.\n\n"
+            f"{Emojis.SOCCER_BALL.value} "
+            f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong>\n"
+            f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
+            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>"
+        )
+
     def matched_played_email_like_repr(self) -> str:
         return (
             f"<p><img src='{self.home_team.picture}' width='22' height='22'><strong> - {self.match_score.home_score} vs. "
@@ -160,10 +171,11 @@ class TeamStanding:
 
     def telegram_like_repr(self) -> str:
         return (
-                f"{Emojis.CHART_INCREASING.value} Posición: <strong>{self.position}</strong>\n"
-                f"{Emojis.CHECK_MARK.value} Puntos: <strong>{self.points}</strong>\n"
-                f"{Emojis.GOAL_NET.value} Diferencia de gol: <strong>{self.goal_difference}</strong>"
+            f"{Emojis.CHART_INCREASING.value} Posición: <strong>{self.position}</strong>\n"
+            f"{Emojis.CHECK_MARK.value} Puntos: <strong>{self.points}</strong>\n"
+            f"{Emojis.GOAL_NET.value} Diferencia de gol: <strong>{self.goal_difference}</strong>"
         )
+
 
 @dataclass
 class Player:
