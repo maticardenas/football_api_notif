@@ -1,2 +1,6 @@
 X_RAPIDAPI_HOST = "api-football-v1.p.rapidapi.com"
-X_RAPIDAPI_KEY = "your-rapidapi-key"
+X_RAPIDAPI_IMG_SEARCH_HOST = "bing-image-search1.p.rapidapi.com"
+X_RAPIDAPI_VIDEO_SEARCH_HOST = "free-football-soccer-videos.p.rapidapi.com"
+X_YOUTUBE_SEARCH_HOST = "youtube-search3.p.rapidapi.com"
+X_WORLDOMETERS_HOST = "worldometers.p.rapidapi.com"
+X_RAPIDAPI_KEY = "5ba265a165msh53a2d69e9a39774p1216ccjsn55c3104b0b9f"

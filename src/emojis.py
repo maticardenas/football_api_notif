@@ -6,6 +6,8 @@ import emoji
 class Emojis(Enum):
     FRANCE = emoji.emojize(":France:", use_aliases=True)
     ARGENTINA = emoji.emojize(":Argentina:", use_aliases=True)
+    NETHERLANDS = emoji.emojize(":Netherlands:", use_aliases=True)
+    SPAIN = emoji.emojize(":Spain:", use_aliases=True)
     GOAT = emoji.emojize(":goat:", use_aliases=True)
     THOUGHT_BALLOON = emoji.emojize(":thought_balloon:", use_aliases=True)
     WAVING_HAND = emoji.emojize(":wave:", use_aliases=True)
@@ -33,3 +35,9 @@ class Emojis(Enum):
         ":person_playing_handball_dark_skin_tone:", use_aliases=True
     )
     LIGHT_BULB = emoji.emojize(":light_bulb:", use_aliases=True)
+    SKULL = emoji.emojize(":skull:", use_aliases=True)
+    NUMBERS = emoji.emojize(":input_numbers:", use_aliases=True)
+    FAMILY = emoji.emojize(":input_numbers:", use_aliases=True)
+    FLEXED_BICEPS = emoji.emojize(":flexed_biceps:", use_aliases=True)
+    MICROBE = emoji.emojize(":microbe:", use_aliases=True)
+    FACE_WITH_MEDICAL_MASK = emoji.emojize(":face_with_medical_mask:", use_aliases=True)
