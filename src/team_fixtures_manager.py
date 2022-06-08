@@ -58,7 +58,7 @@ class TeamFixturesManager:
         if next_team_fixture:
             if (
                 next_team_fixture.remaining_time().days < 1
-                and next_team_fixture.remaining_time().hours < 3
+                and next_team_fixture.remaining_time().hours < 6
                 and next_team_fixture.line_up
             ):
                 self._perform_line_up_confirmed_notification(next_team_fixture)
