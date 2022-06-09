@@ -28,6 +28,8 @@ COPY team_fixture_notifier.py .
 COPY covid_notifier.py .
 COPY football_notifier.env .
 
+RUN cat football_notifier.env >> /etc/environment
+
 RUN python -m pipenv install
 
 CMD cron && tail -f /var/log/cron_log.log
