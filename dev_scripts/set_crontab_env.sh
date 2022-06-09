@@ -1,0 +1,1 @@
+source /usr/football_api/football_notifier.env
