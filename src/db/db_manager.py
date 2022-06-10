@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from sqlmodel import SQLModel, create_engine, Session
 
@@ -31,3 +31,15 @@ class NotifierDBManager:
         session = Session(self._engine)
         session.add(db_object)
         session.commit()
+
+    def insert_records(self, db_objects: List[Any]) -> None:
+        with Session(self._engine) as session:
+            for db_object in db_objects:
+                session.add(db_object)
+                session.commit()
+
+    def select_records(self, statement):
+        with Session(self._engine) as session:
+            results = session.exec(statement)
+
+        return results
