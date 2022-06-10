@@ -1,24 +1,33 @@
-from typing import TYPE_CHECKING
+from typing import Any
 
-import psycopg2
+from sqlmodel import SQLModel, create_engine, Session
 
-if TYPE_CHECKING:
-    from psycopg2.extensions import connection as PostgreSQLConnection
+from config.notif_config import NotifConfig
 
 
-class DBManager:
-    def __init__(
-        self, db_service_name: str, db_name: str, db_user: str, db_password: str
-    ) -> None:
-        self.__db_service_name = db_service_name
-        self.__db_name = db_name
-        self.__db_user = db_user
-        self.__db_password = db_password
+class NotifierDBManager:
+    ENGINE = None
 
-    def get_connection(self) -> "PostgreSQLConnection":
-        psycopg2.connect(
-            host=self.__db_service_name,
-            database=self.__db_name,
-            user=self.__db_user,
-            password=self.__db_password,
+    def __init__(self) -> None:
+        NotifierDBManager.ENGINE = (
+            create_engine(
+                NotifConfig.POSTGRES_DB_URL,
+                connect_args={
+                    "user": NotifConfig.DB_USER,
+                    "password": NotifConfig.DB_PASS,
+                },
+                echo=True,
+            )
+            if not NotifierDBManager.ENGINE
+            else NotifierDBManager.ENGINE
         )
+
+        self._engine = NotifierDBManager.ENGINE
+
+    def create_db_and_tables(self) -> None:
+        SQLModel.metadata.create_all(self._engine)
+
+    def insert_record(self, db_object: Any) -> None:
+        session = Session(self._engine)
+        session.add(db_object)
+        session.commit()

@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Optional, List
 
-from sqlmodel import Field, SQLModel, create_engine
+from sqlmodel import Field, SQLModel
+
 
 class League(SQLModel, table=True):
     id: int = Field(primary_key=True)
@@ -11,7 +12,7 @@ class League(SQLModel, table=True):
 
 
 class Team(SQLModel, table=True):
-    id: str = Field(primary_key=True)
+    id: int = Field(primary_key=True)
     name: str
     picture: str
     aliases: Optional[List[str]]
@@ -30,13 +31,3 @@ class Fixture(SQLModel, table=True):
     home_score: int
     away_score: int
     highlights: Optional[List[str]]
-
-
-sqlite_url = "postgresql://localhost:5432/notifier_db"
-
-engine = create_engine(
-    sqlite_url,
-    connect_args={"user": "postgres", "password": "supersecretpassword"},
-    echo=True)
-
-SQLModel.metadata.create_all(engine)
