@@ -1,14 +1,15 @@
 FROM python:3.8
 
 LABEL maintainer "Matias Cardenas"
-LABEL description	"Python 3.8 image containing Football Notifications APP"
+LABEL description "Python 3.8 image containing Football Notifications APP"
 
 USER root
 RUN apt-get update \
 && apt-get install gcc -y \
 && apt-get clean \
 && apt-get install cron -y \
-&& apt-get install bash
+&& apt-get install bash \
+&& apt-get install vim -y
 
 ADD football_notif_crontab /etc/cron.d/football_notif_crontab
 RUN chmod 777 /etc/cron.d/football_notif_crontab
