@@ -5,21 +5,19 @@ from typing import Any, Dict, List, Optional, Tuple
 from urllib.error import HTTPError
 
 from deep_translator import GoogleTranslator
+from sqlmodel import select
 
+from db.db_manager import NotifierDBManager
 from src.api.fixtures_client import FixturesClient
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
 from src.api.youtube_search_client import YoutubeSearchClient
-from src.entities import (
-    Championship,
-    Fixture,
-    LineUp,
-    MatchHighlights,
-    MatchScore,
-    Player,
-    Team,
-    TeamStanding,
-)
+from src.db.notif_sql_models import Fixture as DBFixture
+from src.db.notif_sql_models import League as DBLeague
+from src.db.notif_sql_models import Team as DBTeam
+from src.entities import (Championship, Fixture, FixtureForDB, LineUp,
+                          MatchHighlights, MatchScore, Player, Team,
+                          TeamStanding)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 
@@ -64,6 +62,42 @@ def get_next_fixture(
         if min_fixture
         else None
     )
+
+
+def get_next_fixture_db(team_fixtures: List[DBFixture]) -> Optional[DBFixture]:
+    min_fixture = None
+    min_diff = 999999999
+
+    for fixture in team_fixtures:
+        fixture_date_diff = int(date_diff(fixture.utc_date).total_seconds())
+
+        if not min_fixture and fixture_date_diff >= 0:
+            min_fixture = fixture
+            min_diff = fixture_date_diff
+
+        if fixture_date_diff >= 0 and (fixture_date_diff < min_diff):
+            min_fixture = fixture
+            min_diff = fixture_date_diff
+
+    return convert_db_fixture(min_fixture) if min_fixture else None
+
+
+def get_last_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
+    min_fixture = None
+    min_diff = -999999999
+
+    for fixture in team_fixtures:
+        fixture_date_diff = int(date_diff(fixture.utc_date).total_seconds())
+
+        if not min_fixture and fixture_date_diff < 0:
+            min_fixture = fixture
+            min_diff = fixture_date_diff
+
+        if fixture_date_diff < 0 and (fixture_date_diff > min_diff):
+            min_fixture = fixture
+            min_diff = fixture_date_diff
+
+    return convert_db_fixture(min_fixture) if min_fixture else None
 
 
 def get_last_fixture(
@@ -112,6 +146,56 @@ def __convert_standing_response(team_standing: dict) -> TeamStanding:
     )
 
 
+def convert_db_fixture(fixture: DBFixture) -> Fixture:
+    utc_date = datetime.strptime(fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
+    ams_date = get_time_in_time_zone(utc_date, TimeZones.AMSTERDAM)
+    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
+
+    # league_name, round_name = __get_translated_league_name_and_round(fixture)
+    notifier_db_manager = NotifierDBManager()
+
+    league: DBLeague = notifier_db_manager.select_records(
+        select(DBLeague).where(DBLeague.id == fixture.league)
+    )[0]
+    home_team: DBTeam = notifier_db_manager.select_records(
+        select(DBTeam).where(DBTeam.id == fixture.home_team)
+    )[0]
+    away_team: DBTeam = notifier_db_manager.select_records(
+        select(DBTeam).where(DBTeam.id == fixture.away_team)
+    )[0]
+
+    return Fixture(
+        fixture.id,
+        utc_date,
+        ams_date,
+        bsas_date,
+        int(date_diff(fixture.utc_date).total_seconds()),
+        "",
+        "",
+        Championship(
+            league.id,
+            league.name,
+            league.country,
+            league.logo,
+        ),
+        fixture.round,
+        Team(
+            home_team.id,
+            home_team.name,
+            home_team.picture,
+            get_team_aliases(str(home_team.id)),
+        ),
+        Team(
+            away_team.id,
+            away_team.name,
+            away_team.picture,
+            get_team_aliases(str(away_team.id)),
+        ),
+        MatchScore(fixture.home_score, fixture.away_score),
+        # get_line_up(fixture_response["fixture"]["id"], team_id),
+    )
+
+
 def convert_fixture_response(
     fixture_response: Dict[str, Any], date_diff: int, team_id: str = 1
 ) -> Fixture:
@@ -156,6 +240,42 @@ def convert_fixture_response(
             fixture_response["goals"]["home"], fixture_response["goals"]["away"]
         ),
         # get_line_up(fixture_response["fixture"]["id"], team_id),
+    )
+
+
+def convert_fixture_response_to_db(fixture_response: Dict[str, Any]) -> Fixture:
+    league_name, round_name = __get_translated_league_name_and_round(fixture_response)
+    home_team_id = fixture_response["teams"]["home"]["id"]
+    away_team_id = fixture_response["teams"]["away"]["id"]
+
+    return FixtureForDB(
+        fixture_response["fixture"]["id"],
+        fixture_response["fixture"]["date"],
+        date_diff,
+        fixture_response["fixture"]["referee"],
+        fixture_response["fixture"]["status"]["long"],
+        Championship(
+            fixture_response["league"]["id"],
+            league_name,
+            fixture_response["league"]["country"],
+            fixture_response["league"]["logo"],
+        ),
+        round_name,
+        Team(
+            home_team_id,
+            fixture_response["teams"]["home"]["name"],
+            fixture_response["teams"]["home"]["logo"],
+            get_team_aliases(str(home_team_id)),
+        ),
+        Team(
+            away_team_id,
+            fixture_response["teams"]["away"]["name"],
+            fixture_response["teams"]["away"]["logo"],
+            get_team_aliases(str(away_team_id)),
+        ),
+        MatchScore(
+            fixture_response["goals"]["home"], fixture_response["goals"]["away"]
+        ),
     )
 
 

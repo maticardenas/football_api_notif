@@ -1,7 +1,11 @@
+import os
+import sys
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from src.emojis import Emojis
 
@@ -25,6 +29,12 @@ class Team:
     name: str
     picture: str
     aliases: list
+
+    def save(self) -> None:
+        team = DBTeam(
+            id=self.id, name=self.name, picture=self.picture, aliases=self.aliases
+        )
+        NOTIF_DB_MANAGER.insert_record(team)
 
 
 @dataclass
@@ -94,7 +104,22 @@ class RemainingTime:
 
 
 @dataclass
+class FixtureForDB:
+    id: int
+    utc_date: str
+    date_diff: int
+    referee: str
+    match_status: str
+    championship: Championship
+    round: str
+    home_team: Team
+    away_team: Team
+    match_score: MatchScore
+
+
+@dataclass
 class Fixture:
+    id: int
     utc_date: datetime
     ams_date: datetime
     bsas_date: datetime
@@ -106,7 +131,7 @@ class Fixture:
     home_team: Team
     away_team: Team
     match_score: MatchScore
-    line_up: Optional[LineUp]
+    line_up: Optional[LineUp] = field(init=False)
     is_next_day: str = field(init=False)
     highlights: List[str] = field(init=False)
 
@@ -149,8 +174,8 @@ class Fixture:
             f"<img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"<img src='{self.championship.logo}' width='22' height='22'> <strong>{self.championship.name}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong><p>"
-            f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:<p>"
-            f"{self.line_up_email_message()}<p>"
+            # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:<p>"
+            # f"{self.line_up_email_message()}<p>"
             f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming online</a>"
         )
 
@@ -163,8 +188,8 @@ class Fixture:
             f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong>\n"
             f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>\n\n"
-            f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
-            f"{self.line_up_message()}\n\n"
+            # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
+            # f"{self.line_up_message() if self.line_up else ''}\n\n"
             f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming online</a>"
         )
 
@@ -188,8 +213,8 @@ class Fixture:
             f" {self.match_score.away_score} - <img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"<img src='{self.championship.logo}' width='25' height='25'> <strong>{self.championship.name}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong><br /><br />"
-            f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:<p>"
-            f"{self.line_up_email_message()}"
+            # f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:<p>"
+            # f"{self.line_up_email_message()}"
         )
 
     def matched_played_telegram_like_repr(self) -> str:
@@ -198,8 +223,8 @@ class Fixture:
             f" {self.match_score.away_score} - {self.away_team.name}</strong>\n"
             f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>\n\n"
-            f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:\n\n"
-            f"{self.line_up_message()}"
+            # f"{Emojis.LIGHT_BULB.value} La alineación titular del equipo fue:\n\n"
+            # f"{self.line_up_message()}"
         )
 
     def _is_next_day_in_europe(self) -> bool:
