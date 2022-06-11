@@ -16,8 +16,8 @@ def get_team_intro_messages(team_id: str, is_group_notification: bool = False) -
             "last_match": f"El PSG {Emojis.FRANCE.value} de Lionel Messi {Emojis.GOAT.value}",
         },
         "435": {
-            "next_match": f"{pronoun} {first_phrase} del River de Marcelo Gallardios",
-            "last_match": f"El River de Marcelo Gallardios",
+            "next_match": f"{pronoun} {first_phrase} del River de Marcelo Gallardios {Emojis.WHITE_CIRCLE.value}{Emojis.RED_CIRCLE.value}",
+            "last_match": f"El River {Emojis.WHITE_CIRCLE.value}{Emojis.RED_CIRCLE.value} de Marcelo Gallardios",
         },
         "26": {
             "next_match": f"{pronoun} {first_phrase} de La Scaloneta {Emojis.ARGENTINA.value}",

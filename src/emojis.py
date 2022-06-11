@@ -45,3 +45,5 @@ class Emojis(Enum):
     BLUE_CIRCLE = emoji.emojize(":blue_circle:", use_aliases=True)
     YELLOW_CIRCLE = emoji.emojize(":yellow_circle:", use_aliases=True)
     PIRATE_FLAG = emoji.emojize(":pirate_flag:", use_aliases=True)
+    WHITE_CIRCLE = emoji.emojize(":white_circle:", use_aliases=True)
+    RED_CIRCLE = emoji.emojize(":red_circle:", use_aliases=True)
