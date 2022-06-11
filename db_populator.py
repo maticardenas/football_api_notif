@@ -12,7 +12,7 @@ from src.db.notif_sql_models import (
     League as DBLeague,
     Team as DBTeam,
 )
-from utils.fixtures_utils import date_diff, convert_fixture_response
+from utils.fixtures_utils import convert_fixture_response_to_db
 
 NOTIFIER_DB_MANAGER = NotifierDBManager()
 
@@ -53,9 +53,8 @@ def insert_team(fixture_team: Team) -> DBTeam:
 
 def save_fixtures(team_fixtures: List[dict]) -> None:
     converted_fixtures = []
-    for fixture in team_fixtures[:1]:
-        fixture_date_diff = int(date_diff(fixture["fixture"]["date"]).total_seconds())
-        converted_fixtures.append(convert_fixture_response(fixture, fixture_date_diff))
+    for fixture in team_fixtures:
+        converted_fixtures.append(convert_fixture_response_to_db(fixture))
 
     db_fixtures = []
     for conv_fix in converted_fixtures:
@@ -70,8 +69,6 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
             db_fixture = DBFixture(
                 id=conv_fix.id,
                 utc_date=conv_fix.utc_date,
-                bsas_date=conv_fix.bsas_date,
-                ams_date=conv_fix.ams_date,
                 league=retrieved_league.pop().id,
                 round=conv_fix.round,
                 home_team=retrieved_home_team.pop().id,
@@ -79,7 +76,18 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
                 home_score=conv_fix.match_score.home_score,
                 away_score=conv_fix.match_score.away_score,
             )
-            db_fixtures.append(db_fixture)
+        else:
+            db_fixture = retrieved_fixture.pop()
+            db_fixture.id = conv_fix.id
+            db_fixture.utc_date = conv_fix.utc_date
+            db_fixture.league = retrieved_league.pop().id
+            db_fixture.round = conv_fix.round
+            db_fixture.home_team = retrieved_home_team.pop().id
+            db_fixture.away_team = retrieved_away_team.pop().id
+            db_fixture.home_score = conv_fix.match_score.home_score
+            db_fixture.away_score = conv_fix.match_score.away_score
+
+        db_fixtures.append(db_fixture)
 
     NOTIFIER_DB_MANAGER.insert_records(db_fixtures)
 
