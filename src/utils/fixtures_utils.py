@@ -60,7 +60,7 @@ def get_next_fixture(
             min_diff = fixture_date_diff
 
     return (
-        __convert_fixture_response(min_fixture, min_diff, team_id)
+        convert_fixture_response(min_fixture, min_diff, team_id)
         if min_fixture
         else None
     )
@@ -84,7 +84,7 @@ def get_last_fixture(
             min_diff = fixture_date_diff
 
     return (
-        __convert_fixture_response(min_fixture, min_diff, team_id)
+        convert_fixture_response(min_fixture, min_diff, team_id)
         if min_fixture
         else None
     )
@@ -112,8 +112,8 @@ def __convert_standing_response(team_standing: dict) -> TeamStanding:
     )
 
 
-def __convert_fixture_response(
-    fixture_response: Dict[str, Any], date_diff: int, team_id: str
+def convert_fixture_response(
+    fixture_response: Dict[str, Any], date_diff: int, team_id: str = 1
 ) -> Fixture:
     utc_date = datetime.strptime(
         fixture_response["fixture"]["date"][:-6], "%Y-%m-%dT%H:%M:%S"
@@ -126,6 +126,7 @@ def __convert_fixture_response(
     away_team_id = fixture_response["teams"]["away"]["id"]
 
     return Fixture(
+        fixture_response["fixture"]["id"],
         utc_date,
         ams_date,
         bsas_date,
@@ -154,7 +155,7 @@ def __convert_fixture_response(
         MatchScore(
             fixture_response["goals"]["home"], fixture_response["goals"]["away"]
         ),
-        get_line_up(fixture_response["fixture"]["id"], team_id),
+        # get_line_up(fixture_response["fixture"]["id"], team_id),
     )
 
 

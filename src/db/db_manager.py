@@ -40,6 +40,6 @@ class NotifierDBManager:
 
     def select_records(self, statement):
         with Session(self._engine) as session:
-            results = session.exec(statement)
-
-        return results
+            results = session.exec(statement).all()
+            print(results)
+            return results

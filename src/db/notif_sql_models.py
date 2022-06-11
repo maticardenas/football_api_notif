@@ -5,6 +5,7 @@ from sqlmodel import Field, SQLModel
 
 
 class League(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
     id: int = Field(primary_key=True)
     name: str
     country: str
@@ -12,6 +13,7 @@ class League(SQLModel, table=True):
 
 
 class Team(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
     id: int = Field(primary_key=True)
     name: str
     picture: str
@@ -19,15 +21,15 @@ class Team(SQLModel, table=True):
 
 
 class Fixture(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
     id: int = Field(primary_key=True)
     utc_date: datetime
     bsas_date: datetime
     ams_date: datetime
-    utc_date: datetime
-    league: League = Field(foreign_key="league.id")
+    league: int = Field(foreign_key="league.id")
     round: str
-    home_team: Team = Field(foreign_key="team.id")
-    away_team: Team = Field(foreign_key="team.id")
-    home_score: int
-    away_score: int
+    home_team: int = Field(foreign_key="team.id")
+    away_team: int = Field(foreign_key="team.id")
+    home_score: Optional[int] = None
+    away_score: Optional[int] = None
     highlights: Optional[List[str]]
