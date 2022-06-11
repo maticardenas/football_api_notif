@@ -26,6 +26,8 @@ COPY ./tests ./tests
 COPY ./Pipfile ./Pipfile
 COPY ./Pipfile.lock ./Pipfile.lock
 COPY team_fixture_notifier.py .
+COPY db_initializer.py .
+COPY db_populator.py .
 COPY covid_notifier.py .
 COPY football_notifier.env .
 

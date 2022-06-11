@@ -5,7 +5,7 @@ from typing import List
 from sqlmodel import or_, select
 
 from config.notif_config import NotifConfig
-from db.db_manager import NotifierDBManager
+from src.db.db_manager import NotifierDBManager
 from src.api.fixtures_client import FixturesClient
 from src.db.notif_sql_models import Fixture as DBFixture
 from src.db.notif_sql_models import League as DBLeague
