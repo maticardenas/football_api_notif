@@ -50,10 +50,14 @@ def insert_team(fixture_team: Team) -> DBTeam:
 
 def save_fixtures(team_fixtures: List[dict]) -> None:
     converted_fixtures = []
+    fix_nr = 1
     for fixture in team_fixtures:
+        print(f"Converting & populating fixture {fix_nr}/{len(team_fixtures)}")
         converted_fixtures.append(convert_fixture_response_to_db(fixture))
+        fix_nr += 1
 
     db_fixtures = []
+
     for conv_fix in converted_fixtures:
         retrieved_league = insert_league(conv_fix.championship)
         retrieved_home_team = insert_team(conv_fix.home_team)
