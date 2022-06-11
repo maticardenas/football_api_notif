@@ -28,3 +28,10 @@ class NotifConfig:
     GMAIL_SENDER = os.environ.get("GMAIL_SENDER")
     GMAIL_PASSWD = os.environ.get("GMAIL_PASSWD")
     EMAIL_RECIPIENTS = get_email_recipients_config()
+
+    # DB
+    DB_HOST = os.environ.get("DB_HOST")
+    DB_NAME = os.environ.get("DB_NAME")
+    DB_USER = os.environ.get("DB_USER")
+    DB_PASS = os.environ.get("DB_PASS")
+    POSTGRES_DB_URL = os.environ.get("POSTGRES_DB_URL")
