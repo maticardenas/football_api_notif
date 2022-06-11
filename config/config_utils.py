@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from config.config_entities import TelegramRecipient, EmailRecipient
+from config.config_entities import EmailRecipient, TelegramRecipient
 
 TELEGRAM_RECIPIENTS_FILE = Path(__file__).parent.absolute() / "telegram_recipients.json"
 EMAIL_RECIPIENTS_FILE = Path(__file__).parent.absolute() / "email_recipients.json"

@@ -15,9 +15,17 @@ from src.api.youtube_search_client import YoutubeSearchClient
 from src.db.notif_sql_models import Fixture as DBFixture
 from src.db.notif_sql_models import League as DBLeague
 from src.db.notif_sql_models import Team as DBTeam
-from src.entities import (Championship, Fixture, FixtureForDB, LineUp,
-                          MatchHighlights, MatchScore, Player, Team,
-                          TeamStanding)
+from src.entities import (
+    Championship,
+    Fixture,
+    FixtureForDB,
+    LineUp,
+    MatchHighlights,
+    MatchScore,
+    Player,
+    Team,
+    TeamStanding,
+)
 from src.utils.date_utils import TimeZones, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 

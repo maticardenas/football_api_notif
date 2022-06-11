@@ -6,12 +6,9 @@ from sqlmodel import select
 from api.fixtures_client import FixturesClient
 from db.db_manager import NotifierDBManager
 from entities import Championship, Team
-
-from src.db.notif_sql_models import (
-    Fixture as DBFixture,
-    League as DBLeague,
-    Team as DBTeam,
-)
+from src.db.notif_sql_models import Fixture as DBFixture
+from src.db.notif_sql_models import League as DBLeague
+from src.db.notif_sql_models import Team as DBTeam
 from utils.fixtures_utils import convert_fixture_response_to_db
 
 NOTIFIER_DB_MANAGER = NotifierDBManager()

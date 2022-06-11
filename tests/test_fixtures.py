@@ -5,10 +5,7 @@ import pytz
 from freezegun import freeze_time
 
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import (
-    date_diff,
-    get_next_fixture,
-)
+from src.utils.fixtures_utils import date_diff, get_next_fixture
 from tests.utils.sample_data_utils import get_sample_data_response
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
