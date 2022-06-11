@@ -23,9 +23,7 @@ class Team(SQLModel, table=True):
 class Fixture(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
     id: int = Field(primary_key=True)
-    utc_date: datetime
-    bsas_date: datetime
-    ams_date: datetime
+    utc_date: str
     league: int = Field(foreign_key="league.id")
     round: str
     home_team: int = Field(foreign_key="team.id")
