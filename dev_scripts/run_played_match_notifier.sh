@@ -10,3 +10,5 @@ cd /usr/football_api
 /usr/local/bin/python -m pipenv run python /usr/football_api/team_fixture_notifier.py 2022 451 played_match
 # Belgrano
 /usr/local/bin/python -m pipenv run python /usr/football_api/team_fixture_notifier.py 2022 440 played_match
+# Manchester City
+/usr/local/bin/python -m pipenv run python /usr/football_api/team_fixture_notifier.py 2022 50 played_match
