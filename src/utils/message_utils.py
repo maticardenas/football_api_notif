@@ -6,9 +6,15 @@ from src.emojis import Emojis
 TEAMS_ALIASES = {"85": ["PSG"]}
 
 
-def get_team_intro_messages(team_id: str, is_group_notification: bool = False, is_on_demand: bool = False) -> str:
+def get_team_intro_messages(
+    team_id: str, is_group_notification: bool = False, is_on_demand: bool = False
+) -> str:
     pronoun = "Les" if is_group_notification else "Te"
-    first_phrase = f"{pronoun} recuerdo que el próximo partido" if not is_on_demand else "El próximo partido"
+    first_phrase = (
+        f"{pronoun} recuerdo que el próximo partido"
+        if not is_on_demand
+        else "El próximo partido"
+    )
 
     switch = {
         "85": {
@@ -31,7 +37,7 @@ def get_team_intro_messages(team_id: str, is_group_notification: bool = False, i
         "440": {
             "next_match": f"{first_phrase} de Belgrano {Emojis.PIRATE_FLAG.value}",
             "last_match": f"Belgrano {Emojis.PIRATE_FLAG.value}",
-        }
+        },
     }
 
     return switch.get(team_id)

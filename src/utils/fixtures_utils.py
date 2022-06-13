@@ -7,11 +7,11 @@ from urllib.error import HTTPError
 from deep_translator import GoogleTranslator
 from sqlmodel import select
 
-from src.db.db_manager import NotifierDBManager
 from src.api.fixtures_client import FixturesClient
 from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
 from src.api.youtube_search_client import YoutubeSearchClient
+from src.db.db_manager import NotifierDBManager
 from src.db.notif_sql_models import Fixture as DBFixture
 from src.db.notif_sql_models import League as DBLeague
 from src.db.notif_sql_models import Team as DBTeam

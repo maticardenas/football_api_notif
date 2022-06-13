@@ -1,9 +1,9 @@
 import os
 
 from config.config_utils import (
-    get_telegram_recipients_config,
     get_email_recipients_config,
     get_managed_teams_config,
+    get_telegram_recipients_config,
 )
 
 

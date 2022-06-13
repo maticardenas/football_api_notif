@@ -2,11 +2,12 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from config.config_entities import EmailRecipient, TelegramRecipient, ManagedTeam
+from config.config_entities import EmailRecipient, ManagedTeam, TelegramRecipient
 
 TELEGRAM_RECIPIENTS_FILE = Path(__file__).parent.absolute() / "telegram_recipients.json"
 EMAIL_RECIPIENTS_FILE = Path(__file__).parent.absolute() / "email_recipients.json"
 MANAGED_TEAMS_FILE = Path(__file__).parent.absolute() / "managed_teams.json"
+
 
 def get_json_file_data(file_path: Path) -> Dict[str, Any]:
     with open(file_path, mode="r") as f:
