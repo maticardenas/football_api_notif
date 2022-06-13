@@ -1,0 +1,27 @@
+[
+  {
+    "id": "435",
+    "name": "River Plate",
+    "command_name": "river"
+  },
+  {
+    "id": "85",
+    "name": "PSG",
+    "command_name": "psg"
+  },
+  {
+    "id": "26",
+    "name": "Argentina",
+    "command_name": "argentina"
+  },
+  {
+    "id": "451",
+    "name": "Boca Juniors",
+    "command_name": "boca"
+  },
+  {
+    "id": "440",
+    "name": "Belgrano",
+    "command_name": "belgrano"
+  }
+]

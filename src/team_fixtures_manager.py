@@ -1,12 +1,12 @@
 import random
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from sqlmodel import or_, select
 
 from config.notif_config import NotifConfig
-from src.db.db_manager import NotifierDBManager
 from src.api.fixtures_client import FixturesClient
+from src.db.db_manager import NotifierDBManager
 from src.db.notif_sql_models import Fixture as DBFixture
 from src.db.notif_sql_models import League as DBLeague
 from src.db.notif_sql_models import Team as DBTeam
@@ -21,11 +21,9 @@ from src.utils.fixtures_utils import (
     get_last_fixture_db,
     get_next_fixture,
     get_next_fixture_db,
-    get_team_standings_for_league,
     get_youtube_highlights_videos,
 )
 from src.utils.message_utils import (
-    get_highlights_text,
     get_team_intro_messages,
     is_subscripted_for_team,
 )
@@ -38,7 +36,15 @@ class TeamFixturesManager:
         self._fixtures_client = FixturesClient()
         self._notifier_db_manager = NotifierDBManager()
 
-    def notify_next_fixture_db(self) -> None:
+    def get_next_team_fixture_text(self, user: str = "") -> tuple:
+        next_team_fixture = self.get_next_team_fixture()
+        return self._telegram_next_fixture_notification(next_team_fixture, True, user) if next_team_fixture else ("Fixture para el equipo no encontrado", "")
+
+    def get_last_team_fixture_text(self, user: str = "") -> tuple:
+        last_team_fixture = self.get_last_team_fixture()
+        return self._telegram_last_fixture_notification(last_team_fixture, user) if last_team_fixture else ("Fixture para el equipo no encontrado", "")
+
+    def get_next_team_fixture(self) -> Optional[Fixture]:
         fixtures_statement = select(DBFixture).where(
             or_(
                 DBFixture.home_team == self._team_id,
@@ -51,6 +57,11 @@ class TeamFixturesManager:
 
         if len(team_fixtures):
             next_team_fixture = get_next_fixture_db(team_fixtures)
+
+        return next_team_fixture
+
+    def notify_next_fixture_db(self) -> None:
+        next_team_fixture = self.get_next_team_fixture()
 
         if next_team_fixture:
             if next_team_fixture.remaining_time().days < 500:
@@ -86,9 +97,9 @@ class TeamFixturesManager:
 
         if next_team_fixture:
             if (
-                next_team_fixture.remaining_time().days < 1
-                and next_team_fixture.remaining_time().hours < 6
-                and next_team_fixture.line_up
+                    next_team_fixture.remaining_time().days < 1
+                    and next_team_fixture.remaining_time().hours < 6
+                    and next_team_fixture.line_up
             ):
                 self._perform_line_up_confirmed_notification(next_team_fixture)
             else:
@@ -96,6 +107,22 @@ class TeamFixturesManager:
                     f"There is still no line up for the match of {next_team_fixture.home_team} vs {next_team_fixture.away_team}"
                 )
                 print(str(next_team_fixture.remaining_time()))
+
+    def get_last_team_fixture(self) -> Optional[Fixture]:
+        fixtures_statement = select(DBFixture).where(
+            or_(
+                DBFixture.home_team == self._team_id,
+                DBFixture.away_team == self._team_id,
+            )
+        )
+        team_fixtures = self._notifier_db_manager.select_records(fixtures_statement)
+
+        last_team_fixture = None
+
+        if team_fixtures:
+            last_team_fixture = get_last_fixture_db(team_fixtures)
+
+        return last_team_fixture
 
     def notify_last_fixture_db(self) -> None:
         fixtures_statement = select(DBFixture).where(
@@ -111,13 +138,10 @@ class TeamFixturesManager:
 
         if last_team_fixture:
             if (
-                -40
-                <= last_team_fixture.remaining_time().days
-                <= NotifConfig.LAST_MATCH_THRESHOLD_DAYS
+                    -40
+                    <= last_team_fixture.remaining_time().days
+                    <= NotifConfig.LAST_MATCH_THRESHOLD_DAYS
             ):
-                # last_team_fixture.highlights = get_youtube_highlights_videos(
-                #     last_team_fixture.home_team, last_team_fixture.away_team
-                # )
                 self._perform_last_fixture_notification(last_team_fixture)
 
     def notify_last_fixture(self) -> None:
@@ -131,21 +155,60 @@ class TeamFixturesManager:
 
         if last_team_fixture:
             if (
-                -1
-                <= last_team_fixture.remaining_time().days
-                <= NotifConfig.LAST_MATCH_THRESHOLD_DAYS
+                    -1
+                    <= last_team_fixture.remaining_time().days
+                    <= NotifConfig.LAST_MATCH_THRESHOLD_DAYS
             ):
                 last_team_fixture.highlights = get_youtube_highlights_videos(
                     last_team_fixture.home_team, last_team_fixture.away_team
                 )
                 self._perform_last_fixture_notification(
-                    last_team_fixture, team_league_standing
+                    last_team_fixture
                 )
 
-    def _perform_last_fixture_notification(
-        self, team_fixture: Fixture, team_standing: TeamStanding = None
-    ) -> None:
+    def _telegram_last_fixture_notification(self, team_fixture: Fixture, user: str = "") -> tuple:
+        match_images = self._get_match_images(team_fixture.championship.league_id)
+        match_image_url = random.choice(match_images)
+        spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
 
+        intro_message = get_team_intro_messages(
+            self._team_id, is_group_notification=True
+        )["last_match"]
+
+        highlights_yt_url = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
+        highlights_text = f"{Emojis.FILM_PROJECTOR.value} <a href='{highlights_yt_url}'>HIGHLIGHTS</a>"
+
+        telegram_message = (
+            f"{Emojis.WAVING_HAND.value}Hola {user}!\n\n"
+            f"{intro_message} "
+            f"jugó el {spanish_format_date}! \nEste fue el resultado: \n\n"
+            f"{team_fixture.matched_played_telegram_like_repr()}"
+            f"{highlights_text}"
+        )
+
+        return (telegram_message, match_image_url)
+
+    def _telegram_next_fixture_notification(self, team_fixture: Fixture, is_on_demand: False, user: str = "") -> tuple:
+        spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
+        match_images = self._get_match_images(team_fixture.championship.league_id)
+        match_image_url = random.choice(match_images)
+        date_text = (
+            "es HOY!"
+            if team_fixture.bsas_date.day == datetime.today().day
+            else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
+        )
+
+        intro_message = get_team_intro_messages(self._team_id, is_group_notification=True, is_on_demand=is_on_demand)["next_match"]
+
+        telegram_message = (
+            f"{Emojis.WAVING_HAND.value}Hola {user}! "
+            f"\n\n{intro_message} {date_text}\n\n{team_fixture.telegram_like_repr()}")
+
+        return (telegram_message, match_image_url)
+
+    def _perform_last_fixture_notification(
+            self, team_fixture: Fixture, team_standing: TeamStanding = None
+    ) -> None:
         match_images = self._get_match_images(team_fixture.championship.league_id)
         match_image_url = random.choice(match_images)
 
@@ -159,7 +222,7 @@ class TeamFixturesManager:
             self._team_id, is_group_notification=True
         )["last_match"]
 
-        highlights_text = ""  # get_highlights_text(team_fixture.highlights)
+        highlights_text = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
 
         FOOTBALL_TELEGRAM_RECIPIENTS = NotifConfig.TELEGRAM_RECIPIENTS
         for recipient in FOOTBALL_TELEGRAM_RECIPIENTS:
@@ -169,7 +232,7 @@ class TeamFixturesManager:
                     f"{intro_message} "
                     f"jugó ayer! \nEste fue el resultado: \n\n"
                     f"{team_fixture.matched_played_telegram_like_repr()}"
-                    f"\n\n{team_standing_msg}\n{highlights_text}"
+                    f"\n{highlights_text}"
                 )
                 send_telegram_message(
                     recipient.telegram_id,
@@ -188,7 +251,7 @@ class TeamFixturesManager:
         email_standing_message = (
             f"{Emojis.RED_EXCLAMATION_MARK.value}{team_standing_email_msg}\n"
         )
-        highlights_text = ""  # get_highlights_text(team_fixture.highlights, email=True)
+        highlights_text = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
 
         EMAIL_RECIPIENTS = NotifConfig.EMAIL_RECIPIENTS
         for recipient in EMAIL_RECIPIENTS:

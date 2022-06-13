@@ -1,7 +1,7 @@
 [
     {
-        "name": "RecipientName",
-        "telegram_id": "telegram-chat-id",
+        "name": "Matias",
+        "telegram_id": "2049581342",
         "team_subscriptions": ["85", "435", "26"]
-    }
+  }
 ]

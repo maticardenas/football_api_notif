@@ -28,7 +28,7 @@ COPY ./Pipfile.lock ./Pipfile.lock
 COPY team_fixture_notifier.py .
 COPY db_initializer.py .
 COPY db_populator.py .
-COPY covid_notifier.py .
+COPY notifier_bot.py .
 COPY football_notifier.env .
 
 RUN cat football_notifier.env >> /etc/environment

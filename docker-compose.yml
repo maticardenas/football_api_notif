@@ -9,6 +9,7 @@ services:
       - football_notifier.env
     depends_on:
       - db
+    command: bash -c "dev_scripts/initialize_and_populate_database.sh && python -m pipenv run python /usr/football_api/notifier_bot.py"
 
   db:
     image: postgres:10-alpine

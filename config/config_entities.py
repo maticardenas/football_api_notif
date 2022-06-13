@@ -12,3 +12,10 @@ class TelegramRecipient:
 class EmailRecipient:
     name: str
     email: str
+
+
+@dataclass
+class ManagedTeam:
+    id: str
+    name: str
+    command_name: str
