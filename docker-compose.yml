@@ -7,3 +7,15 @@ services:
       - "8000:8000"
     env_file:
       - football_notifier.env
+    depends_on:
+      - db
+    command: bash -c "dev_scripts/initialize_and_populate_database.sh && python -m pipenv run python /usr/football_api/notifier_bot.py"
+
+  db:
+    image: postgres:10-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=notifier_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
