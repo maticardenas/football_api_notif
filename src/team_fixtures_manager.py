@@ -23,7 +23,11 @@ from src.utils.fixtures_utils import (
     get_next_fixture_db,
     get_youtube_highlights_videos,
 )
-from src.utils.message_utils import get_team_intro_messages, is_subscripted_for_team
+from src.utils.message_utils import (
+    get_first_phrase_msg,
+    get_team_intro_message,
+    is_subscripted_for_team,
+)
 
 
 class TeamFixturesManager:
@@ -69,7 +73,7 @@ class TeamFixturesManager:
         next_team_fixture = self.get_next_team_fixture()
 
         if next_team_fixture:
-            if next_team_fixture.remaining_time().days < 500:
+            if next_team_fixture.remaining_time().days < NotifConfig.NEXT_MATCH_THRESHOLD:
                 self._perform_fixture_notification(next_team_fixture)
 
     def notify_next_fixture(self) -> None:
@@ -145,9 +149,9 @@ class TeamFixturesManager:
 
         if last_team_fixture:
             if (
-                -40
+                NotifConfig.LAST_MATCH_THRESHOLD_DAYS
                 <= last_team_fixture.remaining_time().days
-                <= NotifConfig.LAST_MATCH_THRESHOLD_DAYS
+                <= 0
             ):
                 self._perform_last_fixture_notification(last_team_fixture)
 
@@ -178,8 +182,10 @@ class TeamFixturesManager:
         match_image_url = random.choice(match_images)
         spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)
 
-        intro_message = get_team_intro_messages(
-            self._team_id, is_group_notification=True
+        team_intro_message = get_team_intro_message(
+            team_fixture.home_team
+            if str(team_fixture.home_team.id) == str(self._team_id)
+            else team_fixture.away_team
         )["last_match"]
 
         highlights_yt_url = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
@@ -187,7 +193,7 @@ class TeamFixturesManager:
 
         telegram_message = (
             f"{Emojis.WAVING_HAND.value}Hola {user}!\n\n"
-            f"{intro_message} "
+            f"{team_intro_message} "
             f"jugó el {spanish_format_date}! \nEste fue el resultado: \n\n"
             f"{team_fixture.matched_played_telegram_like_repr()}"
             f"{highlights_text}"
@@ -207,9 +213,14 @@ class TeamFixturesManager:
             else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
         )
 
-        intro_message = get_team_intro_messages(
-            self._team_id, is_group_notification=True, is_on_demand=is_on_demand
+        first_phrase = get_first_phrase_msg(True, is_on_demand)
+        team_intro_message = get_team_intro_message(
+            team_fixture.home_team
+            if str(team_fixture.home_team.id) == str(self._team_id)
+            else team_fixture.away_team
         )["next_match"]
+
+        intro_message = f"{first_phrase} {team_intro_message}"
 
         telegram_message = (
             f"{Emojis.WAVING_HAND.value}Hola {user}! "
@@ -230,8 +241,11 @@ class TeamFixturesManager:
             if team_standing
             else ""
         )
-        intro_message = get_team_intro_messages(
-            self._team_id, is_group_notification=True
+
+        team_intro_message = get_team_intro_message(
+            team_fixture.home_team
+            if str(team_fixture.home_team.id) == str(self._team_id)
+            else team_fixture.away_team
         )["last_match"]
 
         highlights_yt_url = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
@@ -242,7 +256,7 @@ class TeamFixturesManager:
             if is_subscripted_for_team(recipient, self._team_id):
                 telegram_message = (
                     f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n"
-                    f"{intro_message} "
+                    f"{team_intro_message} "
                     f"jugó ayer! \nEste fue el resultado: \n\n"
                     f"{team_fixture.matched_played_telegram_like_repr()}"
                     f"\n{highlights_text}"
@@ -254,7 +268,6 @@ class TeamFixturesManager:
                 )
 
         # email
-        intro_message = get_team_intro_messages(self._team_id)["last_match"]
         team_standing_email_msg = (
             f"Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}"
             if team_standing
@@ -269,7 +282,7 @@ class TeamFixturesManager:
         EMAIL_RECIPIENTS = NotifConfig.EMAIL_RECIPIENTS
         for recipient in EMAIL_RECIPIENTS:
             message = (
-                f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n{intro_message} "
+                f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n{team_intro_message} "
                 f"jugó ayer!<br /><br />{match_image_text}<br /><br />Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
                 f"<br /><br />{email_standing_message}<br /><br />{highlights_text}"
             )
@@ -292,13 +305,19 @@ class TeamFixturesManager:
             else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
         )
 
+        first_phrase = get_first_phrase_msg(True)
+        team_intro_message = get_team_intro_message(
+            team_fixture.home_team
+            if str(team_fixture.home_team.id) == str(self._team_id)
+            else team_fixture.away_team
+        )["next_match"]
+
+        intro_message = f"{first_phrase} {team_intro_message}"
+
         # telegram
         FOOTBALL_TELEGRAM_RECIPIENTS = NotifConfig.TELEGRAM_RECIPIENTS
         for recipient in FOOTBALL_TELEGRAM_RECIPIENTS:
             if is_subscripted_for_team(recipient, self._team_id):
-                intro_message = get_team_intro_messages(
-                    self._team_id, is_group_notification=True
-                )["next_match"]
                 telegram_message = (
                     f"{Emojis.WAVING_HAND.value}Hola "
                     f"{recipient.name}!\n\n{intro_message} {date_text}\n\n{team_fixture.telegram_like_repr()}"
@@ -312,7 +331,6 @@ class TeamFixturesManager:
         # email
         EMAIL_RECIPIENTS = NotifConfig.EMAIL_RECIPIENTS
         for recipient in EMAIL_RECIPIENTS:
-            intro_message = get_team_intro_messages(self._team_id)["next_match"]
             message = f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n{intro_message} {date_text}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
             send_email_html(
                 f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",
@@ -339,7 +357,6 @@ class TeamFixturesManager:
         # email
         EMAIL_RECIPIENTS = NotifConfig.EMAIL_RECIPIENTS
         for recipient in EMAIL_RECIPIENTS:
-            intro_message = get_team_intro_messages(self._team_id)["next_match"]
             message = f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n{intro_message}\n\n<br /><br />{match_image_text}<br /><br />{team_fixture.email_like_repr()}"
             send_email_html(
                 f"{team_fixture.home_team.name} vs. {team_fixture.away_team.name}",

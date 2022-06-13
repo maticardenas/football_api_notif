@@ -2,7 +2,7 @@ import logging
 from datetime import date
 
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, CommandHandler
 
 from config.notif_config import NotifConfig
 from src.emojis import Emojis
@@ -14,13 +14,14 @@ logging.basicConfig(
 )
 
 
-
 async def start(update: Update, context):
-    await context.bot.send_message(
+    await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        text=f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, soy FootballNotifier bot!\n\n"
-        f"{Emojis.JOYSTICK.value} /next_match - Chequeá mis comandos disponibles con este comando ;) \n\n"
+        photo="https://media.api-sports.io/football/players/154.png",
+        caption=f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, soy FootballNotifier bot!\n\n"
+        f"{Emojis.JOYSTICK.value} /help - Chequeá mis comandos disponibles ;) \n\n"
         f"{Emojis.GOAT.value} {Emojis.ARGENTINA.value} Vamos Messi!",
+        parse_mode="HTML",
     )
 
 
@@ -82,7 +83,7 @@ async def last_match(update: Update, context):
 
 if __name__ == "__main__":
     application = ApplicationBuilder().token(NotifConfig.TELEGRAM_TOKEN).build()
-    start_handler = CommandHandler("fn_start", start)
+    start_handler = CommandHandler("start", start)
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
     help_handler = CommandHandler("help", help)
