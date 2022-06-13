@@ -1,8 +1,9 @@
 import os
 
 from config.config_utils import (
-    get_telegram_recipients_config,
     get_email_recipients_config,
+    get_managed_teams_config,
+    get_telegram_recipients_config,
 )
 
 
@@ -22,6 +23,7 @@ class NotifConfig:
     # TELEGRAM
     TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
     TELEGRAM_RECIPIENTS = get_telegram_recipients_config()
+    MANAGED_TEAMS = get_managed_teams_config()
 
     # EMAIL
     SMTP_SERVER = os.environ.get("SMTP_SERVER")

@@ -14,5 +14,3 @@ if __name__ == "__main__":
         team_fixtures_manager.notify_next_fixture_db()
     elif notif_type == "played_match":
         team_fixtures_manager.notify_last_fixture_db()
-    else:
-        team_fixtures_manager.notify_fixture_line_up_update()

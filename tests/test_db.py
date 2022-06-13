@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from db.db_manager import NotifierDBManager
+from src.db.db_manager import NotifierDBManager
 
 
 @patch("db.db_manager.create_engine")

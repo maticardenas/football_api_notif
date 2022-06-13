@@ -30,12 +30,6 @@ class Team:
     picture: str
     aliases: list
 
-    def save(self) -> None:
-        team = DBTeam(
-            id=self.id, name=self.name, picture=self.picture, aliases=self.aliases
-        )
-        NOTIF_DB_MANAGER.insert_record(team)
-
 
 @dataclass
 class Championship:
