@@ -14,11 +14,6 @@ logging.basicConfig(
 )
 
 
-async def echo_test(update: Update, context):
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=update.message.text
-    )
-
 
 async def start(update: Update, context):
     await context.bot.send_message(
@@ -88,12 +83,10 @@ async def last_match(update: Update, context):
 if __name__ == "__main__":
     application = ApplicationBuilder().token(NotifConfig.TELEGRAM_TOKEN).build()
     start_handler = CommandHandler("fn_start", start)
-    echo_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), echo_test)
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
     help_handler = CommandHandler("help", help)
     application.add_handler(start_handler)
-    application.add_handler(echo_handler)
     application.add_handler(next_match_handler)
     application.add_handler(last_match_handler)
     application.add_handler(help_handler)
