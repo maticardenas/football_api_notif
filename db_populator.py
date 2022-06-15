@@ -1,8 +1,7 @@
-import sys
 from datetime import date
 from typing import List
 
-from sqlmodel import select, or_
+from sqlmodel import select
 
 from config.config_utils import get_managed_teams_config
 from src.api.fixtures_client import FixturesClient
@@ -95,7 +94,6 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
     NOTIFIER_DB_MANAGER.insert_records(db_fixtures)
 
 
-
 def populate_data(is_initial: bool = False) -> None:
     managed_teams = get_managed_teams_config()
     fixtures_client = FixturesClient()
@@ -108,7 +106,7 @@ def populate_data(is_initial: bool = False) -> None:
             if "response" in team_fixtures.as_dict:
                 save_fixtures(team_fixtures.as_dict["response"])
 
-        team_fixtures = fixtures_client.get_fixtures_by(current_year, team.id)
+        team_fixtures = fixtures_client.get_fixtures_by(str(current_year), team.id)
         if "response" in team_fixtures.as_dict:
             save_fixtures(team_fixtures.as_dict["response"])
 
