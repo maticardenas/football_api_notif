@@ -31,6 +31,7 @@ async def help(update: Update, context):
         f" {Emojis.JOYSTICK.value} Estos son mis comandos disponibles (por ahora):\n\n"
         f"• /next_match <team>: próximo partido del equipo.\n"
         f"• /last_match <team>: último partido jugado del equipo."
+        f"• /available_teams: equipos disponibles."
     )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
@@ -60,12 +61,20 @@ async def next_match(update: Update, context):
         text, photo = team_fixtures_manager.get_next_team_fixture_text(
             update.effective_user.first_name
         )
-        await context.bot.send_photo(
-            chat_id=update.effective_chat.id,
-            photo=photo,
-            caption=text,
-            parse_mode="HTML",
-        )
+        if photo:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=photo,
+                caption=text,
+                parse_mode="HTML",
+            )
+        else:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=text,
+                parse_mode="HTML",
+            )
+
 
 
 async def last_match(update: Update, context):
@@ -83,12 +92,19 @@ async def last_match(update: Update, context):
         text, photo = team_fixtures_manager.get_last_team_fixture_text(
             update.effective_user.first_name
         )
-        await context.bot.send_photo(
-            chat_id=update.effective_chat.id,
-            photo=photo,
-            caption=text,
-            parse_mode="HTML",
-        )
+        if photo:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=photo,
+                caption=text,
+                parse_mode="HTML",
+            )
+        else:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=text,
+                parse_mode="HTML",
+            )
 
 
 if __name__ == "__main__":
