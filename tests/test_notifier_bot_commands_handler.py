@@ -10,16 +10,19 @@ from src.telegram_bot.bot_commands_handler import NotifierBotCommandsHandler
 def test_get_managed_team(mocked_get_managed_teams_config):
     # given
     managed_team_river = ManagedTeam(
-            "435",
-            "River Plate",
-            "river",
-        )
+        "435",
+        "River Plate",
+        "river",
+    )
     managed_team_psg = ManagedTeam(
-            "85",
-            "Paris Saint Germain",
-            "psg",
-        )
-    mocked_get_managed_teams_config.return_value = [managed_team_river, managed_team_psg]
+        "85",
+        "Paris Saint Germain",
+        "psg",
+    )
+    mocked_get_managed_teams_config.return_value = [
+        managed_team_river,
+        managed_team_psg,
+    ]
     notifier_commands_handler = NotifierBotCommandsHandler()
 
     # when
@@ -42,27 +45,28 @@ def test_available_command_team_names(mocked_get_managed_teams_config):
         "Paris Saint Germain",
         "psg",
     )
-    mocked_get_managed_teams_config.return_value = [managed_team_river, managed_team_psg]
+    mocked_get_managed_teams_config.return_value = [
+        managed_team_river,
+        managed_team_psg,
+    ]
     notifier_commands_handler = NotifierBotCommandsHandler()
 
     # when
-    available_command_team_names = notifier_commands_handler.available_command_team_names()
+    available_command_team_names = (
+        notifier_commands_handler.available_command_team_names()
+    )
 
     # then
     assert available_command_team_names == ["river", "psg"]
 
 
-
 @pytest.mark.parametrize(
-    "team, is_available",
-    [
-        ("river", True),
-        ("psg", True),
-        ("mancity", False)
-    ]
+    "team, is_available", [("river", True), ("psg", True), ("mancity", False)]
 )
 @patch("src.telegram_bot.bot_commands_handler.get_managed_teams_config")
-def test_is_available_team(mocked_get_managed_teams_config, team: str, is_available: bool):
+def test_is_available_team(
+    mocked_get_managed_teams_config, team: str, is_available: bool
+):
     # given
     managed_team_river = ManagedTeam(
         "435",
@@ -74,7 +78,10 @@ def test_is_available_team(mocked_get_managed_teams_config, team: str, is_availa
         "Paris Saint Germain",
         "psg",
     )
-    mocked_get_managed_teams_config.return_value = [managed_team_river, managed_team_psg]
+    mocked_get_managed_teams_config.return_value = [
+        managed_team_river,
+        managed_team_psg,
+    ]
     notifier_commands_handler = NotifierBotCommandsHandler()
 
     # when - then

@@ -3,6 +3,7 @@ from typing import List
 
 from sqlmodel import select
 
+from config.config_utils import get_managed_teams_config
 from src.api.fixtures_client import FixturesClient
 from src.db.db_manager import NotifierDBManager
 from src.db.notif_sql_models import Fixture as DBFixture
@@ -94,8 +95,15 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
 
 
 if __name__ == "__main__":
-    season = sys.argv[1]
-    team = sys.argv[2]
+    managed_teams = get_managed_teams_config()
     fixtures_client = FixturesClient()
-    team_fixtures = fixtures_client.get_fixtures_by(season, team)
-    save_fixtures(team_fixtures.as_dict["response"])
+    for team in managed_teams:
+        fixtures = NOTIFIER_DB_MANAGER.select_records(select(DBFixture))
+        if not len(fixtures):
+            team_fixtures = fixtures_client.get_fixtures_by("2021", team.id)
+            if "response" in team_fixtures.as_dict:
+                save_fixtures(team_fixtures.as_dict["response"])
+
+        team_fixtures = fixtures_client.get_fixtures_by("2022", team.id)
+        if "response" in team_fixtures.as_dict:
+            save_fixtures(team_fixtures.as_dict["response"])

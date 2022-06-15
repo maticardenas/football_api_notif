@@ -10,11 +10,6 @@
     "command_name": "psg"
   },
   {
-    "id": "26",
-    "name": "Argentina",
-    "command_name": "argentina"
-  },
-  {
     "id": "451",
     "name": "Boca Juniors",
     "command_name": "boca"
@@ -26,7 +21,72 @@
   },
   {
     "id": "50",
-    "name": "Machester City",
+    "name": "Manchester City",
     "command_name": "mancity"
+  },
+  {
+    "id": "1957",
+    "name": "Racing de Cordoba",
+    "command_name": "racingcor"
+  },
+  {
+    "id": "457",
+    "name": "Newell's",
+    "command_name": "newells"
+  },
+  {
+    "id": "529",
+    "name": "Barcelona",
+    "command_name": "barcelona"
+  },
+  {
+    "id": "40",
+    "name": "Liverpool",
+    "command_name": "liverpool"
+  },
+  {
+    "id": "33",
+    "name": "Manchester United",
+    "command_name": "manutd"
+  },
+  {
+    "id": "157",
+    "name": "Bayern Munich",
+    "command_name": "manutd"
+  },
+  {
+    "id": "505",
+    "name": "Inter Milan",
+    "command_name": "inter"
+  },
+  {
+    "id": "26",
+    "name": "Argentina",
+    "command_name": "argentina"
+  },
+  {
+    "id": "2",
+    "name": "Francia",
+    "command_name": "france"
+  },
+  {
+    "id": "6",
+    "name": "Brasil",
+    "command_name": "brazil"
+  },
+  {
+    "id": "768",
+    "name": "Italia",
+    "command_name": "italy"
+  },
+  {
+    "id": "1118",
+    "name": "Países Bajos",
+    "command_name": "netherlands"
+  },
+  {
+    "id": "10",
+    "name": "Inglaterra",
+    "command_name": "england"
   }
 ]

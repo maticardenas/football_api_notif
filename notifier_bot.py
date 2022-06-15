@@ -7,7 +7,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler
 from config.notif_config import NotifConfig
 from src.emojis import Emojis
 from src.team_fixtures_manager import TeamFixturesManager
-from src.telegram_bot.bot_commands_handler import NextAndLastMatchCommandHandler
+from src.telegram_bot.bot_commands_handler import NextAndLastMatchCommandHandler, NotifierBotCommandsHandler
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -31,6 +31,16 @@ async def help(update: Update, context):
         f" {Emojis.JOYSTICK.value} Estos son mis comandos disponibles (por ahora):\n\n"
         f"• /next_match <team>: próximo partido del equipo.\n"
         f"• /last_match <team>: último partido jugado del equipo."
+    )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+async def available_teams(update: Update, context):
+    notifier_commands_handler = NotifierBotCommandsHandler()
+    text = (
+        f"{Emojis.WAVING_HAND.value}Hola {update.effective_user.first_name}!\n\n"
+        f" {Emojis.TELEVISION.value} Estos son los equipos disponibles:\n\n"
+        f"{notifier_commands_handler.available_teams_text()}"
     )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
@@ -86,10 +96,12 @@ if __name__ == "__main__":
     start_handler = CommandHandler("start", start)
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
+    available_teams_handler = CommandHandler("available_teams", available_teams)
     help_handler = CommandHandler("help", help)
     application.add_handler(start_handler)
     application.add_handler(next_match_handler)
     application.add_handler(last_match_handler)
     application.add_handler(help_handler)
+    application.add_handler(available_teams_handler)
 
     application.run_polling()
