@@ -131,7 +131,8 @@ class Fixture:
 
     def __post_init__(self) -> None:
         self.is_next_day = "(+1)" if self._is_next_day_in_europe() else ""
-        self.futbol_libre_url = "https://futbollibre.online/es/"
+        self.futbol_libre_url = "https://futbollibre.net"
+        self.futbol_para_todos_url = "https://futbolparatodos.online/es/"
 
     def remaining_time(self) -> RemainingTime:
         days = self.date_diff // 86400
@@ -170,7 +171,8 @@ class Fixture:
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong><p>"
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:<p>"
             # f"{self.line_up_email_message()}<p>"
-            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming online</a>"
+            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FutbolLibre)</a><br />"
+            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (Futbol Para Todos)</a>"
         )
 
     def telegram_like_repr(self) -> str:
@@ -184,7 +186,8 @@ class Fixture:
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>\n\n"
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
             # f"{self.line_up_message() if self.line_up else ''}\n\n"
-            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming online</a>"
+            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FutbolLibre)</a>\n"
+            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (Futbol Para Todos)</a>"
         )
 
     def line_up_message(self) -> str:
