@@ -172,7 +172,7 @@ class Fixture:
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:<p>"
             # f"{self.line_up_email_message()}<p>"
             f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FutbolLibre)</a><br />"
-            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (Futbol Para Todos)</a>"
+            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FPT)</a>"
         )
 
     def telegram_like_repr(self) -> str:
@@ -187,7 +187,7 @@ class Fixture:
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
             # f"{self.line_up_message() if self.line_up else ''}\n\n"
             f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FutbolLibre)</a>\n"
-            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (Futbol Para Todos)</a>"
+            f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FPT)</a>"
         )
 
     def line_up_message(self) -> str:

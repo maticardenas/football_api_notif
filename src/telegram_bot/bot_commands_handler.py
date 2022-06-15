@@ -46,7 +46,7 @@ class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
         elif len(self._command_args) > 1:
             response = "Sólo puedes ingresar un equipo"
         else:
-            team = self._command_args[0]
+            team = self._command_args[0].lower()
             if not self.is_available_team(team):
                 response = (
                     f"Oops! '{team}' no está disponible :(\n\n"
