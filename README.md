@@ -14,7 +14,16 @@ So far, it processes information about specific team's **fixtures**, informing p
 
 ## Bot Commands
 
+- `/start` - Bot's introductory message.
+
+- `help` - Information about bot's commands and what they provide.
+
+- `available_teams` - Available team's that can be queried with the other commands.
+
+
 - `/next_match <team>` > Retrieves information about next scheduled match for an specific team, including rival, date (in different timezones), league and round which is being played.
+
+
 - `/last_match <team>` > Retrieves information about last match played by the specific team, including  scores, rival, date (in different timezones), league, roung and highlights
 
 
