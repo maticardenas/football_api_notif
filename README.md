@@ -6,6 +6,8 @@
 
 This application consumes, stores and processes football information and makes it available through a Telegram bot.
 
+For adding this bot to telegram you should search it as `@card_football_bot`
+
 
 ## Main Functionalities
 
