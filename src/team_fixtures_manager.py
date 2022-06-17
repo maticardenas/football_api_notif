@@ -236,11 +236,11 @@ class TeamFixturesManager:
         match_image_url = random.choice(match_images)
 
         # telegram
-        team_standing_msg = (
-            f"{Emojis.RED_EXCLAMATION_MARK.value} Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
-            if team_standing
-            else ""
-        )
+        # team_standing_msg = (
+        #     f"{Emojis.RED_EXCLAMATION_MARK.value} Situación actual en el campeonato: \n\n{team_standing.telegram_like_repr()}\n"
+        #     if team_standing
+        #     else ""
+        # )
 
         team_intro_message = get_team_intro_message(
             team_fixture.home_team
@@ -268,31 +268,31 @@ class TeamFixturesManager:
                 )
 
         # email
-        team_standing_email_msg = (
-            f"Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}"
-            if team_standing
-            else ""
-        )
-        match_image_text = f"<img src='{match_image_url}'>"
-        email_standing_message = (
-            f"{Emojis.RED_EXCLAMATION_MARK.value}{team_standing_email_msg}\n"
-        )
-        highlights_text = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
-
-        EMAIL_RECIPIENTS = NotifConfig.EMAIL_RECIPIENTS
-        for recipient in EMAIL_RECIPIENTS:
-            message = (
-                f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n{team_intro_message} "
-                f"jugó ayer!<br /><br />{match_image_text}<br /><br />Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
-                f"<br /><br />{email_standing_message}<br /><br />{highlights_text}"
-            )
-
-            send_email_html(
-                f"{team_fixture.home_team.name} ({team_fixture.match_score.home_score}) - "
-                f"({team_fixture.match_score.away_score}) {team_fixture.away_team.name}",
-                message,
-                recipient.email,
-            )
+        # team_standing_email_msg = (
+        #     f"Situación actual en el campeonato: \n\n{team_standing.email_like_repr()}"
+        #     if team_standing
+        #     else ""
+        # )
+        # match_image_text = f"<img src='{match_image_url}'>"
+        # email_standing_message = (
+        #     f"{Emojis.RED_EXCLAMATION_MARK.value}\n"
+        # )
+        # highlights_text = f"https://www.youtube.com/results?search_query={team_fixture.home_team.name}+vs+{team_fixture.away_team.name}+jugadas+resumen"
+        #
+        # EMAIL_RECIPIENTS = NotifConfig.EMAIL_RECIPIENTS
+        # for recipient in EMAIL_RECIPIENTS:
+        #     message = (
+        #         f"{Emojis.WAVING_HAND.value}Hola {recipient.name}!\n\n{team_intro_message} "
+        #         f"jugó ayer!<br /><br />{match_image_text}<br /><br />Este fue el resultado: \n\n{team_fixture.matched_played_email_like_repr()}"
+        #         f"<br /><br />{email_standing_message}<br /><br />{highlights_text}"
+        #     )
+        #
+        #     send_email_html(
+        #         f"{team_fixture.home_team.name} ({team_fixture.match_score.home_score}) - "
+        #         f"({team_fixture.match_score.away_score}) {team_fixture.away_team.name}",
+        #         message,
+        #         recipient.email,
+        #     )
 
     def _perform_fixture_notification(self, team_fixture: Fixture) -> None:
         spanish_format_date = get_date_spanish_text_format(team_fixture.bsas_date)

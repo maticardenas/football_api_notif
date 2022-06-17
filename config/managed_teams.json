@@ -15,9 +15,29 @@
     "command_name": "boca"
   },
   {
+    "id": "453",
+    "name": "Independiente",
+    "command_name": "independiente"
+  },
+  {
+    "id": "436",
+    "name": "Racing",
+    "command_name": "racing"
+  },
+  {
     "id": "440",
     "name": "Belgrano",
     "command_name": "belgrano"
+  },
+  {
+    "id": "456",
+    "name": "Talleres",
+    "command_name": "talleres"
+  },
+  {
+    "id": "478",
+    "name": "Instituto",
+    "command_name": "instituto"
   },
   {
     "id": "50",
