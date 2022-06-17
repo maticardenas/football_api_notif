@@ -30,7 +30,7 @@ async def help(update: Update, context):
         f"{Emojis.WAVING_HAND.value}Hola {update.effective_user.first_name}!\n\n"
         f" {Emojis.JOYSTICK.value} Estos son mis comandos disponibles (por ahora):\n\n"
         f"• /next_match <team>: próximo partido del equipo.\n"
-        f"• /last_match <team>: último partido jugado del equipo."
+        f"• /last_match <team>: último partido jugado del equipo.\n"
         f"• /available_teams: equipos disponibles."
     )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
