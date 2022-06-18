@@ -1,4 +1,3 @@
-import logging
 from datetime import date
 
 from telegram import Update
@@ -6,15 +5,14 @@ from telegram.ext import ApplicationBuilder, CommandHandler
 
 from config.notif_config import NotifConfig
 from src.emojis import Emojis
+from src.notifier_logger import get_logger
 from src.team_fixtures_manager import TeamFixturesManager
 from src.telegram_bot.bot_commands_handler import NextAndLastMatchCommandHandler, NotifierBotCommandsHandler
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-
+logger = get_logger(__name__)
 
 async def start(update: Update, context):
+    logger.info(f"'start' command executed - by {update.effective_user.name}")
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo="https://media.api-sports.io/football/players/154.png",
@@ -26,6 +24,7 @@ async def start(update: Update, context):
 
 
 async def help(update: Update, context):
+    logger.info(f"'help' command executed - by {update.effective_user.name}")
     text = (
         f"{Emojis.WAVING_HAND.value}Hola {update.effective_user.first_name}!\n\n"
         f" {Emojis.JOYSTICK.value} Estos son mis comandos disponibles (por ahora):\n\n"
@@ -37,6 +36,7 @@ async def help(update: Update, context):
 
 
 async def available_teams(update: Update, context):
+    logger.info(f"'available_teams' command executed - by {update.effective_user.name}")
     notifier_commands_handler = NotifierBotCommandsHandler()
     text = (
         f"{Emojis.WAVING_HAND.value}Hola {update.effective_user.first_name}!\n\n"
@@ -47,6 +47,7 @@ async def available_teams(update: Update, context):
 
 
 async def next_match(update: Update, context):
+    logger.info(f"'next_match {' '.join(context.args)}' command executed - by {update.effective_user.name}")
     command_handler = NextAndLastMatchCommandHandler(context.args)
     validated_input = command_handler.validate_command_input()
 
@@ -61,6 +62,7 @@ async def next_match(update: Update, context):
         text, photo = team_fixtures_manager.get_next_team_fixture_text(
             update.effective_user.first_name
         )
+        logger.info(f"Fixture - text: {text} - photo: {photo}")
         if photo:
             await context.bot.send_photo(
                 chat_id=update.effective_chat.id,
@@ -78,6 +80,7 @@ async def next_match(update: Update, context):
 
 
 async def last_match(update: Update, context):
+    logger.info(f"'last_match {' '.join(context.args)}' command executed - by {update.effective_user.name}")
     command_handler = NextAndLastMatchCommandHandler(context.args)
     validated_input = command_handler.validate_command_input()
 
@@ -92,6 +95,7 @@ async def last_match(update: Update, context):
         text, photo = team_fixtures_manager.get_last_team_fixture_text(
             update.effective_user.first_name
         )
+        logger.info(f"Fixture - text: {text} - photo: {photo}")
         if photo:
             await context.bot.send_photo(
                 chat_id=update.effective_chat.id,

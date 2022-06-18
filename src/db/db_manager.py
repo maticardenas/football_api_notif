@@ -3,7 +3,9 @@ from typing import Any, List
 from sqlmodel import Session, SQLModel, create_engine
 
 from config.notif_config import NotifConfig
+from src.notifier_logger import get_logger
 
+logger = get_logger(__name__)
 
 class NotifierDBManager:
     ENGINE = None
@@ -25,6 +27,7 @@ class NotifierDBManager:
         self._engine = NotifierDBManager.ENGINE
 
     def create_db_and_tables(self) -> None:
+        logger.info("Creating database and tables")
         SQLModel.metadata.create_all(self._engine)
 
     def insert_record(self, db_object: Any) -> None:

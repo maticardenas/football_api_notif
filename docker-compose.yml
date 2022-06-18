@@ -19,3 +19,5 @@ services:
       - POSTGRES_DB=notifier_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=supersecretpassword
+    volumes:
+      - ./data:/var/lib/postgresql/data
