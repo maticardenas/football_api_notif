@@ -84,7 +84,7 @@ class TeamFixturesManager:
                 self._perform_fixture_notification(next_team_fixture)
 
             logger.info(
-                f"Fixture found for team {self._team_id} is not in less than {NotifConfig.NEXT_MATCH_THRESHOLD}, therefore not notifying"
+                f"Fixture found for team {self._team_id} is not in less than {NotifConfig.NEXT_MATCH_THRESHOLD} days, therefore not notifying"
             )
 
         logger.info(f"Not next fixture found for team {self._team_id}")
