@@ -7,6 +7,7 @@ from src.notifier_logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class NotifierDBManager:
     ENGINE = None
 

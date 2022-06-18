@@ -7,9 +7,13 @@ from config.notif_config import NotifConfig
 from src.emojis import Emojis
 from src.notifier_logger import get_logger
 from src.team_fixtures_manager import TeamFixturesManager
-from src.telegram_bot.bot_commands_handler import NextAndLastMatchCommandHandler, NotifierBotCommandsHandler
+from src.telegram_bot.bot_commands_handler import (
+    NextAndLastMatchCommandHandler,
+    NotifierBotCommandsHandler,
+)
 
 logger = get_logger(__name__)
+
 
 async def start(update: Update, context):
     logger.info(f"'start' command executed - by {update.effective_user.name}")
@@ -47,7 +51,9 @@ async def available_teams(update: Update, context):
 
 
 async def next_match(update: Update, context):
-    logger.info(f"'next_match {' '.join(context.args)}' command executed - by {update.effective_user.name}")
+    logger.info(
+        f"'next_match {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+    )
     command_handler = NextAndLastMatchCommandHandler(context.args)
     validated_input = command_handler.validate_command_input()
 
@@ -78,9 +84,10 @@ async def next_match(update: Update, context):
             )
 
 
-
 async def last_match(update: Update, context):
-    logger.info(f"'last_match {' '.join(context.args)}' command executed - by {update.effective_user.name}")
+    logger.info(
+        f"'last_match {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+    )
     command_handler = NextAndLastMatchCommandHandler(context.args)
     validated_input = command_handler.validate_command_input()
 

@@ -17,12 +17,15 @@ NOTIFIER_DB_MANAGER = NotifierDBManager()
 
 logger = get_logger(__name__)
 
+
 def insert_league(fixture_league: Championship) -> DBLeague:
     league_statement = select(DBLeague).where(DBLeague.id == fixture_league.league_id)
     retrieved_league = NOTIFIER_DB_MANAGER.select_records(league_statement)
 
     if not len(retrieved_league):
-        logger.info(f"Inserting League {fixture_league.name} - it does not exist in the database")
+        logger.info(
+            f"Inserting League {fixture_league.name} - it does not exist in the database"
+        )
         league = DBLeague(
             id=fixture_league.league_id,
             name=fixture_league.name,
@@ -40,7 +43,9 @@ def insert_team(fixture_team: Team) -> DBTeam:
     retrieved_team = NOTIFIER_DB_MANAGER.select_records(team_statement)
 
     if not len(retrieved_team):
-        logger.info(f"Inserting Team {fixture_team.name} - it does not exist in the database")
+        logger.info(
+            f"Inserting Team {fixture_team.name} - it does not exist in the database"
+        )
         team = DBTeam(
             id=fixture_team.id,
             name=fixture_team.name,
@@ -72,7 +77,9 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
         retrieved_fixture = NOTIFIER_DB_MANAGER.select_records(fixture_statement)
 
         if not len(retrieved_fixture):
-            logger.info(f"Inserting Fixture {conv_fix.home_team.name} vs {conv_fix.away_team.name} - it does not exist in the database")
+            logger.info(
+                f"Inserting Fixture {conv_fix.home_team.name} vs {conv_fix.away_team.name} - it does not exist in the database"
+            )
             db_fixture = DBFixture(
                 id=conv_fix.id,
                 utc_date=conv_fix.utc_date,
@@ -84,7 +91,9 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
                 away_score=conv_fix.match_score.away_score,
             )
         else:
-            logger.info(f"Updating Fixture {conv_fix.home_team.name} vs {conv_fix.away_team.name}")
+            logger.info(
+                f"Updating Fixture {conv_fix.home_team.name} vs {conv_fix.away_team.name}"
+            )
             db_fixture = retrieved_fixture.pop()
             db_fixture.id = conv_fix.id
             db_fixture.utc_date = conv_fix.utc_date
