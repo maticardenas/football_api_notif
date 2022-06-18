@@ -12,6 +12,7 @@ from src.db.notif_sql_models import League as DBLeague
 from src.db.notif_sql_models import Team as DBTeam
 from src.emojis import Emojis
 from src.entities import Fixture, TeamStanding
+from src.notifier_logger import get_logger
 from src.senders.email_sender import send_email_html
 from src.senders.telegram_sender import send_telegram_message
 from src.utils.date_utils import get_date_spanish_text_format
@@ -28,6 +29,9 @@ from src.utils.message_utils import (
     get_team_intro_message,
     is_subscripted_for_team,
 )
+
+
+logger = get_logger(__name__)
 
 
 class TeamFixturesManager:
@@ -73,8 +77,17 @@ class TeamFixturesManager:
         next_team_fixture = self.get_next_team_fixture()
 
         if next_team_fixture:
-            if next_team_fixture.remaining_time().days < NotifConfig.NEXT_MATCH_THRESHOLD:
+            if (
+                next_team_fixture.remaining_time().days
+                < NotifConfig.NEXT_MATCH_THRESHOLD
+            ):
                 self._perform_fixture_notification(next_team_fixture)
+
+            logger.info(
+                f"Fixture found for team {self._team_id} is not in less than {NotifConfig.NEXT_MATCH_THRESHOLD}, therefore not notifying"
+            )
+
+        logger.info(f"Not next fixture found for team {self._team_id}")
 
     def notify_next_fixture(self) -> None:
         team_fixtures = self._fixtures_client.get_fixtures_by(
@@ -112,12 +125,13 @@ class TeamFixturesManager:
             ):
                 self._perform_line_up_confirmed_notification(next_team_fixture)
             else:
-                print(
+                logger.info(
                     f"There is still no line up for the match of {next_team_fixture.home_team} vs {next_team_fixture.away_team}"
                 )
-                print(str(next_team_fixture.remaining_time()))
+                logger.info(str(next_team_fixture.remaining_time()))
 
     def get_last_team_fixture(self) -> Optional[Fixture]:
+        logger.info(f"Getting last fixture for team {self._team_id}")
         fixtures_statement = select(DBFixture).where(
             or_(
                 DBFixture.home_team == self._team_id,
@@ -134,6 +148,7 @@ class TeamFixturesManager:
         return last_team_fixture
 
     def notify_last_fixture_db(self) -> None:
+        logger.info(f"Getting last fixture for team {self._team_id} from db")
         fixtures_statement = select(DBFixture).where(
             or_(
                 DBFixture.home_team == self._team_id,
@@ -154,6 +169,11 @@ class TeamFixturesManager:
                 <= 0
             ):
                 self._perform_last_fixture_notification(last_team_fixture)
+            logger.info(
+                f"Last fixture found for team {self._team_id} has not been played in less than {abs(NotifConfig.LAST_MATCH_THRESHOLD_DAYS)} days, therefore not notifying"
+            )
+
+        logger.info(f"Not last fixture found for team {self._team_id}")
 
     def notify_last_fixture(self) -> None:
         team_fixtures = self._fixtures_client.get_fixtures_by(
