@@ -26,7 +26,8 @@ from src.entities import (
     Team,
     TeamStanding,
 )
-from src.utils.date_utils import TimeZones, get_time_in_time_zone
+from src.utils.date_utils import TimeZones, get_time_in_time_zone, \
+    get_formatted_date
 from src.utils.message_utils import TEAMS_ALIASES
 
 
@@ -106,6 +107,14 @@ def get_last_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
             min_diff = fixture_date_diff
 
     return convert_db_fixture(min_fixture) if min_fixture else None
+
+
+def get_today_fixture_db(team_fixtures) -> Optional[Fixture]:
+    for fixture in team_fixtures:
+        if get_formatted_date(fixture.utc_date).date() == datetime.today().date():
+            return convert_db_fixture(fixture)
+
+    return None
 
 
 def get_last_fixture(

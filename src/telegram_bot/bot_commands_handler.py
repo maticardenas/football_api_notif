@@ -1,12 +1,19 @@
 from typing import List
 
+from sqlmodel import select, or_
+
 from config.config_entities import ManagedTeam
 from config.config_utils import get_managed_teams_config
+from src.db.db_manager import NotifierDBManager
+from src.db.notif_sql_models import Fixture
+
+from src.utils.fixtures_utils import get_today_fixture_db
 
 
 class NotifierBotCommandsHandler:
     def __init__(self):
         self._managed_teams = get_managed_teams_config()
+        self._notifier_db_manager = NotifierDBManager()
 
     def get_managed_team(self, command_name: str) -> ManagedTeam:
         return next(
@@ -31,6 +38,23 @@ class NotifierBotCommandsHandler:
                 for available_team in self.available_command_team_names()
             ]
         )
+
+    def today_games(self) -> List[str]:
+        today_games = []
+        for team in self._managed_teams:
+            statement = select(Fixture).where(
+                or_(
+                    Fixture.home_team == team.id,
+                    Fixture.away_team == team.id,
+                )
+            )
+            team_fixtures = self._notifier_db_manager.select_records(statement)
+
+            today_games.append(get_today_fixture_db(team_fixtures))
+
+
+        return [fixture for fixture in today_games if fixture]
+
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):

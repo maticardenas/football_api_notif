@@ -37,3 +37,7 @@ def get_date_spanish_text_format(date: datetime) -> str:
     return (
         f"{DAYS[date.weekday()]} {date.day} de {MONTHS[date.month-1]} del {date.year}"
     )
+
+
+def get_formatted_date(date: str) -> datetime:
+    return datetime.strptime(date[:-6], "%Y-%m-%dT%H:%M:%S")
