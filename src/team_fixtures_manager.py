@@ -57,14 +57,17 @@ class TeamFixturesManager:
             else ("Fixture para el equipo no encontrado", "")
         )
 
-    def get_next_team_fixture(self) -> Optional[Fixture]:
+    def get_team_db_fixtures(self) -> Optional[List[DBFixture]]:
         fixtures_statement = select(DBFixture).where(
             or_(
                 DBFixture.home_team == self._team_id,
                 DBFixture.away_team == self._team_id,
             )
         )
-        team_fixtures = self._notifier_db_manager.select_records(fixtures_statement)
+        return self._notifier_db_manager.select_records(fixtures_statement)
+
+    def get_next_team_fixture(self) -> Optional[Fixture]:
+        team_fixtures = self.get_team_db_fixtures()
 
         next_team_fixture = None
 
@@ -132,13 +135,7 @@ class TeamFixturesManager:
 
     def get_last_team_fixture(self) -> Optional[Fixture]:
         logger.info(f"Getting last fixture for team {self._team_id}")
-        fixtures_statement = select(DBFixture).where(
-            or_(
-                DBFixture.home_team == self._team_id,
-                DBFixture.away_team == self._team_id,
-            )
-        )
-        team_fixtures = self._notifier_db_manager.select_records(fixtures_statement)
+        team_fixtures = self.get_team_db_fixtures()
 
         last_team_fixture = None
 
