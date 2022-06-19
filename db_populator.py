@@ -117,16 +117,18 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
     NOTIFIER_DB_MANAGER.insert_records(db_fixtures)
 
 
-def populate_initial_data() -> None:
+def populate_data(is_initial=False) -> None:
     fixtures_client = FixturesClient()
     current_year = date.today().year
     last_year = current_year - 1
 
     for team in MANAGED_TEAMS:
         logger.info(f"Saving fixtures for team {team.name}")
-        team_fixtures = fixtures_client.get_fixtures_by(str(last_year), team.id)
-        if "response" in team_fixtures.as_dict:
-            save_fixtures(team_fixtures.as_dict["response"])
+
+        if is_initial:
+            team_fixtures = fixtures_client.get_fixtures_by(str(last_year), team.id)
+            if "response" in team_fixtures.as_dict:
+                save_fixtures(team_fixtures.as_dict["response"])
 
         team_fixtures = fixtures_client.get_fixtures_by(str(current_year), team.id)
         if "response" in team_fixtures.as_dict:
@@ -174,7 +176,4 @@ if __name__ == "__main__":
 
     logger.info(f"IS_INITIAL -> {is_initial}")
 
-    if is_initial:
-        populate_initial_data()
-    else:
-        update_fixtures()
+    populate_data(is_initial)
