@@ -62,7 +62,8 @@ async def next_match(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        team = command_handler.get_managed_team(context.args[0])
+        team_name = context.args[0].lower()
+        team = command_handler.get_managed_team(team_name)
         current_season = date.today().year
         team_fixtures_manager = TeamFixturesManager(current_season, team.id)
         text, photo = team_fixtures_manager.get_next_team_fixture_text(
@@ -96,7 +97,8 @@ async def last_match(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        team = command_handler.get_managed_team(context.args[0])
+        team_name = context.args[0].lower()
+        team = command_handler.get_managed_team(team_name)
         current_season = date.today().year
         team_fixtures_manager = TeamFixturesManager(current_season, team.id)
         text, photo = team_fixtures_manager.get_last_team_fixture_text(
