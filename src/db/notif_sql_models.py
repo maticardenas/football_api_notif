@@ -20,6 +20,18 @@ class Team(SQLModel, table=True):
     aliases: Optional[List[str]]
 
 
+class ManagedTeam(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+    team_command: str
+    team_id: int = Field(foreign_key="team.id")
+
+
+class NotifSubscription(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+    chat_id: str
+    team_ids: List[int] = Field(foreign_key="team.id")
+
+
 class Fixture(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
     id: int = Field(primary_key=True)
