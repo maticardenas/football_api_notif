@@ -21,7 +21,6 @@ MANAGED_TEAMS = get_managed_teams_config()
 logger = get_logger(__name__)
 
 
-
 def insert_league(fixture_league: Championship) -> DBLeague:
     league_statement = select(DBLeague).where(DBLeague.id == fixture_league.league_id)
     retrieved_league = NOTIFIER_DB_MANAGER.select_records(league_statement)
@@ -66,8 +65,12 @@ def save_fixtures(team_fixtures: List[dict]) -> None:
     converted_fixtures = []
     fix_nr = 1
     for fixture in team_fixtures:
-        fixture_match = f'{fixture["teams"]["home"]["name"]} vs. {fixture["teams"]["away"]["name"]}'
-        logger.info(f"Converting & populating fixture {fix_nr}/{len(team_fixtures)} - {fixture_match}")
+        fixture_match = (
+            f'{fixture["teams"]["home"]["name"]} vs. {fixture["teams"]["away"]["name"]}'
+        )
+        logger.info(
+            f"Converting & populating fixture {fix_nr}/{len(team_fixtures)} - {fixture_match}"
+        )
         converted_fixtures.append(convert_fixture_response_to_db(fixture))
         fix_nr += 1
 
@@ -132,11 +135,11 @@ def populate_initial_data() -> None:
 
 def update_fixtures() -> None:
     """
-        This function updates only fixtures corresponding to the
-        last & next match for each managed team, given that this is
-        at the moment the only that the user can query, doesn't make sense to
-        query all the fixtures for all teams. This way we can save dozens of
-        RAPID API hits per day, giving space to multiple other functionalities.
+    This function updates only fixtures corresponding to the
+    last & next match for each managed team, given that this is
+    at the moment the only that the user can query, doesn't make sense to
+    query all the fixtures for all teams. This way we can save dozens of
+    RAPID API hits per day, giving space to multiple other functionalities.
     """
     fixtures_client = FixturesClient()
     fixtures_to_update = get_all_fixtures_to_update()
@@ -147,9 +150,11 @@ def update_fixtures() -> None:
         save_fixtures(team_fixtures.as_dict["response"])
 
 
-def get_fixture_update_lots(fixtures_to_update: List[int], lot_size=20) -> List[List[int]]:
+def get_fixture_update_lots(
+    fixtures_to_update: List[int], lot_size: int = 20
+) -> List[List[int]]:
     for i in range(0, len(fixtures_to_update), lot_size):
-        yield fixtures_to_update[i:i + lot_size]
+        yield fixtures_to_update[i : i + lot_size]
 
 
 def get_all_fixtures_to_update() -> List[DBFixture]:

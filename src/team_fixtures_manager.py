@@ -76,7 +76,6 @@ class TeamFixturesManager:
 
         return next_team_fixture
 
-
     def notify_next_fixture_db(self) -> None:
         next_team_fixture = self.get_next_team_fixture()
 

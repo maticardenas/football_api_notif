@@ -35,7 +35,7 @@ deep-translator = "==1.5.4"
 psycopg2 = "==2.9.3"
 sqlmodel = "0.0.6"
 python-telegram-bot = "==20.0a0"
-
+python-dotenv = "*"
 
 [dev-packages]
 

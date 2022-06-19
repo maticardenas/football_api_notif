@@ -199,7 +199,7 @@ def convert_db_fixture(fixture: DBFixture) -> Fixture:
             away_team.picture,
             get_team_aliases(str(away_team.id)),
         ),
-        MatchScore(fixture.home_score, fixture.away_score)
+        MatchScore(fixture.home_score, fixture.away_score),
     )
 
 

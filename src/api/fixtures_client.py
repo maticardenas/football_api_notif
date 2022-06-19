@@ -9,7 +9,9 @@ class FixturesClient(BaseClient):
         super().__init__()
         self.request = APIRequest()
 
-    def get_fixtures_by(self, season: int = None, team_id: int = None, ids: List[int] = []) -> Dict[str, Any]:
+    def get_fixtures_by(
+        self, season: int = None, team_id: int = None, ids: List[int] = []
+    ) -> Dict[str, Any]:
         endpoint = "/v3/fixtures"
         params = {}
 
