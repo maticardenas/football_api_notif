@@ -199,8 +199,7 @@ def convert_db_fixture(fixture: DBFixture) -> Fixture:
             away_team.picture,
             get_team_aliases(str(away_team.id)),
         ),
-        MatchScore(fixture.home_score, fixture.away_score),
-        # get_line_up(fixture_response["fixture"]["id"], team_id),
+        MatchScore(fixture.home_score, fixture.away_score)
     )
 
 
