@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from src.api.base_client import BaseClient
 from src.request import APIRequest
@@ -9,9 +9,21 @@ class FixturesClient(BaseClient):
         super().__init__()
         self.request = APIRequest()
 
-    def get_fixtures_by(self, season: int, team_id: int) -> Dict[str, Any]:
+    def get_fixtures_by(
+        self, season: int = None, team_id: int = None, ids: List[int] = []
+    ) -> Dict[str, Any]:
         endpoint = "/v3/fixtures"
-        params = {"season": season, "team": team_id}
+        params = {}
+
+        if season:
+            params["season"] = season
+
+        if team_id:
+            params["team"] = team_id
+
+        if len(ids):
+            params["ids"] = "-".join([str(fix_id) for fix_id in ids])
+
         url = f"{self.base_url}{endpoint}"
 
         return self.request.get(url, params, self.headers)
