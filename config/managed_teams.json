@@ -75,6 +75,26 @@
     "command_name": "bayern"
   },
   {
+    "id": "165",
+    "name": "Borussia Dortmund",
+    "command_name": "borussia"
+  },
+  {
+    "id": "42",
+    "name": "Arsenal",
+    "command_name": "arsenal"
+  },
+  {
+    "id": "47",
+    "name": "Tottenham",
+    "command_name": "tottenham"
+  },
+  {
+    "id": "496",
+    "name": "Juventus",
+    "command_name": "juventus"
+  },
+  {
     "id": "505",
     "name": "Inter Milan",
     "command_name": "inter"
