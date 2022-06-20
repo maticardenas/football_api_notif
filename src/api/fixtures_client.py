@@ -1,7 +1,11 @@
 from typing import Any, Dict, List
 
 from src.api.base_client import BaseClient
+from src.notifier_logger import get_logger
 from src.request import APIRequest
+
+
+logger = get_logger(__name__)
 
 
 class FixturesClient(BaseClient):
@@ -26,7 +30,11 @@ class FixturesClient(BaseClient):
 
         url = f"{self.base_url}{endpoint}"
 
-        return self.request.get(url, params, self.headers)
+        response = self.request.get(url, params, self.headers)
+
+        logger.info(f"get_fixtures_by response - {response.status_code}")
+
+        return response
 
     def get_standings_by(self, season: int, team_id: int) -> Dict[str, Any]:
         endpoint = "/v3/standings"
