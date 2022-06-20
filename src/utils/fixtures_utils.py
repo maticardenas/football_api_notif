@@ -112,9 +112,6 @@ def is_today_fixture(team_fixture: DBFixture) -> bool:
     utc_date = datetime.strptime(team_fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
     bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
 
-    import pdb
-
-    pdb.set_trace()
     return bsas_date.date() == datetime.today().date()
 
 
