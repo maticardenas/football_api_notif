@@ -30,7 +30,6 @@ from src.utils.message_utils import (
     is_subscripted_for_team,
 )
 
-
 logger = get_logger(__name__)
 
 

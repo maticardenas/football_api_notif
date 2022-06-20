@@ -1,6 +1,8 @@
-from db_populator import get_fixture_update_lots
 from pathlib import Path
+
 from dotenv import load_dotenv
+
+from db_populator import get_fixture_update_lots
 
 current_path = Path(__file__).parent.absolute()
 env_file = current_path / ".." / "football_notifier.env"

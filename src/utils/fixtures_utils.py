@@ -1,6 +1,6 @@
 import re
 import urllib
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.error import HTTPError
 
@@ -26,7 +26,7 @@ from src.entities import (
     Team,
     TeamStanding,
 )
-from src.utils.date_utils import TimeZones, get_time_in_time_zone, get_formatted_date
+from src.utils.date_utils import TimeZones, get_formatted_date, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 
 
@@ -115,9 +115,24 @@ def is_today_fixture(team_fixture: DBFixture) -> bool:
     return bsas_date.date() == datetime.today().date()
 
 
+def is_yesterday_fixture(team_fixture: DBFixture) -> bool:
+    utc_date = datetime.strptime(team_fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
+    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
+
+    return bsas_date.date() == (datetime.today().date() - timedelta(days=1))
+
+
 def get_today_fixture_db(team_fixtures) -> Optional[Fixture]:
     for fixture in team_fixtures:
         if is_today_fixture(fixture):
+            return convert_db_fixture(fixture)
+
+    return None
+
+
+def get_yesterday_fixture_db(team_fixtures) -> Optional[Fixture]:
+    for fixture in team_fixtures:
+        if is_yesterday_fixture(fixture):
             return convert_db_fixture(fixture)
 
     return None

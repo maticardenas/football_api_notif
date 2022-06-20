@@ -4,7 +4,6 @@ from src.api.base_client import BaseClient
 from src.notifier_logger import get_logger
 from src.request import APIRequest
 
-
 logger = get_logger(__name__)
 
 
