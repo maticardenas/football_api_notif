@@ -225,7 +225,7 @@ class TeamFixturesManager:
         match_image_url = random.choice(match_images)
         date_text = (
             "es HOY!"
-            if team_fixture.bsas_date.day == datetime.today().day
+            if team_fixture.bsas_date.date() == datetime.today().date()
             else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
         )
 
@@ -317,7 +317,7 @@ class TeamFixturesManager:
         match_image_text = f"<img width='100%' height='100%' src='{match_image_url}'>"
         date_text = (
             "es HOY!"
-            if team_fixture.bsas_date.day == datetime.today().day
+            if team_fixture.bsas_date.date() == datetime.today().date()
             else f"es el {Emojis.SPIRAL_CALENDAR.value} {spanish_format_date}."
         )
 
