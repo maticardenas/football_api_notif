@@ -162,11 +162,12 @@ class Fixture:
         )
 
     def one_line_telegram_repr(self) -> str:
-        return f"{Emojis.SOCCER_BALL.value} " \
-               f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong> \n {Emojis.ALARM_CLOCK.value} - " \
-               f"{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}</strong> / " \
-               f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong>"
-
+        return (
+            f"{Emojis.SOCCER_BALL.value} "
+            f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong> \n {Emojis.ALARM_CLOCK.value} - "
+            f"{Emojis.EUROPEAN_UNION.value} <strong>{str(self.ams_date)[11:16]} HS {self.is_next_day}</strong> / "
+            f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong>"
+        )
 
     def email_like_repr(self) -> str:
         return (

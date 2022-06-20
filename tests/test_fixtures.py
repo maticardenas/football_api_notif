@@ -1,11 +1,12 @@
 import os
 from datetime import datetime
+from unittest.mock import MagicMock
 
 import pytz
 from freezegun import freeze_time
 
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import date_diff, get_next_fixture
+from src.utils.fixtures_utils import date_diff, get_next_fixture, is_today_fixture
 from tests.utils.sample_data_utils import get_sample_data_response
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,6 +64,42 @@ def test_date_conversion():
     # then
     assert local_definitive_date
     assert bsas_definitive_date
+
+
+def test_is_today_fixture():
+    with freeze_time("2022-06-19 10:30:00"):
+        river_fixture = MagicMock(
+            id=863211,
+            utc_date="2022-06-19T21:00:00+00:00",
+            league=128,
+            round="2ª Fase - 4",
+            home_team=441,
+            away_team=435,
+            home_score=1,
+            away_score=5,
+        )
+
+        is_today_bsas_fixture = is_today_fixture(river_fixture)
+
+        assert True == is_today_bsas_fixture
+
+
+def test_is_today_fixture_false():
+    with freeze_time("2022-06-18 02:30:00"):
+        river_fixture = MagicMock(
+            id=863211,
+            utc_date="2022-06-19T21:00:00+00:00",
+            league=128,
+            round="2ª Fase - 4",
+            home_team=441,
+            away_team=435,
+            home_score=1,
+            away_score=5,
+        )
+
+        is_today_bsas_fixture = is_today_fixture(river_fixture)
+
+        assert False == is_today_bsas_fixture
 
 
 def test_get_date_spanish_text_format():

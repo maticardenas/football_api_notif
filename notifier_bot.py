@@ -131,7 +131,9 @@ async def today_games(update: Update, context):
     today_games_fixtures = command_handler.today_games()
 
     if len(today_games_fixtures):
-        today_games_text = "\n\n".join([fixture.one_line_telegram_repr() for fixture in today_games_fixtures])
+        today_games_text = "\n\n".join(
+            [fixture.one_line_telegram_repr() for fixture in today_games_fixtures]
+        )
         today_games_text_intro = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, estos son los partidos de hoy:\n\n"
 
         text = f"{today_games_text_intro}{today_games_text}"
@@ -142,14 +144,12 @@ async def today_games(update: Update, context):
 
     photo = random.choice([league.logo for league in leagues])
 
-
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=photo,
         caption=text,
         parse_mode="HTML",
     )
-
 
 
 if __name__ == "__main__":

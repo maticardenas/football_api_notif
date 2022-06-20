@@ -52,9 +52,7 @@ class NotifierBotCommandsHandler:
 
             today_games.append(get_today_fixture_db(team_fixtures))
 
-
         return [fixture for fixture in today_games if fixture]
-
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
