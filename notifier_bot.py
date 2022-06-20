@@ -82,11 +82,7 @@ async def next_match(update: Update, context):
                 parse_mode="HTML",
             )
         else:
-            context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=text,
-                parse_mode="HTML",
-            )
+            context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 async def last_match(update: Update, context):
@@ -117,11 +113,7 @@ async def last_match(update: Update, context):
                 parse_mode="HTML",
             )
         else:
-            context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=text,
-                parse_mode="HTML",
-            )
+            context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 async def today_matches(update: Update, context):
@@ -141,7 +133,7 @@ async def today_matches(update: Update, context):
         leagues = [fixture.championship for fixture in today_games_fixtures]
         photo = random.choice([league.logo for league in leagues])
     else:
-        text = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, lamentablemente hoy no hay partidos de los equipos disponibles :("
+        text = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, lamentablemente hoy no hay partidos :("
         photo = messi_photo
 
     await context.bot.send_photo(
