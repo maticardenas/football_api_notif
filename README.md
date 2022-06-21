@@ -22,11 +22,15 @@ So far, it processes information about specific team's **fixtures**, informing p
 
 - `/available_teams` - Available team's that can be queried with the other commands.
 
-
 - `/next_match <team>` > Retrieves information about next scheduled match for an specific team, including rival, date (in different timezones), league and round which is being played.
 
-
 - `/last_match <team>` > Retrieves information about last match played by the specific team, including  scores, rival, date (in different timezones), league, roung and highlights
+
+- `/today_matches` > Retrieves information about matches to be played on the current day.
+
+- `/tomorrows_matches` > Retrieves information about matches to be played on the following day.
+
+- `/last_played_matches` > Retrieves information about matches to be played on the previous day.
 
 
 ## Implementation Overview

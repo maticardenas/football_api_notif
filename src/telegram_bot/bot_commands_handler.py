@@ -1,4 +1,5 @@
-from typing import List
+from random import random
+from typing import List, Tuple
 
 from sqlmodel import or_, select
 
@@ -6,7 +7,13 @@ from config.config_entities import ManagedTeam
 from config.config_utils import get_managed_teams_config
 from src.db.db_manager import NotifierDBManager
 from src.db.notif_sql_models import Fixture
-from src.utils.fixtures_utils import get_today_fixture_db, get_yesterday_fixture_db
+from src.emojis import Emojis
+from src.telegram_bot.bot_constants import MESSI_PHOTO
+from src.utils.fixtures_utils import (
+    get_today_fixture_db,
+    get_yesterday_fixture_db,
+    get_tomorrow_fixture_db,
+)
 
 
 class NotifierBotCommandsHandler:
@@ -38,8 +45,23 @@ class NotifierBotCommandsHandler:
             ]
         )
 
-    def today_games(self) -> List[str]:
-        today_games = []
+    def _get_date_games_fixtures(self, criteria: str = "today") -> List[str]:
+        """
+        This method retrieves the fixtures for all managed teams according to certain "criteria"
+
+        :param criteria: date to get fixtures from
+        :return: fixtures according to the criteria
+        """
+        games = []
+
+        retrieve_date_methods = {
+            "today": get_today_fixture_db,
+            "yesterday": get_yesterday_fixture_db,
+            "tomorrow": get_tomorrow_fixture_db,
+        }
+
+        retrieve_method = retrieve_date_methods.get(criteria, get_today_fixture_db)
+
         for team in self._managed_teams:
             statement = select(Fixture).where(
                 or_(
@@ -49,24 +71,88 @@ class NotifierBotCommandsHandler:
             )
             team_fixtures = self._notifier_db_manager.select_records(statement)
 
-            today_games.append(get_today_fixture_db(team_fixtures))
+            games.append(retrieve_method(team_fixtures))
 
-        return [fixture for fixture in today_games if fixture]
+        return [fixture for fixture in games if fixture]
 
-    def yesterday_games(self) -> List[str]:
-        today_games = []
-        for team in self._managed_teams:
-            statement = select(Fixture).where(
-                or_(
-                    Fixture.home_team == team.id,
-                    Fixture.away_team == team.id,
-                )
+    def today_games(self, user_name: str) -> Tuple[str, str]:
+        today_games_fixtures = self._get_date_games_fixtures("today")
+
+        if len(today_games_fixtures):
+            today_games_text = "\n\n".join(
+                [fixture.one_line_telegram_repr() for fixture in today_games_fixtures]
             )
-            team_fixtures = self._notifier_db_manager.select_records(statement)
+            today_games_text_intro = (
+                f"{Emojis.WAVING_HAND.value} Hola "
+                f"{user_name}, "
+                f"estos son los partidos de hoy:\n\n"
+            )
+            text = f"{today_games_text_intro}{today_games_text}"
+            leagues = [fixture.championship for fixture in today_games_fixtures]
+            photo = random.choice([league.logo for league in leagues])
+        else:
+            text = (
+                f"{Emojis.WAVING_HAND.value} Hola "
+                f"{user_name}, lamentablemente hoy "
+                f"no hay partidos :("
+            )
+            photo = MESSI_PHOTO
 
-            today_games.append(get_yesterday_fixture_db(team_fixtures))
+        return (text, photo)
 
-        return [fixture for fixture in today_games if fixture]
+    def yesterday_games(self, user_name: str) -> Tuple[str, str]:
+        played_games_fixtures = self._get_date_games_fixtures("yesterday")
+
+        if len(played_games_fixtures):
+            played_games_text = "\n\n".join(
+                [
+                    fixture.one_line_telegram_repr(played=True)
+                    for fixture in played_games_fixtures
+                ]
+            )
+            played_games_text_intro = (
+                f"{Emojis.WAVING_HAND.value} Hola "
+                f"{user_name}, "
+                f"estos son los partidos jugados "
+                f"ayer:\n\n"
+            )
+            text = f"{played_games_text_intro}{played_games_text}"
+            leagues = [fixture.championship for fixture in played_games_fixtures]
+            photo = random.choice([league.logo for league in leagues])
+        else:
+            text = (
+                f"{Emojis.WAVING_HAND.value} Hola "
+                f"{user_name}, lamentablemente "
+                f"ayer no se jugaron partidos :("
+            )
+            photo = MESSI_PHOTO
+
+        return (text, photo)
+
+    def tomorrow_games(self, user_name: str) -> Tuple[str, str]:
+        tomorrow_games_fixtures = self._get_date_games_fixtures("tomorrow")
+
+        if len(tomorrow_games_fixtures):
+            tomorrow_games_text = "\n\n".join(
+                [fixture.one_line_telegram_repr() for fixture in tomorrow_games_fixtures]
+            )
+            tomorrow_games_text_intro = (
+                f"{Emojis.WAVING_HAND.value} Hola "
+                f"{user_name}, "
+                f"estos son los partidos de mañna:\n\n"
+            )
+            text = f"{tomorrow_games_text_intro}{tomorrow_games_text}"
+            leagues = [fixture.championship for fixture in tomorrow_games_fixtures]
+            photo = random.choice([league.logo for league in leagues])
+        else:
+            text = (
+                f"{Emojis.WAVING_HAND.value} Hola "
+                f"{user_name}, lamentablemente mañana "
+                f"no hay partidos :("
+            )
+            photo = MESSI_PHOTO
+
+        return (text, photo)
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):

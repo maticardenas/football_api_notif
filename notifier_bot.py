@@ -12,16 +12,16 @@ from src.telegram_bot.bot_commands_handler import (
     NextAndLastMatchCommandHandler,
     NotifierBotCommandsHandler,
 )
+from src.telegram_bot.bot_constants import MESSI_PHOTO
 
 logger = get_logger(__name__)
-messi_photo = "https://media.api-sports.io/football/players/154.png"
 
 
 async def start(update: Update, context):
     logger.info(f"'start' command executed - by {update.effective_user.name}")
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo=messi_photo,
+        photo=MESSI_PHOTO,
         caption=f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, soy FootballNotifier bot!\n\n"
         f"{Emojis.JOYSTICK.value} /help - Chequeá mis comandos disponibles ;) \n\n"
         f"{Emojis.GOAT.value} {Emojis.ARGENTINA.value} Vamos Messi!",
@@ -38,6 +38,7 @@ async def help(update: Update, context):
         f"• /last_match <team>: último partido jugado del equipo.\n"
         f"• /available_teams: equipos disponibles.\n"
         f"• /today_matches: partidos de hoy (de los equipos disponibles).\n"
+        f"• /tomorrow_matches: partidos de mañana (de los equipos disponibles).\n"
         f"• /last_played_matches: partidos jugados el día de ayer (de los equipos disponibles)."
     )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
@@ -121,20 +122,7 @@ async def today_matches(update: Update, context):
         f"'today_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
     command_handler = NotifierBotCommandsHandler()
-
-    today_games_fixtures = command_handler.today_games()
-
-    if len(today_games_fixtures):
-        today_games_text = "\n\n".join(
-            [fixture.one_line_telegram_repr() for fixture in today_games_fixtures]
-        )
-        today_games_text_intro = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, estos son los partidos de hoy:\n\n"
-        text = f"{today_games_text_intro}{today_games_text}"
-        leagues = [fixture.championship for fixture in today_games_fixtures]
-        photo = random.choice([league.logo for league in leagues])
-    else:
-        text = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, lamentablemente hoy no hay partidos :("
-        photo = messi_photo
+    text, photo = command_handler.today_games(update.effective_user.first_name)
 
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
@@ -149,23 +137,22 @@ async def last_played_matches(update: Update, context):
         f"'last_played_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
     command_handler = NotifierBotCommandsHandler()
+    text, photo = command_handler.yesterday_games(update.effective_user.first_name)
 
-    played_games_fixtures = command_handler.yesterday_games()
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=photo,
+        caption=text,
+        parse_mode="HTML",
+    )
 
-    if len(played_games_fixtures):
-        played_games_text = "\n\n".join(
-            [
-                fixture.one_line_telegram_repr(played=True)
-                for fixture in played_games_fixtures
-            ]
-        )
-        played_games_text_intro = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, estos son los partidos jugados ayer:\n\n"
-        text = f"{played_games_text_intro}{played_games_text}"
-        leagues = [fixture.championship for fixture in played_games_fixtures]
-        photo = random.choice([league.logo for league in leagues])
-    else:
-        text = f"{Emojis.WAVING_HAND.value} Hola {update.effective_user.first_name}, lamentablemente ayer no se jugaron partidos :("
-        photo = messi_photo
+
+async def tomorrow_matches(update: Update, context):
+    logger.info(
+        f"'tomorrow_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+    )
+    command_handler = NotifierBotCommandsHandler()
+    text, photo = command_handler.tomorrow_games(update.effective_user.first_name)
 
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
@@ -181,6 +168,7 @@ if __name__ == "__main__":
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
     today_matches_handler = CommandHandler("today_matches", today_matches)
+    tomorrow_matches_handler = CommandHandler("tomorrow_matches", tomorrow_matches)
     last_played_matches_handler = CommandHandler(
         "last_played_matches", last_played_matches
     )
@@ -193,5 +181,6 @@ if __name__ == "__main__":
     application.add_handler(today_matches_handler)
     application.add_handler(last_played_matches_handler)
     application.add_handler(available_teams_handler)
+    application.add_handler(tomorrow_matches_handler)
 
     application.run_polling()
