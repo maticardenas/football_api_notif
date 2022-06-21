@@ -139,7 +139,7 @@ class NotifierBotCommandsHandler:
             tomorrow_games_text_intro = (
                 f"{Emojis.WAVING_HAND.value} Hola "
                 f"{user_name}, "
-                f"estos son los partidos de mañna:\n\n"
+                f"estos son los partidos de mañana:\n\n"
             )
             text = f"{tomorrow_games_text_intro}{tomorrow_games_text}"
             leagues = [fixture.championship for fixture in tomorrow_games_fixtures]
