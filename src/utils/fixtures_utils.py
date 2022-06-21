@@ -122,6 +122,13 @@ def is_yesterday_fixture(team_fixture: DBFixture) -> bool:
     return bsas_date.date() == (datetime.today().date() - timedelta(days=1))
 
 
+def is_tomorrow_fixture(team_fixture: DBFixture) -> bool:
+    utc_date = datetime.strptime(team_fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
+    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
+
+    return bsas_date.date() == (datetime.today().date() + timedelta(days=1))
+
+
 def get_today_fixture_db(team_fixtures) -> Optional[Fixture]:
     for fixture in team_fixtures:
         if is_today_fixture(fixture):
@@ -133,6 +140,14 @@ def get_today_fixture_db(team_fixtures) -> Optional[Fixture]:
 def get_yesterday_fixture_db(team_fixtures) -> Optional[Fixture]:
     for fixture in team_fixtures:
         if is_yesterday_fixture(fixture):
+            return convert_db_fixture(fixture)
+
+    return None
+
+
+def get_tomorrow_fixture_db(team_fixtures) -> Optional[Fixture]:
+    for fixture in team_fixtures:
+        if is_tomorrow_fixture(fixture):
             return convert_db_fixture(fixture)
 
     return None
