@@ -45,6 +45,9 @@ class NotifierBotCommandsHandler:
             ]
         )
 
+    def _get_all_fixtures_ids(self, fixtures: List[Fixture]) -> List[str]:
+        return [fixture.id for fixture in fixtures]
+
     def _get_date_games_fixtures(self, criteria: str = "today") -> List[str]:
         """
         This method retrieves the fixtures for all managed teams according to certain "criteria"
@@ -71,9 +74,13 @@ class NotifierBotCommandsHandler:
             )
             team_fixtures = self._notifier_db_manager.select_records(statement)
 
-            games.append(retrieve_method(team_fixtures))
+            fixture = retrieve_method(team_fixtures)
 
-        return [fixture for fixture in games if fixture]
+            if fixture:
+                if fixture.id not in self._get_all_fixtures_ids(games):
+                    games.append(retrieve_method(team_fixtures))
+
+        return games
 
     def today_games(self, user_name: str) -> Tuple[str, str]:
         today_games_fixtures = self._get_date_games_fixtures("today")
