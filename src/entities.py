@@ -174,13 +174,16 @@ class Fixture:
             repr = (
                 f"{Emojis.SOCCER_BALL.value} "
                 f"<strong>{self.home_team.name} [{self.match_score.home_score}] vs. [{self.match_score.away_score}] {self.away_team.name}</strong> \n"
+                f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
                 f"{Emojis.FILM_PROJECTOR.value} <a href='{self.highlights[0]}'>HIGHLIGHTS</a>"
             )
         else:
             repr = (
                 f"{Emojis.SOCCER_BALL.value} "
-                f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong> \n {Emojis.ALARM_CLOCK.value} - "
-                f"{self.time_telegram_text()}"
+                f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong> \n"
+                f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
+                f"{Emojis.ALARM_CLOCK.value} {self.time_telegram_text()}"
+
             )
 
         return repr
