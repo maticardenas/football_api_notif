@@ -128,5 +128,135 @@
     "id": "10",
     "name": "Inglaterra",
     "command_name": "england"
+  },
+  {
+    "id": "1569",
+    "name": "Qatar",
+    "command_name": "qatar"
+  },
+  {
+    "id": "2382",
+    "name": "Ecuador",
+    "command_name": "ecuador"
+  },
+  {
+    "id": "13",
+    "name": "Senegal",
+    "command_name": "senegal"
+  },
+  {
+    "id": "22",
+    "name": "Iran",
+    "command_name": "iran"
+  },
+  {
+    "id": "2384",
+    "name": "USA",
+    "command_name": "usa"
+  },
+  {
+    "id": "767",
+    "name": "Wales",
+    "command_name": "wales"
+  },
+  {
+    "id": "23",
+    "name": "Saudi Arabia",
+    "command_name": "saudiarabia"
+  },
+  {
+    "id": "16",
+    "name": "Mexico",
+    "command_name": "mexico"
+  },
+  {
+    "id": "24",
+    "name": "Poland",
+    "command_name": "poland"
+  },
+  {
+    "id": "20",
+    "name": "Australia",
+    "command_name": "australia"
+  },
+  {
+    "id": "21",
+    "name": "Denmark",
+    "command_name": "denmark"
+  },
+  {
+    "id": "28",
+    "name": "Tunisia",
+    "command_name": "tunisia"
+  },
+  {
+    "id": "9",
+    "name": "Spain",
+    "command_name": "spain"
+  },
+  {
+    "id": "29",
+    "name": "Costa Rica",
+    "command_name": "costarica"
+  },
+  {
+    "id": "25",
+    "name": "Germany",
+    "command_name": "germany"
+  },
+  {
+    "id": "1",
+    "name": "Belgium",
+    "command_name": "belgium"
+  },
+  {
+    "id": "5529",
+    "name": "Canada",
+    "command_name": "canada"
+  },
+  {
+    "id": "3",
+    "name": "Croatia",
+    "command_name": "croatia"
+  },
+  {
+    "id": "31",
+    "name": "Morocco",
+    "command_name": "Morocco"
+  },
+  {
+    "id": "14",
+    "name": "Serbia",
+    "command_name": "serbia"
+  },
+  {
+    "id": "15",
+    "name": "Switzerland",
+    "command_name": "switzerland"
+  },
+  {
+    "id": "1530",
+    "name": "Cameroon",
+    "command_name": "cameroon"
+  },
+  {
+    "id": "27",
+    "name": "Portugal",
+    "command_name": "portugal"
+  },
+  {
+    "id": "1504",
+    "name": "Ghana",
+    "command_name": "ghana"
+  },
+  {
+    "id": "7",
+    "name": "Uruguay",
+    "command_name": "uruguay"
+  },
+  {
+    "id": "17",
+    "name": "South Korea",
+    "command_name": "southkorea"
   }
 ]
