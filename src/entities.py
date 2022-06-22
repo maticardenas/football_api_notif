@@ -50,10 +50,12 @@ class Player:
     id: int
     name: str
     pos: str
+    picture: str
 
 
 @dataclass
 class LineUp:
+    id: int
     formation: str
     goalkeeper: Player
     defenders: List[Player]

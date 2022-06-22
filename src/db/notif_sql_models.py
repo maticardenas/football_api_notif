@@ -28,6 +28,25 @@ class Fixture(SQLModel, table=True):
     round: str
     home_team: int = Field(foreign_key="team.id")
     away_team: int = Field(foreign_key="team.id")
+    line_up: Optional[int] = Field(foreign_key="lineup.id")
     home_score: Optional[int] = None
     away_score: Optional[int] = None
     highlights: Optional[List[str]]
+
+
+class Player(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+    id: int = Field(primary_key=True)
+    name: str
+    pos: str
+    picture: str
+
+
+class LineUp(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+    id: int = Field(primary_key=True)
+    formation: str
+    goalkeeper: int = Field(foreign_key="player.id")
+    defenders: List[int] = Field(foreign_key="player.id")
+    midfielders: List[int] = Field(foreign_key="player.id")
+    forward_strikers: List[int] = Field(foreign_key="player.id")
