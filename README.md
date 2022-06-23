@@ -28,7 +28,7 @@ So far, it processes information about specific team's **fixtures**, informing p
 
 - `/today_matches` - Retrieves information about matches to be played on the current day.
 
-- `/tomorrows_matches` - Retrieves information about matches to be played on the following day.
+- `/tomorrow_matches` - Retrieves information about matches to be played on the following day.
 
 - `/last_played_matches` - Retrieves information about matches to be played on the previous day.
 
