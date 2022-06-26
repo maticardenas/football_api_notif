@@ -27,6 +27,21 @@ class FixturesClient(BaseClient):
         if len(ids):
             params["ids"] = "-".join([str(fix_id) for fix_id in ids])
 
+        if h2h:
+            params["h2h"] = h2h
+
+        url = f"{self.base_url}{endpoint}"
+
+        response = self.request.get(url, params, self.headers)
+
+        logger.info(f"get_fixtures_by response - {response.status_code}")
+
+        return response
+
+    def get_head_to_head(self, team_1: str, team_2: str) -> Dict[str, Any]:
+        endpoint = "/v3/fixtures/headtohead"
+        params = {"h2h": f"{team_1}-{team_2}"}
+
         url = f"{self.base_url}{endpoint}"
 
         response = self.request.get(url, params, self.headers)

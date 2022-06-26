@@ -141,7 +141,10 @@ class NotifierBotCommandsHandler:
 
         if len(tomorrow_games_fixtures):
             tomorrow_games_text = "\n\n".join(
-                [fixture.one_line_telegram_repr() for fixture in tomorrow_games_fixtures]
+                [
+                    fixture.one_line_telegram_repr()
+                    for fixture in tomorrow_games_fixtures
+                ]
             )
             tomorrow_games_text_intro = (
                 f"{Emojis.WAVING_HAND.value} Hola "

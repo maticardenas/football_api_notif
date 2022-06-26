@@ -12,6 +12,7 @@ from src.api.images_search_client import ImagesSearchClient
 from src.api.videos_search_client import VideosSearchClient
 from src.api.youtube_search_client import YoutubeSearchClient
 from src.db.db_manager import NotifierDBManager
+from src.db.fixtures_db_manager import FixturesDBManager
 from src.db.notif_sql_models import Fixture as DBFixture
 from src.db.notif_sql_models import League as DBLeague
 from src.db.notif_sql_models import Team as DBTeam
@@ -28,6 +29,10 @@ from src.entities import (
 )
 from src.utils.date_utils import TimeZones, get_formatted_date, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
+
+
+FIXTURES_DB_MANAGER = FixturesDBManager()
+FIXTURES_CLIENT = FixturesClient()
 
 
 def get_team_aliases(team_id: str) -> list:
@@ -87,7 +92,15 @@ def get_next_fixture_db(team_fixtures: List[DBFixture]) -> Optional[DBFixture]:
             min_fixture = fixture
             min_diff = fixture_date_diff
 
-    return convert_db_fixture(min_fixture) if min_fixture else None
+    converted_fixture = None
+
+    if min_fixture:
+        converted_fixture = convert_db_fixture(min_fixture)
+        converted_fixture.head_to_head = get_head_to_heads(
+            converted_fixture.home_team.id, converted_fixture.away_team.id
+        )
+
+    return converted_fixture
 
 
 def get_last_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
@@ -105,7 +118,15 @@ def get_last_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
             min_fixture = fixture
             min_diff = fixture_date_diff
 
-    return convert_db_fixture(min_fixture) if min_fixture else None
+    converted_fixture = None
+
+    if min_fixture:
+        converted_fixture = convert_db_fixture(min_fixture)
+        converted_fixture.head_to_head = get_head_to_heads(
+            converted_fixture.home_team.id, converted_fixture.away_team.id
+        )
+
+    return converted_fixture
 
 
 def is_today_fixture(team_fixture: DBFixture) -> bool:
@@ -129,12 +150,35 @@ def is_tomorrow_fixture(team_fixture: DBFixture) -> bool:
     return bsas_date.date() == (datetime.today().date() + timedelta(days=1))
 
 
-def get_today_fixture_db(team_fixtures) -> Optional[Fixture]:
+def get_today_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
     for fixture in team_fixtures:
         if is_today_fixture(fixture):
             return convert_db_fixture(fixture)
 
     return None
+
+
+def insert_head_to_heads() -> Optional[List[Fixture]]:
+    tomorrow_games = FIXTURES_DB_MANAGER.get_games_in_following_n_days(5)
+
+    for game in tomorrow_games:
+        head_to_head = FIXTURES_CLIENT.get_head_to_head(game.home_team, game.away_team)
+        if "response" in head_to_head.as_dict:
+            head_to_head_fixtures = head_to_head.as_dict["response"]
+            if head_to_head_fixtures:
+                FIXTURES_DB_MANAGER.save_fixtures(
+                    [
+                        convert_fixture_response_to_db(fixture)
+                        for fixture in head_to_head_fixtures
+                    ]
+                )
+
+
+def get_head_to_heads(team_1: str, team_2: str) -> Optional[List[Fixture]]:
+    head_to_head_fixtures = FIXTURES_DB_MANAGER.get_head_to_head_fixtures(
+        team_1, team_2
+    )
+    return [convert_db_fixture(fixture) for fixture in head_to_head_fixtures]
 
 
 def get_yesterday_fixture_db(team_fixtures) -> Optional[Fixture]:
@@ -200,6 +244,9 @@ def __convert_standing_response(team_standing: dict) -> TeamStanding:
 
 
 def convert_db_fixture(fixture: DBFixture) -> Fixture:
+    """
+    Converts a fixture from database into a Fixture entity for notifying.
+    """
     utc_date = datetime.strptime(fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
     ams_date = get_time_in_time_zone(utc_date, TimeZones.AMSTERDAM)
     bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
@@ -472,9 +519,7 @@ def get_youtube_highlights_videos(
 
 
 def get_line_up(fixture_id: str, team_id: str) -> Optional[LineUp]:
-    fixture_client = FixturesClient()
-
-    response = fixture_client.get_line_up(fixture_id, team_id)
+    response = FIXTURES_CLIENT.get_line_up(fixture_id, team_id)
     json_response = response.as_dict["response"]
 
     line_up = None

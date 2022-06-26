@@ -128,6 +128,7 @@ class Fixture:
     line_up: Optional[LineUp] = field(init=False)
     is_next_day: str = field(init=False)
     highlights: List[str] = field(init=False)
+    head_to_head: List["Fixture"] = field(init=False)
 
     def __post_init__(self) -> None:
         self.is_next_day = "(+1)" if self._is_next_day_in_europe() else ""
@@ -137,6 +138,7 @@ class Fixture:
         self.highlights = [
             f"https://www.youtube.com/results?search_query={self.home_team.name}+vs+{self.away_team.name}+jugadas+resumen"
         ]
+        self.head_to_head = []
 
     def remaining_time(self) -> RemainingTime:
         days = self.date_diff // 86400
@@ -169,6 +171,25 @@ class Fixture:
             f"{Emojis.ARGENTINA.value} <strong>{str(self.bsas_date)[11:16]} HS</strong>"
         )
 
+    def head_to_head_text(self) -> str:
+        h2h_text = ""
+
+        if self.head_to_head:
+            head_to_head_list = ""
+            for h2h_fixture in reversed(self.head_to_head[-5:]):
+                date_to_show = h2h_fixture.bsas_date.strftime("%Y-%m-%d")
+                head_to_head_list += (
+                    f"{Emojis.SPIRAL_CALENDAR.value} {date_to_show}\n"
+                    f"{Emojis.SOCCER_BALL.value} {h2h_fixture.home_team.name} [{h2h_fixture.match_score.home_score}] vs [{h2h_fixture.match_score.away_score}] {h2h_fixture.away_team.name}\n\n"
+                )
+
+            h2h_text = (
+                f"{Emojis.RIGHT_FACING_FIST.value}{Emojis.LEFT_FACING_FIST.value} Últimos enfrentamientos:\n\n"
+                f"{head_to_head_list}"
+            )
+
+        return h2h_text
+
     def one_line_telegram_repr(self, played: bool = False) -> str:
         if played:
             repr = (
@@ -183,7 +204,6 @@ class Fixture:
                 f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong> \n"
                 f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
                 f"{Emojis.ALARM_CLOCK.value} {self.time_telegram_text()}"
-
             )
 
         return repr
@@ -198,6 +218,7 @@ class Fixture:
             f"<img src='{self.away_team.picture}' width='22' height='22'></strong><br />"
             f"<img src='{self.championship.logo}' width='22' height='22'> <strong>{self.championship.name}</strong><br />"
             f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong><p>"
+            f"{self.head_to_head_text()}"
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:<p>"
             # f"{self.line_up_email_message()}<p>"
             f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FutbolLibre)</a><br />"
@@ -211,8 +232,8 @@ class Fixture:
             f"{Emojis.ALARM_CLOCK.value} {str(self.remaining_time())} para el partido.\n\n"
             f"{Emojis.SOCCER_BALL.value} "
             f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong>\n"
-            f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
-            f"{Emojis.PUSHPIN.value} <strong>{self.round}</strong>\n\n"
+            f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n\n"
+            f"{self.head_to_head_text()}"
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
             # f"{self.line_up_message() if self.line_up else ''}\n\n"
             f"{Emojis.TELEVISION.value} <a href='{self.futbol_libre_url}'>Streaming Online (FutbolLibre)</a>\n"
