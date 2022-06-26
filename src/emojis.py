@@ -47,3 +47,5 @@ class Emojis(Enum):
     PIRATE_FLAG = emoji.emojize(":pirate_flag:", use_aliases=True)
     WHITE_CIRCLE = emoji.emojize(":white_circle:", use_aliases=True)
     RED_CIRCLE = emoji.emojize(":red_circle:", use_aliases=True)
+    RIGHT_FACING_FIST = emoji.emojize(":right-facing_fist:", use_aliases=True)
+    LEFT_FACING_FIST = emoji.emojize(":left-facing_fist:", use_aliases=True)

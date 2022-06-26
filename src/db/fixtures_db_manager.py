@@ -59,6 +59,7 @@ class FixturesDBManager:
                 or_(DBFixture.home_team == team_1, DBFixture.away_team == team_1),
             )
             .where(or_(DBFixture.home_team == team_2, DBFixture.away_team == team_2))
+            .order_by(DBFixture.utc_date)
         )
 
         fixtures = self._notifier_db_manager.select_records(statement)
