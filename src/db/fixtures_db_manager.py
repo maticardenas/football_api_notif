@@ -29,7 +29,7 @@ class FixturesDBManager:
 
         for day in range(1, days + 1):
             today = datetime.today()
-            following_day = today + timedelta(days=days)
+            following_day = today + timedelta(days=day)
             bsas_date = get_time_in_time_zone(following_day, TimeZones.BSAS)
             tomorrow_str = bsas_date.strftime("%Y-%m-%d")
 
