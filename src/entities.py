@@ -179,8 +179,8 @@ class Fixture:
             for h2h_fixture in reversed(self.head_to_head[-5:]):
                 date_to_show = h2h_fixture.bsas_date.strftime("%Y-%m-%d")
                 head_to_head_list += (
-                    f"{Emojis.SPIRAL_CALENDAR.value} <strong>{date_to_show}</strong>\n"
-                    f"{Emojis.SOCCER_BALL.value} <strong>{h2h_fixture.home_team.name} [{h2h_fixture.match_score.home_score}] vs [{h2h_fixture.match_score.away_score}] {h2h_fixture.away_team.name}</strong>\n\n"
+                    f"{Emojis.SPIRAL_CALENDAR.value} {date_to_show}\n"
+                    f"{Emojis.SOCCER_BALL.value} {h2h_fixture.home_team.name} [{h2h_fixture.match_score.home_score}] vs [{h2h_fixture.match_score.away_score}] {h2h_fixture.away_team.name}\n\n"
                 )
 
             h2h_text = (
@@ -232,7 +232,7 @@ class Fixture:
             f"{Emojis.ALARM_CLOCK.value} {str(self.remaining_time())} para el partido.\n\n"
             f"{Emojis.SOCCER_BALL.value} "
             f"<strong>{self.home_team.name} vs. {self.away_team.name}</strong>\n"
-            f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n"
+            f"{Emojis.TROPHY.value} <strong>{self.championship.name}</strong>\n\n"
             f"{self.head_to_head_text()}"
             # f"{Emojis.LIGHT_BULB.value} Posible alineación del equipo:\n\n"
             # f"{self.line_up_message() if self.line_up else ''}\n\n"
