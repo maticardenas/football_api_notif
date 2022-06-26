@@ -23,6 +23,21 @@ class FixturesDBManager:
     def get_all_fixtures(self) -> List[Optional[DBFixture]]:
         return self._notifier_db_manager.select_records(select(DBFixture))
 
+
+    def get_games_in_following_n_days(self, days: int) -> List[Optional[DBFixture]]:
+        fixtures = []
+
+        for day in range(1, days + 1):
+            today = datetime.today()
+            following_day = today + timedelta(days=days)
+            bsas_date = get_time_in_time_zone(following_day, TimeZones.BSAS)
+            tomorrow_str = bsas_date.strftime("%Y-%m-%d")
+
+            statement = select(DBFixture).where(DBFixture.utc_date.contains(tomorrow_str))
+            fixtures.append(self._notifier_db_manager.select_records(statement))
+
+        return fixtures
+
     def get_tomorrow_games(self) -> List[Optional[DBFixture]]:
         today = datetime.today()
         tomorrow = today + timedelta(days=1)

@@ -100,4 +100,3 @@ if __name__ == "__main__":
     logger.info(f"IS_INITIAL -> {is_initial}")
 
     populate_data(is_initial)
-    insert_head_to_heads()
