@@ -34,7 +34,7 @@ class FixturesDBManager:
             tomorrow_str = bsas_date.strftime("%Y-%m-%d")
 
             statement = select(DBFixture).where(DBFixture.utc_date.contains(tomorrow_str))
-            fixtures.append(self._notifier_db_manager.select_records(statement))
+            fixtures = fixtures + self._notifier_db_manager.select_records(statement)
 
         return fixtures
 
