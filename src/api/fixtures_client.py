@@ -27,9 +27,6 @@ class FixturesClient(BaseClient):
         if len(ids):
             params["ids"] = "-".join([str(fix_id) for fix_id in ids])
 
-        if h2h:
-            params["h2h"] = h2h
-
         url = f"{self.base_url}{endpoint}"
 
         response = self.request.get(url, params, self.headers)
