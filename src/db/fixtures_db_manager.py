@@ -92,18 +92,25 @@ class FixturesDBManager:
                 f"Inserting League {fixture_league.name} - it does not exist "
                 f"in the database"
             )
-            league = DBLeague(
+            db_league = DBLeague(
                 id=fixture_league.league_id,
                 name=fixture_league.name,
                 logo=fixture_league.logo,
                 country=fixture_league.country,
             )
-            self._notifier_db_manager.insert_record(league)
-            retrieved_league = self._notifier_db_manager.select_records(
-                league_statement
+        else:
+            logger.info(
+                f"Updating League '{fixture_league.name}' - it already exists in "
+                f"the database"
             )
+            db_league = retrieved_league.pop()
+            db_league.name = fixture_league.id
+            db_league.logo = fixture_league.logo
+            db_league.country = fixture_league.country
 
-        return retrieved_league
+        self._notifier_db_manager.insert_record(db_league)
+
+        return db_league
 
     def insert_team(self, fixture_team: Team) -> DBTeam:
         team_statement = select(DBTeam).where(DBTeam.id == fixture_team.id)
@@ -114,16 +121,26 @@ class FixturesDBManager:
                 f"Inserting Team {fixture_team.name} - it does not exist in "
                 f"the database"
             )
-            team = DBTeam(
+            db_team = DBTeam(
                 id=fixture_team.id,
                 name=fixture_team.name,
                 picture=fixture_team.picture,
                 aliases=fixture_team.aliases,
             )
-            self._notifier_db_manager.insert_record(team)
-            retrieved_team = self._notifier_db_manager.select_records(team_statement)
 
-        return retrieved_team
+        else:
+            logger.info(
+                f"Updating Team '{fixture_team.name}' - it already exists in "
+                f"the database"
+            )
+            db_team = retrieved_team.pop()
+            db_team.name = fixture_team.id
+            db_team.picture = fixture_team.picture
+            db_team.aliases = fixture_team.aliases
+
+        self._notifier_db_manager.insert_record(db_team)
+
+        return db_team
 
     def save_fixtures(self, team_fixtures: List[FixtureForDB]) -> None:
         db_fixtures = []
@@ -149,8 +166,8 @@ class FixturesDBManager:
                     utc_date=conv_fix.utc_date,
                     league=retrieved_league.pop().id,
                     round=conv_fix.round,
-                    home_team=retrieved_home_team.pop().id,
-                    away_team=retrieved_away_team.pop().id,
+                    home_team=retrieved_home_team.id,
+                    away_team=retrieved_away_team.id,
                     home_score=conv_fix.match_score.home_score,
                     away_score=conv_fix.match_score.away_score,
                 )
