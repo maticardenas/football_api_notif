@@ -23,7 +23,6 @@ class FixturesDBManager:
     def get_all_fixtures(self) -> List[Optional[DBFixture]]:
         return self._notifier_db_manager.select_records(select(DBFixture))
 
-
     def get_games_in_following_n_days(self, days: int) -> List[Optional[DBFixture]]:
         fixtures = []
 
@@ -33,7 +32,9 @@ class FixturesDBManager:
             bsas_date = get_time_in_time_zone(following_day, TimeZones.BSAS)
             tomorrow_str = bsas_date.strftime("%Y-%m-%d")
 
-            statement = select(DBFixture).where(DBFixture.utc_date.contains(tomorrow_str))
+            statement = select(DBFixture).where(
+                DBFixture.utc_date.contains(tomorrow_str)
+            )
             fixtures = fixtures + self._notifier_db_manager.select_records(statement)
 
         return fixtures
@@ -104,13 +105,15 @@ class FixturesDBManager:
                 f"the database"
             )
             db_league = retrieved_league.pop()
-            db_league.name = fixture_league.id
+            db_league.name = fixture_league.league_id
             db_league.logo = fixture_league.logo
             db_league.country = fixture_league.country
 
         self._notifier_db_manager.insert_record(db_league)
 
-        return db_league
+        # object needs to be queried again, as when we insert db_league we are closing the sessiona and then it's out of scope
+        # for later using it again
+        return self._notifier_db_manager.select_records(league_statement)[0]
 
     def insert_team(self, fixture_team: Team) -> DBTeam:
         team_statement = select(DBTeam).where(DBTeam.id == fixture_team.id)
@@ -140,7 +143,7 @@ class FixturesDBManager:
 
         self._notifier_db_manager.insert_record(db_team)
 
-        return db_team
+        return self._notifier_db_manager.select_records(team_statement)[0]
 
     def save_fixtures(self, team_fixtures: List[FixtureForDB]) -> None:
         db_fixtures = []
@@ -164,7 +167,7 @@ class FixturesDBManager:
                 db_fixture = DBFixture(
                     id=conv_fix.id,
                     utc_date=conv_fix.utc_date,
-                    league=retrieved_league.pop().id,
+                    league=retrieved_league.id,
                     round=conv_fix.round,
                     home_team=retrieved_home_team.id,
                     away_team=retrieved_away_team.id,
@@ -179,10 +182,10 @@ class FixturesDBManager:
                 db_fixture = retrieved_fixture.pop()
                 db_fixture.id = conv_fix.id
                 db_fixture.utc_date = conv_fix.utc_date
-                db_fixture.league = retrieved_league.pop().id
+                db_fixture.league = retrieved_league.id
                 db_fixture.round = conv_fix.round
-                db_fixture.home_team = retrieved_home_team.pop().id
-                db_fixture.away_team = retrieved_away_team.pop().id
+                db_fixture.home_team = retrieved_home_team.id
+                db_fixture.away_team = retrieved_away_team.id
                 db_fixture.home_score = conv_fix.match_score.home_score
                 db_fixture.away_score = conv_fix.match_score.away_score
 
