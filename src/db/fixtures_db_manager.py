@@ -8,8 +8,9 @@ from src.db.notif_sql_models import (
     Fixture as DBFixture,
     Team as DBTeam,
     League as DBLeague,
+    Standing as DBStanding,
 )
-from src.entities import Championship, Team, FixtureForDB
+from src.entities import Championship, Team, FixtureForDB, TeamStanding
 from src.notifier_logger import get_logger
 from src.utils.date_utils import get_time_in_time_zone, TimeZones
 
@@ -22,7 +23,6 @@ class FixturesDBManager:
 
     def get_all_fixtures(self) -> List[Optional[DBFixture]]:
         return self._notifier_db_manager.select_records(select(DBFixture))
-
 
     def get_games_in_following_n_days(self, days: int) -> List[Optional[DBFixture]]:
         fixtures = []
@@ -141,6 +141,40 @@ class FixturesDBManager:
         self._notifier_db_manager.insert_record(db_team)
 
         return db_team
+
+    def insert_team_standing(self, team_id: int, team_standing: TeamStanding) -> DBStanding:
+        team_standing_statement = select(DBStanding).where(DBStanding.team == team_id, DBStanding.league == team_standing.championship.league_id)
+        retrieved_team_standing = self._notifier_db_manager.select_records(
+            team_standing_statement
+        )
+
+        if not len(team_standing_statement):
+            logger.info(
+                f"Inserting Team Standing - team {team_id} & {team_standing.championship.name} - it does not exist in "
+                f"the database"
+            )
+            db_team_standing = DBStanding(
+                league=team_standing.championship.league_id,
+                team=team_id,
+                position=team_standing.position,
+                goal_diff=team_standing.goal_difference,
+                current_condition=team_standing.current_condition
+            )
+        else:
+            logger.info(
+                f"Updating Team Standing team {team_id} & {team_standing.championship.name} - it already exists in "
+                f"the database"
+            )
+            db_team_standing = retrieved_team_standing
+            db_team_standing.league = team_standing.championship.league_id
+            db_team_standing.team = team_id
+            db_team_standing.position = team_standing.position
+            db_team_standing.goal_diff = team_standing.goal_difference
+            db_team_standing.current_condition = team_standing.current_condition
+
+        self._notifier_db_manager.insert_record(db_team_standing)
+
+        return db_team_standing
 
     def save_fixtures(self, team_fixtures: List[FixtureForDB]) -> None:
         db_fixtures = []
