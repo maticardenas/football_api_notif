@@ -31,6 +31,7 @@ COPY db_populator.py .
 COPY head_to_head_updater.py .
 COPY notifier_bot.py .
 COPY football_notifier.env .
+COPY partial_db_updater.py .
 
 RUN cat football_notifier.env >> /etc/environment
 
