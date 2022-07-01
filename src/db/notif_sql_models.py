@@ -50,3 +50,13 @@ class LineUp(SQLModel, table=True):
     defenders: List[int] = Field(foreign_key="player.id")
     midfielders: List[int] = Field(foreign_key="player.id")
     forward_strikers: List[int] = Field(foreign_key="player.id")
+
+
+class Standing(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+    league: int = Field(foreign_key="league.id")
+    team: int = Field(foreign_key="team.id")
+    position: int
+    points: int
+    goal_diff: int
+    current_condition: str
