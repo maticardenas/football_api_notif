@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from src.api.base_client import BaseClient
 from src.notifier_logger import get_logger
@@ -47,9 +47,16 @@ class FixturesClient(BaseClient):
 
         return response
 
-    def get_standings_by(self, season: int, team_id: int) -> Dict[str, Any]:
+    def get_standings_by(self, season: int, team_id: Optional[int] = None, league: Optional[int] = None) -> Dict[str, Any]:
         endpoint = "/v3/standings"
-        params = {"season": season, "team": team_id}
+        params = {"season": season}
+
+        if team_id:
+            params["team"] = team_id
+
+        if league:
+            params["league"]
+
         url = f"{self.base_url}{endpoint}"
 
         return self.request.get(url, params, self.headers)
