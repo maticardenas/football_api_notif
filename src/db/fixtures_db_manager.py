@@ -105,7 +105,8 @@ class FixturesDBManager:
                 f"the database"
             )
             db_league = retrieved_league.pop()
-            db_league.name = fixture_league.league_id
+            db_league.id = fixture_league.league_id
+            db_league.name = fixture_league.name
             db_league.logo = fixture_league.logo
             db_league.country = fixture_league.country
 
@@ -137,7 +138,8 @@ class FixturesDBManager:
                 f"the database"
             )
             db_team = retrieved_team.pop()
-            db_team.name = fixture_team.id
+            db_team.id = fixture_team.id
+            db_team.name = fixture_team.name
             db_team.picture = fixture_team.picture
             db_team.aliases = fixture_team.aliases
 
