@@ -159,7 +159,7 @@ def get_today_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
 
 
 def insert_head_to_heads() -> Optional[List[Fixture]]:
-    tomorrow_games = FIXTURES_DB_MANAGER.get_games_in_following_n_days(5)
+    tomorrow_games = FIXTURES_DB_MANAGER.get_games_in_surrounding_n_days(5)
 
     for game in tomorrow_games:
         head_to_head = FIXTURES_CLIENT.get_head_to_head(game.home_team, game.away_team)
