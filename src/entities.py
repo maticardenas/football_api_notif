@@ -101,6 +101,7 @@ class RemainingTime:
 class FixtureForDB:
     id: int
     utc_date: str
+    bsas_date: str
     date_diff: int
     referee: str
     match_status: str

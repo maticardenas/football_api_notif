@@ -24,49 +24,28 @@ class FixturesDBManager:
         return self._notifier_db_manager.select_records(select(DBFixture))
 
     def get_games_in_surrounding_n_days(self, days: int) -> List[Optional[DBFixture]]:
-        fixtures = []
+        surrounding_fixtures = []
 
-        for day in range(1, days + 1):
+        if days > 0:
+            days_range = range(1, days)
+        elif days < 0:
+            days_range = range(days, 0)
+        else:
+            days_range = range(0, 1)
+
+        for day in days_range:
             today = datetime.today()
-            following_day = today + timedelta(days=day)
-            bsas_date = get_time_in_time_zone(following_day, TimeZones.BSAS)
-            games_date = bsas_date.strftime("%Y-%m-%d")
+            bsas_today = get_time_in_time_zone(today, TimeZones.BSAS)
+            surrounding_day = bsas_today + timedelta(days=day)
+            games_date = surrounding_day.strftime("%Y-%m-%d")
 
             statement = select(DBFixture).where(
-                DBFixture.utc_date.contains(games_date)
+                DBFixture.bsas_date.contains(games_date)
             )
-            fixtures = fixtures + self._notifier_db_manager.select_records(statement)
 
-        return fixtures
+            surrounding_fixtures += self._notifier_db_manager.select_records(statement)
 
-    def get_tomorrow_games(self) -> List[Optional[DBFixture]]:
-        today = datetime.today()
-        tomorrow = today + timedelta(days=1)
-        bsas_date = get_time_in_time_zone(tomorrow, TimeZones.BSAS)
-        tomorrow_str = bsas_date.strftime("%Y-%m-%d")
-
-        statement = select(DBFixture).where(DBFixture.utc_date.contains(tomorrow_str))
-
-        return self._notifier_db_manager.select_records(statement)
-
-    def get_today_games(self) -> List[Optional[DBFixture]]:
-        today = datetime.today()
-        bsas_date = get_time_in_time_zone(today, TimeZones.BSAS)
-        today_str = bsas_date.strftime("%Y-%m-%d")
-
-        statement = select(DBFixture).where(DBFixture.utc_date.contains(today_str))
-
-        return self._notifier_db_manager.select_records(statement)
-
-    def get_yesterday_games(self) -> List[Optional[DBFixture]]:
-        today = datetime.today()
-        yesterday = today - timedelta(days=1)
-        bsas_date = get_time_in_time_zone(yesterday, TimeZones.BSAS)
-        yesterday_str = bsas_date.strftime("%Y-%m-%d")
-
-        statement = select(DBFixture).where(DBFixture.utc_date.contains(yesterday_str))
-
-        return self._notifier_db_manager.select_records(statement)
+        return surrounding_fixtures
 
     def get_head_to_head_fixtures(self, team_1: str, team_2: str):
         statement = (
@@ -101,7 +80,8 @@ class FixturesDBManager:
             )
         else:
             logger.info(
-                f"Updating League '{fixture_league.name}' - it already exists in "
+                f"Updating League '{fixture_league.name}' - it already "
+                f"exists in "
                 f"the database"
             )
             db_league = retrieved_league.pop()
@@ -112,7 +92,8 @@ class FixturesDBManager:
 
         self._notifier_db_manager.insert_record(db_league)
 
-        # object needs to be queried again, as when we insert db_league we are closing the sessiona and then it's out of scope
+        # object needs to be queried again, as when we insert db_league we
+        # are closing the session and then it's out of scope
         # for later using it again
         return self._notifier_db_manager.select_records(league_statement)[0]
 
@@ -169,6 +150,7 @@ class FixturesDBManager:
                 db_fixture = DBFixture(
                     id=conv_fix.id,
                     utc_date=conv_fix.utc_date,
+                    bsas_date=conv_fix.bsas_date,
                     league=retrieved_league.id,
                     round=conv_fix.round,
                     home_team=retrieved_home_team.id,
@@ -184,6 +166,7 @@ class FixturesDBManager:
                 db_fixture = retrieved_fixture.pop()
                 db_fixture.id = conv_fix.id
                 db_fixture.utc_date = conv_fix.utc_date
+                db_fixture.bsas_date = conv_fix.bsas_date
                 db_fixture.league = retrieved_league.id
                 db_fixture.round = conv_fix.round
                 db_fixture.home_team = retrieved_home_team.id

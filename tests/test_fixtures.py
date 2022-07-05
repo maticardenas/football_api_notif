@@ -66,42 +66,6 @@ def test_date_conversion():
     assert bsas_definitive_date
 
 
-def test_is_today_fixture():
-    with freeze_time("2022-06-19 10:30:00"):
-        river_fixture = MagicMock(
-            id=863211,
-            utc_date="2022-06-19T21:00:00+00:00",
-            league=128,
-            round="2ª Fase - 4",
-            home_team=441,
-            away_team=435,
-            home_score=1,
-            away_score=5,
-        )
-
-        is_today_bsas_fixture = is_today_fixture(river_fixture)
-
-        assert True == is_today_bsas_fixture
-
-
-def test_is_today_fixture_false():
-    with freeze_time("2022-06-18 02:30:00"):
-        river_fixture = MagicMock(
-            id=863211,
-            utc_date="2022-06-19T21:00:00+00:00",
-            league=128,
-            round="2ª Fase - 4",
-            home_team=441,
-            away_team=435,
-            home_score=1,
-            away_score=5,
-        )
-
-        is_today_bsas_fixture = is_today_fixture(river_fixture)
-
-        assert False == is_today_bsas_fixture
-
-
 def test_get_date_spanish_text_format():
     # given
     date = datetime.strptime("2021-10-29T18:45:00", "%Y-%m-%dT%H:%M:%S")

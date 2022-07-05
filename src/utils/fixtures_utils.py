@@ -136,28 +136,6 @@ def is_today_fixture(team_fixture: DBFixture) -> bool:
     return bsas_date.date() == datetime.today().date()
 
 
-def is_yesterday_fixture(team_fixture: DBFixture) -> bool:
-    utc_date = datetime.strptime(team_fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
-    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
-
-    return bsas_date.date() == (datetime.today().date() - timedelta(days=1))
-
-
-def is_tomorrow_fixture(team_fixture: DBFixture) -> bool:
-    utc_date = datetime.strptime(team_fixture.utc_date[:-6], "%Y-%m-%dT%H:%M:%S")
-    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
-
-    return bsas_date.date() == (datetime.today().date() + timedelta(days=1))
-
-
-def get_today_fixture_db(team_fixtures: List[DBFixture]) -> Optional[Fixture]:
-    for fixture in team_fixtures:
-        if is_today_fixture(fixture):
-            return convert_db_fixture(fixture)
-
-    return None
-
-
 def insert_head_to_heads() -> Optional[List[Fixture]]:
     tomorrow_games = FIXTURES_DB_MANAGER.get_games_in_surrounding_n_days(5)
 
@@ -179,22 +157,6 @@ def get_head_to_heads(team_1: str, team_2: str) -> Optional[List[Fixture]]:
         team_1, team_2
     )
     return [convert_db_fixture(fixture) for fixture in head_to_head_fixtures]
-
-
-def get_yesterday_fixture_db(team_fixtures) -> Optional[Fixture]:
-    for fixture in team_fixtures:
-        if is_yesterday_fixture(fixture):
-            return convert_db_fixture(fixture)
-
-    return None
-
-
-def get_tomorrow_fixture_db(team_fixtures) -> Optional[Fixture]:
-    for fixture in team_fixtures:
-        if is_tomorrow_fixture(fixture):
-            return convert_db_fixture(fixture)
-
-    return None
 
 
 def get_last_fixture(
@@ -347,9 +309,15 @@ def convert_fixture_response_to_db(fixture_response: Dict[str, Any]) -> Fixture:
     home_team_id = fixture_response["teams"]["home"]["id"]
     away_team_id = fixture_response["teams"]["away"]["id"]
 
+    utc_date = datetime.strptime(
+        fixture_response["fixture"]["date"][:-6], "%Y-%m-%dT%H:%M:%S"
+    )
+    bsas_date = get_time_in_time_zone(utc_date, TimeZones.BSAS)
+
     return FixtureForDB(
         fixture_response["fixture"]["id"],
         fixture_response["fixture"]["date"],
+        datetime.strftime(bsas_date, "%Y-%m-%dT%H:%M:%S"),
         date_diff,
         fixture_response["fixture"]["referee"],
         fixture_response["fixture"]["status"]["long"],
