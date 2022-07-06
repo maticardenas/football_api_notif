@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from src.api.base_client import BaseClient
 from src.notifier_logger import get_logger
@@ -13,7 +13,12 @@ class FixturesClient(BaseClient):
         self.request = APIRequest()
 
     def get_fixtures_by(
-        self, season: int = None, team_id: int = None, ids: List[int] = []
+        self,
+        season: int = None,
+        team_id: int = None,
+        ids: List[int] = [],
+        league_id: int = None,
+        between_dates: Tuple[str, str] = None,
     ) -> Dict[str, Any]:
         endpoint = "/v3/fixtures"
         params = {}
@@ -26,6 +31,13 @@ class FixturesClient(BaseClient):
 
         if len(ids):
             params["ids"] = "-".join([str(fix_id) for fix_id in ids])
+
+        if league_id:
+            params["league"] = league_id
+
+        if between_dates:
+            params["from"] = between_dates[0]
+            params["to"] = between_dates[1]
 
         url = f"{self.base_url}{endpoint}"
 
