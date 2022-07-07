@@ -140,7 +140,7 @@ async def today_matches(update: Update, context):
 
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=photo,
+            text=text,
             parse_mode="HTML",
         )
 
