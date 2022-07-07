@@ -198,6 +198,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
     def get_fixtures_text(self, converted_fixtures: List[Fixture], played=False) -> List[str]:
         text_limit = 3950
         fixtures_text = ""
+        fitting_fixtures = []
 
         for fixture in converted_fixtures:
             fixture_text = fixture.one_line_telegram_repr(played)
@@ -205,9 +206,9 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             if len(f"{fixtures_text}\n\n{fixture_text}") > text_limit:
                 break
             else:
-                fixtures_text = f"{fixtures_text}\n\n{fixture_text}"
+                fitting_fixtures.append(fixture)
 
-        return fixtures_text
+        return "\n\n".join(fitting_fixtures)
 
 
 
