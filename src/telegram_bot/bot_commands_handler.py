@@ -208,7 +208,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             else:
                 fitting_fixtures.append(fixture)
 
-        return "\n\n".join(fitting_fixtures.one_line_telegram_repr(played))
+        return "\n\n".join([fixture.one_line_telegram_repr(played) for fixture in fitting_fixtures])
 
 
 
