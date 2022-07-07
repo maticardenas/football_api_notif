@@ -30,7 +30,10 @@ def update_fixtures() -> None:
         logger.info(f"Updating fixtures for lot {lot}")
         team_fixtures = fixtures_client.get_fixtures_by(ids=lot)
         FIXTURES_DB_MANAGER.save_fixtures(
-            [convert_fixture_response_to_db(fixture) for fixture in team_fixtures.as_dict["response"]]
+            [
+                convert_fixture_response_to_db(fixture)
+                for fixture in team_fixtures.as_dict["response"]
+            ]
         )
 
 

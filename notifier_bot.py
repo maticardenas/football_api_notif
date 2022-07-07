@@ -10,6 +10,7 @@ from src.team_fixtures_manager import TeamFixturesManager
 from src.telegram_bot.bot_commands_handler import (
     NextAndLastMatchCommandHandler,
     NotifierBotCommandsHandler,
+    SurroundingMatchesHandler,
 )
 from src.telegram_bot.bot_constants import MESSI_PHOTO
 
@@ -35,10 +36,11 @@ async def help(update: Update, context):
         f" {Emojis.JOYSTICK.value} Estos son mis comandos disponibles (por ahora):\n\n"
         f"• /next_match <team>: próximo partido del equipo.\n"
         f"• /last_match <team>: último partido jugado del equipo.\n"
-        f"• /available_teams: equipos disponibles.\n"
-        f"• /today_matches: partidos de hoy (de los equipos disponibles).\n"
-        f"• /tomorrow_matches: partidos de mañana (de los equipos disponibles).\n"
-        f"• /last_played_matches: partidos jugados el día de ayer (de los equipos disponibles)."
+        f"• /available_teams: equipos disponibles para consultar.\n"
+        f"• /available_leagues: torneos disponibles para consultar.\n"
+        f"• /today_matches [opt]<league>: partidos de hoy (de los equipos disponibles).\n"
+        f"• /tomorrow_matches [opt]<league>: partidos de mañana (de los equipos disponibles).\n"
+        f"• /last_played_matches [opt]<league>: partidos jugados el día de ayer (de los equipos disponibles)."
     )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
@@ -54,11 +56,26 @@ async def available_teams(update: Update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
+async def available_leagues(update: Update, context):
+    logger.info(
+        f"'available_leagues' command executed - by {update.effective_user.name}"
+    )
+    notifier_commands_handler = NotifierBotCommandsHandler()
+    text = (
+        f"{Emojis.WAVING_HAND.value}Hola {update.effective_user.first_name}!\n\n"
+        f" {Emojis.TELEVISION.value} Estos son los torneos disponibles:\n\n"
+        f"{notifier_commands_handler.available_leagues_text()}"
+    )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
 async def next_match(update: Update, context):
     logger.info(
         f"'next_match {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
-    command_handler = NextAndLastMatchCommandHandler(context.args)
+    command_handler = NextAndLastMatchCommandHandler(
+        context.args, update.effective_user.first_name
+    )
     validated_input = command_handler.validate_command_input()
 
     if validated_input:
@@ -66,13 +83,7 @@ async def next_match(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        team_name = context.args[0].lower()
-        team = command_handler.get_managed_team(team_name)
-        current_season = date.today().year
-        team_fixtures_manager = TeamFixturesManager(current_season, team.id)
-        text, photo = team_fixtures_manager.get_next_team_fixture_text(
-            update.effective_user.first_name
-        )
+        text, photo = command_handler.next_match_team_notif()
         logger.info(f"Fixture - text: {text} - photo: {photo}")
         if photo:
             await context.bot.send_photo(
@@ -87,7 +98,7 @@ async def next_match(update: Update, context):
 
 async def last_match(update: Update, context):
     logger.info(
-        f"'last_match {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+        f"'last_match {' '.join(context.args)}' command executed - by {update.effective_user.first_name}"
     )
     command_handler = NextAndLastMatchCommandHandler(context.args)
     validated_input = command_handler.validate_command_input()
@@ -97,13 +108,7 @@ async def last_match(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        team_name = context.args[0].lower()
-        team = command_handler.get_managed_team(team_name)
-        current_season = date.today().year
-        team_fixtures_manager = TeamFixturesManager(current_season, team.id)
-        text, photo = team_fixtures_manager.get_last_team_fixture_text(
-            update.effective_user.first_name
-        )
+        text, photo = command_handler.last_match_team_notif()
         logger.info(f"Fixture - text: {text} - photo: {photo}")
         if photo:
             await context.bot.send_photo(
@@ -120,45 +125,75 @@ async def today_matches(update: Update, context):
     logger.info(
         f"'today_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
-    command_handler = NotifierBotCommandsHandler()
-    text, photo = command_handler.today_games(update.effective_user.first_name)
-
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=photo,
-        caption=text,
-        parse_mode="HTML",
+    command_handler = SurroundingMatchesHandler(
+        context.args, update.effective_user.first_name
     )
+
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text, photo = command_handler.today_games(update.effective_user.first_name)
+
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=photo,
+            caption=text,
+            parse_mode="HTML",
+        )
 
 
 async def last_played_matches(update: Update, context):
     logger.info(
         f"'last_played_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
-    command_handler = NotifierBotCommandsHandler()
-    text, photo = command_handler.yesterday_games(update.effective_user.first_name)
-
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=photo,
-        caption=text,
-        parse_mode="HTML",
+    command_handler = SurroundingMatchesHandler(
+        context.args, update.effective_user.first_name
     )
+
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text, photo = command_handler.yesterday_games(update.effective_user.first_name)
+
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=photo,
+            caption=text,
+            parse_mode="HTML",
+        )
 
 
 async def tomorrow_matches(update: Update, context):
     logger.info(
         f"'tomorrow_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
-    command_handler = NotifierBotCommandsHandler()
-    text, photo = command_handler.tomorrow_games(update.effective_user.first_name)
-
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=photo,
-        caption=text,
-        parse_mode="HTML",
+    command_handler = SurroundingMatchesHandler(
+        context.args, update.effective_user.name
     )
+
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text, photo = command_handler.tomorrow_games()
+
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=photo,
+            caption=text,
+            parse_mode="HTML",
+        )
 
 
 if __name__ == "__main__":
@@ -172,7 +207,9 @@ if __name__ == "__main__":
         "last_played_matches", last_played_matches
     )
     available_teams_handler = CommandHandler("available_teams", available_teams)
+    available_leagues_handler = CommandHandler("available_leagues", available_leagues)
     help_handler = CommandHandler("help", help)
+
     application.add_handler(start_handler)
     application.add_handler(next_match_handler)
     application.add_handler(last_match_handler)
@@ -181,5 +218,6 @@ if __name__ == "__main__":
     application.add_handler(last_played_matches_handler)
     application.add_handler(available_teams_handler)
     application.add_handler(tomorrow_matches_handler)
+    application.add_handler(available_leagues_handler)
 
     application.run_polling()
