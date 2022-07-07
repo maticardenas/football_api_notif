@@ -1,3 +1,4 @@
+import time
 from datetime import date, datetime, timedelta
 from typing import List
 
@@ -87,6 +88,9 @@ def populate_league_fixtures() -> None:
             FIXTURES_DB_MANAGER.save_fixtures(
                 get_converted_fixtures_to_db(league_fixtures.as_dict["response"])
             )
+
+        # to avoid reaching rate limit at API calls.
+        time.sleep(2.5)
 
 
 def populate_data(is_initial=False) -> None:
