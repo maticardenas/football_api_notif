@@ -41,6 +41,8 @@ class FixturesClient(BaseClient):
 
         url = f"{self.base_url}{endpoint}"
 
+        print(params)
+
         response = self.request.get(url, params, self.headers)
 
         logger.info(f"get_fixtures_by response - {response.status_code}")

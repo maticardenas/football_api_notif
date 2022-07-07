@@ -18,4 +18,11 @@ class EmailRecipient:
 class ManagedTeam:
     id: str
     name: str
-    command_name: str
+    command: str
+
+
+@dataclass
+class ManagedLeague:
+    id: str
+    name: str
+    command: str
