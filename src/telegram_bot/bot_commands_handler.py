@@ -97,8 +97,9 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         return response
 
     def today_games(self) -> Tuple[str, str]:
+        league_id = self._managed_league.id if self._managed_league else None
         today_games_fixtures = (
-            self._fixtures_db_manager.get_games_in_surrounding_n_days(0, self._managed_league.id)
+            self._fixtures_db_manager.get_games_in_surrounding_n_days(0, league_id)
         )
 
         league_text = (
@@ -109,9 +110,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             converted_games = [
                 convert_db_fixture(fixture) for fixture in today_games_fixtures
             ]
-            today_games_text = "\n\n".join(
-                [fixture.one_line_telegram_repr() for fixture in converted_games]
-            )
+            today_games_text = self.get_fixtures_text(converted_games)
             today_games_text_intro = (
                 f"{Emojis.WAVING_HAND.value} Hola "
                 f"{self._user}, "
@@ -131,23 +130,19 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         return (text, photo)
 
     def yesterday_games(self) -> Tuple[str, str]:
+        league_id = self._managed_league.id if self._managed_league else None
         played_games_fixtures = (
-            self._fixtures_db_manager.get_games_in_surrounding_n_days(-1, self._managed_league.id)
+            self._fixtures_db_manager.get_games_in_surrounding_n_days(-1, league_id)
         )
 
         league_text = (
-            f"en {self._managed_league.name}" if self._managed_league else ""
+            f" en {self._managed_league.name}" if self._managed_league else ""
         )
         if len(played_games_fixtures):
             converted_fixtures = [
                 convert_db_fixture(fixture) for fixture in played_games_fixtures
             ]
-            played_games_text = "\n\n".join(
-                [
-                    fixture.one_line_telegram_repr(played=True)
-                    for fixture in converted_fixtures
-                ]
-            )
+            played_games_text = self.get_fixtures_text(converted_fixtures, played=True)
             played_games_text_intro = (
                 f"{Emojis.WAVING_HAND.value} Hola "
                 f"{self._user}, "
@@ -168,8 +163,9 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         return (text, photo)
 
     def tomorrow_games(self) -> Tuple[str, str]:
+        league_id = self._managed_league.id if self._managed_league else None
         tomorrow_games_fixtures = (
-            self._fixtures_db_manager.get_games_in_surrounding_n_days(1, self._managed_league)
+            self._fixtures_db_manager.get_games_in_surrounding_n_days(1, league_id)
         )
 
         league_text = (
@@ -179,9 +175,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             converted_fixtures = [
                 convert_db_fixture(fixture) for fixture in tomorrow_games_fixtures
             ]
-            tomorrow_games_text = "\n\n".join(
-                [fixture.one_line_telegram_repr() for fixture in converted_fixtures]
-            )
+            tomorrow_games_text = self.get_fixtures_text(converted_fixtures)
             tomorrow_games_text_intro = (
                 f"{Emojis.WAVING_HAND.value} Hola "
                 f"{self._user}, "
@@ -199,6 +193,25 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             photo = MESSI_PHOTO
 
         return (text, photo)
+
+
+    def get_fixtures_text(self, converted_fixtures: List[Fixture], played=False) -> List[str]:
+        text_limit = 3950
+        fixtures_text = ""
+
+        for fixture in converted_fixtures:
+            fixture_text = fixture.one_line_telegram_repr(played)
+
+            if len(f"{fixtures_text}\n\n{fixture_text}") > text_limit:
+                break
+            else:
+                fixtures_text = f"{fixtures_text}\n\n{fixture_text}"
+
+        return fixtures_text
+
+
+
+
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):

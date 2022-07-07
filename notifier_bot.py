@@ -138,10 +138,9 @@ async def today_matches(update: Update, context):
     else:
         text, photo = command_handler.today_games()
 
-        await context.bot.send_photo(
+        await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            photo=photo,
-            caption=text,
+            text=photo,
             parse_mode="HTML",
         )
 
@@ -163,10 +162,9 @@ async def last_played_matches(update: Update, context):
     else:
         text, photo = command_handler.yesterday_games()
 
-        await context.bot.send_photo(
+        await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            photo=photo,
-            caption=text,
+            text=text,
             parse_mode="HTML",
         )
 
@@ -188,10 +186,9 @@ async def tomorrow_matches(update: Update, context):
     else:
         text, photo = command_handler.tomorrow_games()
 
-        await context.bot.send_photo(
+        await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            photo=photo,
-            caption=text,
+            text=text,
             parse_mode="HTML",
         )
 
