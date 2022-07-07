@@ -2,261 +2,261 @@
   {
     "id": "435",
     "name": "River Plate",
-    "command_name": "river"
+    "command": "river"
   },
   {
     "id": "85",
     "name": "PSG",
-    "command_name": "psg"
+    "command": "psg"
   },
   {
     "id": "451",
     "name": "Boca Juniors",
-    "command_name": "boca"
+    "command": "boca"
   },
   {
     "id": "453",
     "name": "Independiente",
-    "command_name": "independiente"
+    "command": "independiente"
   },
   {
     "id": "436",
     "name": "Racing",
-    "command_name": "racing"
+    "command": "racing"
   },
   {
     "id": "440",
     "name": "Belgrano",
-    "command_name": "belgrano"
+    "command": "belgrano"
   },
   {
     "id": "456",
     "name": "Talleres",
-    "command_name": "talleres"
+    "command": "talleres"
   },
   {
     "id": "478",
     "name": "Instituto",
-    "command_name": "instituto"
+    "command": "instituto"
   },
   {
     "id": "50",
     "name": "Manchester City",
-    "command_name": "mancity"
+    "command": "mancity"
   },
   {
     "id": "1957",
     "name": "Racing de Cordoba",
-    "command_name": "racingcor"
+    "command": "racingcor"
   },
   {
     "id": "457",
     "name": "Newell's",
-    "command_name": "newells"
+    "command": "newells"
   },
   {
     "id": "529",
     "name": "Barcelona",
-    "command_name": "barcelona"
+    "command": "barcelona"
   },
   {
     "id": "40",
     "name": "Liverpool",
-    "command_name": "liverpool"
+    "command": "liverpool"
   },
   {
     "id": "33",
     "name": "Manchester United",
-    "command_name": "manutd"
+    "command": "manutd"
   },
   {
     "id": "157",
     "name": "Bayern Munich",
-    "command_name": "bayern"
+    "command": "bayern"
   },
   {
     "id": "165",
     "name": "Borussia Dortmund",
-    "command_name": "borussia"
+    "command": "borussia"
   },
   {
     "id": "42",
     "name": "Arsenal",
-    "command_name": "arsenal"
+    "command": "arsenal"
   },
   {
     "id": "47",
     "name": "Tottenham",
-    "command_name": "tottenham"
+    "command": "tottenham"
   },
   {
     "id": "496",
     "name": "Juventus",
-    "command_name": "juventus"
+    "command": "juventus"
   },
   {
     "id": "505",
     "name": "Inter Milan",
-    "command_name": "inter"
+    "command": "inter"
   },
   {
     "id": "26",
     "name": "Argentina",
-    "command_name": "argentina"
+    "command": "argentina"
   },
   {
     "id": "2",
     "name": "Francia",
-    "command_name": "france"
+    "command": "france"
   },
   {
     "id": "6",
     "name": "Brasil",
-    "command_name": "brazil"
+    "command": "brazil"
   },
   {
     "id": "768",
     "name": "Italia",
-    "command_name": "italy"
+    "command": "italy"
   },
   {
     "id": "1118",
     "name": "Países Bajos",
-    "command_name": "netherlands"
+    "command": "netherlands"
   },
   {
     "id": "10",
     "name": "Inglaterra",
-    "command_name": "england"
+    "command": "england"
   },
   {
     "id": "1569",
     "name": "Qatar",
-    "command_name": "qatar"
+    "command": "qatar"
   },
   {
     "id": "2382",
     "name": "Ecuador",
-    "command_name": "ecuador"
+    "command": "ecuador"
   },
   {
     "id": "13",
     "name": "Senegal",
-    "command_name": "senegal"
+    "command": "senegal"
   },
   {
     "id": "22",
     "name": "Iran",
-    "command_name": "iran"
+    "command": "iran"
   },
   {
     "id": "2384",
     "name": "USA",
-    "command_name": "usa"
+    "command": "usa"
   },
   {
     "id": "767",
     "name": "Wales",
-    "command_name": "wales"
+    "command": "wales"
   },
   {
     "id": "23",
     "name": "Saudi Arabia",
-    "command_name": "saudiarabia"
+    "command": "saudiarabia"
   },
   {
     "id": "16",
     "name": "Mexico",
-    "command_name": "mexico"
+    "command": "mexico"
   },
   {
     "id": "24",
     "name": "Poland",
-    "command_name": "poland"
+    "command": "poland"
   },
   {
     "id": "20",
     "name": "Australia",
-    "command_name": "australia"
+    "command": "australia"
   },
   {
     "id": "21",
     "name": "Denmark",
-    "command_name": "denmark"
+    "command": "denmark"
   },
   {
     "id": "28",
     "name": "Tunisia",
-    "command_name": "tunisia"
+    "command": "tunisia"
   },
   {
     "id": "9",
     "name": "Spain",
-    "command_name": "spain"
+    "command": "spain"
   },
   {
     "id": "29",
     "name": "Costa Rica",
-    "command_name": "costarica"
+    "command": "costarica"
   },
   {
     "id": "25",
     "name": "Germany",
-    "command_name": "germany"
+    "command": "germany"
   },
   {
     "id": "1",
     "name": "Belgium",
-    "command_name": "belgium"
+    "command": "belgium"
   },
   {
     "id": "5529",
     "name": "Canada",
-    "command_name": "canada"
+    "command": "canada"
   },
   {
     "id": "3",
     "name": "Croatia",
-    "command_name": "croatia"
+    "command": "croatia"
   },
   {
     "id": "31",
     "name": "Morocco",
-    "command_name": "morocco"
+    "command": "morocco"
   },
   {
     "id": "14",
     "name": "Serbia",
-    "command_name": "serbia"
+    "command": "serbia"
   },
   {
     "id": "15",
     "name": "Switzerland",
-    "command_name": "switzerland"
+    "command": "switzerland"
   },
   {
     "id": "1530",
     "name": "Cameroon",
-    "command_name": "cameroon"
+    "command": "cameroon"
   },
   {
     "id": "27",
     "name": "Portugal",
-    "command_name": "portugal"
+    "command": "portugal"
   },
   {
     "id": "1504",
     "name": "Ghana",
-    "command_name": "ghana"
+    "command": "ghana"
   },
   {
     "id": "7",
     "name": "Uruguay",
-    "command_name": "uruguay"
+    "command": "uruguay"
   },
   {
     "id": "17",
     "name": "South Korea",
-    "command_name": "southkorea"
+    "command": "southkorea"
   }
 ]
