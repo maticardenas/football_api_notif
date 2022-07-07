@@ -82,13 +82,13 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         super().__init__()
         self._command_args = commands_args
         self._user = user
-        self._league = ""
+        self._managed_league = None
 
     def validate_command_input(self) -> str:
         response = ""
 
         if len(self._command_args) == 1:
-            self._league = self._command_args[0].lower()
+            self._managed_league = self.get_managed_league(self._command_args[0].lower())
         elif len(self._command_args) > 1:
             response = "Sólo puedes ingresar uno (torneo) o ningún paramétro."
         else:
@@ -98,11 +98,11 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
 
     def today_games(self) -> Tuple[str, str]:
         today_games_fixtures = (
-            self._fixtures_db_manager.get_games_in_surrounding_n_days(0, self._league)
+            self._fixtures_db_manager.get_games_in_surrounding_n_days(0, self._managed_league.id)
         )
 
         league_text = (
-            f" en {self.get_managed_league(self._league).name}" if self._league else ""
+            f" en {self._managed_league.name}" if self._managed_league else ""
         )
 
         if len(today_games_fixtures):
@@ -132,11 +132,11 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
 
     def yesterday_games(self) -> Tuple[str, str]:
         played_games_fixtures = (
-            self._fixtures_db_manager.get_games_in_surrounding_n_days(-1, self._league)
+            self._fixtures_db_manager.get_games_in_surrounding_n_days(-1, self._managed_league.id)
         )
 
         league_text = (
-            f"en {self.get_managed_league(self._league).name}" if self._league else ""
+            f"en {self._managed_league.name}" if self._managed_league else ""
         )
         if len(played_games_fixtures):
             converted_fixtures = [
@@ -169,11 +169,11 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
 
     def tomorrow_games(self) -> Tuple[str, str]:
         tomorrow_games_fixtures = (
-            self._fixtures_db_manager.get_games_in_surrounding_n_days(1, self._league)
+            self._fixtures_db_manager.get_games_in_surrounding_n_days(1, self._managed_league)
         )
 
         league_text = (
-            f" en {self.get_managed_league(self._league).name}" if self._league else ""
+            f" en {self._managed_league.name}" if self._managed_league else ""
         )
         if len(tomorrow_games_fixtures):
             converted_fixtures = [

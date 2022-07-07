@@ -136,7 +136,7 @@ async def today_matches(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        text, photo = command_handler.today_games(update.effective_user.first_name)
+        text, photo = command_handler.today_games()
 
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
@@ -161,7 +161,7 @@ async def last_played_matches(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        text, photo = command_handler.yesterday_games(update.effective_user.first_name)
+        text, photo = command_handler.yesterday_games()
 
         await context.bot.send_photo(
             chat_id=update.effective_chat.id,
