@@ -31,7 +31,7 @@ class FixturesDBManager:
         surrounding_fixtures = []
 
         if days > 0:
-            days_range = range(1, days)
+            days_range = range(1, days + 1)
         elif days < 0:
             days_range = range(days, 0)
         else:

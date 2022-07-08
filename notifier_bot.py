@@ -174,7 +174,7 @@ async def tomorrow_matches(update: Update, context):
         f"'tomorrow_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
     )
     command_handler = SurroundingMatchesHandler(
-        context.args, update.effective_user.name
+        context.args, update.effective_user.first_name
     )
 
     validated_input = command_handler.validate_command_input()
