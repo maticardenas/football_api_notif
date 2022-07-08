@@ -64,6 +64,8 @@ def populate_team_fixtures(is_initial) -> None:
             FIXTURES_DB_MANAGER.save_fixtures(
                 get_converted_fixtures_to_db(team_fixtures.as_dict["response"])
             )
+        # to avoid reaching rate limit at API calls.
+        time.sleep(2.5)
 
 
 def populate_league_fixtures() -> None:
