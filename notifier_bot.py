@@ -100,7 +100,9 @@ async def last_match(update: Update, context):
     logger.info(
         f"'last_match {' '.join(context.args)}' command executed - by {update.effective_user.first_name}"
     )
-    command_handler = NextAndLastMatchCommandHandler(context.args)
+    command_handler = NextAndLastMatchCommandHandler(
+        context.args, update.effective_user.first_name
+    )
     validated_input = command_handler.validate_command_input()
 
     if validated_input:
