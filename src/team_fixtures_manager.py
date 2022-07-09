@@ -2,14 +2,9 @@ import random
 from datetime import datetime
 from typing import List, Optional
 
-from sqlmodel import or_, select
-
 from config.notif_config import NotifConfig
 from src.api.fixtures_client import FixturesClient
-from src.db.db_manager import NotifierDBManager
-from src.db.notif_sql_models import Fixture as DBFixture
-from src.db.notif_sql_models import League as DBLeague
-from src.db.notif_sql_models import Team as DBTeam
+from src.db.fixtures_db_manager import FixturesDBManager
 from src.emojis import Emojis
 from src.entities import Fixture, TeamStanding
 from src.notifier_logger import get_logger
@@ -38,7 +33,7 @@ class TeamFixturesManager:
         self._season = season
         self._team_id = team_id
         self._fixtures_client = FixturesClient()
-        self._notifier_db_manager = NotifierDBManager()
+        self._fixtures_db_manager = FixturesDBManager()
 
     def get_next_team_fixture_text(self, user: str = "") -> tuple:
         next_team_fixture = self.get_next_team_fixture()
@@ -56,17 +51,8 @@ class TeamFixturesManager:
             else ("Fixture para el equipo no encontrado", "")
         )
 
-    def get_team_db_fixtures(self) -> Optional[List[DBFixture]]:
-        fixtures_statement = select(DBFixture).where(
-            or_(
-                DBFixture.home_team == self._team_id,
-                DBFixture.away_team == self._team_id,
-            )
-        )
-        return self._notifier_db_manager.select_records(fixtures_statement)
-
     def get_next_team_fixture(self) -> Optional[Fixture]:
-        team_fixtures = self.get_team_db_fixtures()
+        team_fixtures = self._fixtures_db_manager.get_fixtures_by_team(self._team_id)
 
         next_team_fixture = None
 
@@ -134,7 +120,7 @@ class TeamFixturesManager:
 
     def get_last_team_fixture(self) -> Optional[Fixture]:
         logger.info(f"Getting last fixture for team {self._team_id}")
-        team_fixtures = self.get_team_db_fixtures()
+        team_fixtures = self._fixtures_db_manager.get_fixtures_by_team(self._team_id)
 
         last_team_fixture = None
 
@@ -145,13 +131,7 @@ class TeamFixturesManager:
 
     def notify_last_fixture_db(self) -> None:
         logger.info(f"Getting last fixture for team {self._team_id} from db")
-        fixtures_statement = select(DBFixture).where(
-            or_(
-                DBFixture.home_team == self._team_id,
-                DBFixture.away_team == self._team_id,
-            )
-        )
-        team_fixtures = self._notifier_db_manager.select_records(fixtures_statement)
+        team_fixtures = self._fixtures_db_manager.get_fixtures_by_team(self._team_id)
 
         last_team_fixture = None
 
@@ -381,18 +361,7 @@ class TeamFixturesManager:
             )
 
     def _get_match_images(self, league_id: int) -> List[str]:
-        match_image_url_team_statement = select(DBTeam).where(
-            DBTeam.id == self._team_id
-        )
-        match_image_url_league_statement = select(DBLeague).where(
-            DBLeague.id == league_id
-        )
-
-        team_image_url = self._notifier_db_manager.select_records(
-            match_image_url_team_statement
-        )[0].picture
-        league_image_url = self._notifier_db_manager.select_records(
-            match_image_url_league_statement
-        )[0].logo
+        team_image_url = self._fixtures_db_manager.get_team(self._team_id)[0].picture
+        league_image_url = self._fixtures_db_manager.get_league(league_id)[0].logo
 
         return [team_image_url, league_image_url]

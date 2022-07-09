@@ -88,7 +88,9 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         response = ""
 
         if len(self._command_args) == 1:
-            self._managed_league = self.get_managed_league(self._command_args[0].lower())
+            self._managed_league = self.get_managed_league(
+                self._command_args[0].lower()
+            )
         elif len(self._command_args) > 1:
             response = "Sólo puedes ingresar uno (torneo) o ningún paramétro."
         else:
@@ -102,9 +104,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             self._fixtures_db_manager.get_games_in_surrounding_n_days(0, league_id)
         )
 
-        league_text = (
-            f" en {self._managed_league.name}" if self._managed_league else ""
-        )
+        league_text = f" en {self._managed_league.name}" if self._managed_league else ""
 
         if len(today_games_fixtures):
             converted_games = [
@@ -135,9 +135,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             self._fixtures_db_manager.get_games_in_surrounding_n_days(-1, league_id)
         )
 
-        league_text = (
-            f" en {self._managed_league.name}" if self._managed_league else ""
-        )
+        league_text = f" en {self._managed_league.name}" if self._managed_league else ""
         if len(played_games_fixtures):
             converted_fixtures = [
                 convert_db_fixture(fixture) for fixture in played_games_fixtures
@@ -168,9 +166,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             self._fixtures_db_manager.get_games_in_surrounding_n_days(1, league_id)
         )
 
-        league_text = (
-            f" en {self._managed_league.name}" if self._managed_league else ""
-        )
+        league_text = f" en {self._managed_league.name}" if self._managed_league else ""
         if len(tomorrow_games_fixtures):
             converted_fixtures = [
                 convert_db_fixture(fixture) for fixture in tomorrow_games_fixtures
@@ -194,8 +190,9 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
 
         return (text, photo)
 
-
-    def get_fixtures_text(self, converted_fixtures: List[Fixture], played=False) -> List[str]:
+    def get_fixtures_text(
+        self, converted_fixtures: List[Fixture], played=False
+    ) -> List[str]:
         text_limit = 3950
         fixtures_text = ""
         fitting_fixtures = []
@@ -208,11 +205,9 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             else:
                 fitting_fixtures.append(fixture)
 
-        return "\n\n".join([fixture.one_line_telegram_repr(played) for fixture in fitting_fixtures])
-
-
-
-
+        return "\n\n".join(
+            [fixture.one_line_telegram_repr(played) for fixture in fitting_fixtures]
+        )
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):

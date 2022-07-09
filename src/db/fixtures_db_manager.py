@@ -25,6 +25,14 @@ class FixturesDBManager:
     def get_all_fixtures(self) -> List[Optional[DBFixture]]:
         return self._notifier_db_manager.select_records(select(DBFixture))
 
+    def get_team(self, team_id: int) -> Optional[DBTeam]:
+        team_statement = select(DBTeam).where(DBTeam.id == team_id)
+        return self._notifier_db_manager.select_records(team_statement)
+
+    def get_league(self, league_id: int) -> Optional[DBLeague]:
+        league_statement = select(DBLeague).where(DBLeague.id == league_id)
+        return self._notifier_db_manager.select_records(league_statement)
+
     def get_games_in_surrounding_n_days(
         self, days: int, league: str = ""
     ) -> List[Optional[DBFixture]]:
@@ -44,7 +52,9 @@ class FixturesDBManager:
             games_date = surrounding_day.strftime("%Y-%m-%d")
 
             statement = (
-                select(DBFixture).where(DBFixture.bsas_date.contains(games_date)).order_by(DBFixture.league)
+                select(DBFixture)
+                .where(DBFixture.bsas_date.contains(games_date))
+                .order_by(DBFixture.league)
                 if not league
                 else select(DBFixture).where(
                     DBFixture.bsas_date.contains(games_date), DBFixture.league == league
@@ -54,6 +64,19 @@ class FixturesDBManager:
             surrounding_fixtures += self._notifier_db_manager.select_records(statement)
 
         return surrounding_fixtures
+
+    def get_fixtures_by_team(self, team_id: int) -> Optional[List[DBFixture]]:
+        fixtures_statement = select(DBFixture).where(
+            or_(
+                DBFixture.home_team == team_id,
+                DBFixture.away_team == team_id,
+            )
+        )
+        return self._notifier_db_manager.select_records(fixtures_statement)
+
+    def get_fixtures_by_league(self, league_id: int) -> Optional[List[DBFixture]]:
+        fixtures_statement = select(DBFixture).where(DBFixture.league == league_id)
+        return self._notifier_db_manager.select_records(fixtures_statement)
 
     def get_head_to_head_fixtures(self, team_1: str, team_2: str):
         statement = (
