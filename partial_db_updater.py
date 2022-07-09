@@ -6,7 +6,7 @@ from src.api.fixtures_client import FixturesClient
 from src.db.fixtures_db_manager import FixturesDBManager
 from src.notifier_logger import get_logger
 from src.team_fixtures_manager import TeamFixturesManager
-from src.utils.fixtures_utils import convert_fixture_response_to_db
+from src.utils.fixtures_utils import convert_fixtures_response_to_db
 
 FIXTURES_DB_MANAGER = FixturesDBManager()
 MANAGED_TEAMS = get_managed_teams_config()
@@ -30,10 +30,7 @@ def update_fixtures() -> None:
         logger.info(f"Updating fixtures for lot {lot}")
         team_fixtures = fixtures_client.get_fixtures_by(ids=lot)
         FIXTURES_DB_MANAGER.save_fixtures(
-            [
-                convert_fixture_response_to_db(fixture)
-                for fixture in team_fixtures.as_dict["response"]
-            ]
+            convert_fixtures_response_to_db(team_fixtures.as_dict["response"])
         )
 
 

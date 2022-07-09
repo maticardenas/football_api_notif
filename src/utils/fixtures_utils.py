@@ -1,7 +1,7 @@
 import re
 import urllib
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.error import HTTPError
 
 from deep_translator import GoogleTranslator
@@ -27,12 +27,15 @@ from src.entities import (
     Team,
     TeamStanding,
 )
+from src.notifier_logger import get_logger
 from src.utils.date_utils import TimeZones, get_formatted_date, get_time_in_time_zone
 from src.utils.message_utils import TEAMS_ALIASES
 
 
 FIXTURES_DB_MANAGER = FixturesDBManager()
 FIXTURES_CLIENT = FixturesClient()
+
+logger = get_logger(__name__)
 
 
 def get_team_aliases(team_id: str) -> list:
@@ -146,10 +149,33 @@ def insert_head_to_heads() -> Optional[List[Fixture]]:
             if head_to_head_fixtures:
                 FIXTURES_DB_MANAGER.save_fixtures(
                     [
-                        convert_fixture_response_to_db(fixture)
+                        convert_fixture_response_to_db_fixture(fixture)
                         for fixture in head_to_head_fixtures
                     ]
                 )
+
+
+def convert_fixtures_response_to_db(
+    fixtures_response: Union[List[dict], List[List[dict]]]
+) -> List[DBFixture]:
+    """
+    :param fixtures_response: "response" key from fixtures response. It can be either a list of individual fixtures
+    or a list of lists (max 100) if response includes too many fixtures.
+
+    :return: a list of converted fixtures to DB entities.
+    """
+    converted_db_fixtures = []
+
+    for item in fixtures_response:
+        if isinstance(item, list):
+            for fixture in item:
+                converted_db_fixtures.append(
+                    convert_fixture_response_to_db_fixture(fixture)
+                )
+        else:
+            converted_db_fixtures.append(convert_fixture_response_to_db_fixture(item))
+
+    return converted_db_fixtures
 
 
 def get_head_to_heads(team_1: str, team_2: str) -> Optional[List[Fixture]]:
@@ -304,7 +330,10 @@ def convert_fixture_response(
     )
 
 
-def convert_fixture_response_to_db(fixture_response: Dict[str, Any]) -> Fixture:
+def convert_fixture_response_to_db_fixture(fixture_response: Dict[str, Any]) -> Fixture:
+    fixture_teams = f"{fixture_response['teams']['home']['name']} vs {fixture_response['teams']['away']['name']}"
+    logger.info(f"Converting fixture response '{fixture_teams}' to DB entity")
+
     league_name, round_name = __get_translated_league_name_and_round(fixture_response)
     home_team_id = fixture_response["teams"]["home"]["id"]
     away_team_id = fixture_response["teams"]["away"]["id"]

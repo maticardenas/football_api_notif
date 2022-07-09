@@ -3,8 +3,13 @@ from datetime import datetime
 import pytz
 from freezegun import freeze_time
 
+from src.entities import FixtureForDB
 from src.utils.date_utils import get_date_spanish_text_format
-from src.utils.fixtures_utils import date_diff, get_next_fixture
+from src.utils.fixtures_utils import (
+    date_diff,
+    get_next_fixture,
+    convert_fixtures_response_to_db,
+)
 from tests.utils.sample_data_utils import get_sample_data_response
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -73,3 +78,16 @@ def test_get_date_spanish_text_format():
 
     # then
     assert formatted_date == "Viernes 29 de Octubre del 2021"
+
+
+def test_convert_fixtures_response_to_db():
+    # given
+    fixture_response_json_file = "fixtures_response_sample.json"
+    fixture_response = get_sample_data_response(DATA_PATH, fixture_response_json_file)
+
+    # when
+    converted_fixtures = convert_fixtures_response_to_db(fixture_response)
+
+    # then
+    assert len(converted_fixtures) == 54
+    assert all([isinstance(fixture, FixtureForDB) for fixture in converted_fixtures])

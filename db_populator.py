@@ -7,7 +7,10 @@ from src.api.fixtures_client import FixturesClient
 from src.db.fixtures_db_manager import FixturesDBManager
 from src.entities import Fixture, FixtureForDB
 from src.notifier_logger import get_logger
-from src.utils.fixtures_utils import convert_fixture_response_to_db
+from src.utils.fixtures_utils import (
+    convert_fixture_response_to_db_fixture,
+    convert_fixtures_response_to_db,
+)
 
 FIXTURES_DB_MANAGER = FixturesDBManager()
 MANAGED_TEAMS = get_managed_teams_config()
@@ -28,7 +31,6 @@ def get_converted_fixtures_to_db(fixtures: List[Fixture]) -> List[FixtureForDB]:
             f"Converting & populating fixture {fix_nr}/"
             f"{len(fixtures)} - {fixture_match}"
         )
-        converted_fixtures.append(convert_fixture_response_to_db(fixture))
         fix_nr += 1
 
     return converted_fixtures
@@ -56,13 +58,13 @@ def populate_team_fixtures(is_initial) -> None:
             team_fixtures = fixtures_client.get_fixtures_by(str(last_year), team.id)
             if "response" in team_fixtures.as_dict:
                 FIXTURES_DB_MANAGER.save_fixtures(
-                    get_converted_fixtures_to_db(team_fixtures.as_dict["response"])
+                    convert_fixtures_response_to_db(team_fixtures.as_dict["response"])
                 )
 
         team_fixtures = fixtures_client.get_fixtures_by(str(current_year), team.id)
         if "response" in team_fixtures.as_dict:
             FIXTURES_DB_MANAGER.save_fixtures(
-                get_converted_fixtures_to_db(team_fixtures.as_dict["response"])
+                convert_fixtures_response_to_db(team_fixtures.as_dict["response"])
             )
         # to avoid reaching rate limit at API calls.
         time.sleep(2.5)
@@ -88,7 +90,7 @@ def populate_league_fixtures() -> None:
 
         if "response" in league_fixtures.as_dict:
             FIXTURES_DB_MANAGER.save_fixtures(
-                get_converted_fixtures_to_db(league_fixtures.as_dict["response"])
+                convert_fixtures_response_to_db(league_fixtures.as_dict["response"])
             )
 
         # to avoid reaching rate limit at API calls.
