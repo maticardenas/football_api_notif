@@ -54,11 +54,11 @@ class FixturesDBManager:
             statement = (
                 select(DBFixture)
                 .where(DBFixture.bsas_date.contains(games_date))
-                .order_by(DBFixture.league)
+                .order_by(DBFixture.bsas_date)
                 if not league
                 else select(DBFixture).where(
                     DBFixture.bsas_date.contains(games_date), DBFixture.league == league
-                )
+                ).order_by(DBFixture.bsas_date)
             )
 
             surrounding_fixtures += self._notifier_db_manager.select_records(statement)
