@@ -44,7 +44,7 @@ class FixturesDBManager:
             games_date = surrounding_day.strftime("%Y-%m-%d")
 
             statement = (
-                select(DBFixture).where(DBFixture.bsas_date.contains(games_date))
+                select(DBFixture).where(DBFixture.bsas_date.contains(games_date)).order_by(DBFixture.league)
                 if not league
                 else select(DBFixture).where(
                     DBFixture.bsas_date.contains(games_date), DBFixture.league == league
