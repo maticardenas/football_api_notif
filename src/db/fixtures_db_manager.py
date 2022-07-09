@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import List, Optional
 
+from sqlalchemy import asc, desc
 from sqlmodel import select, or_
 
 from src.db.db_manager import NotifierDBManager
@@ -79,6 +80,48 @@ class FixturesDBManager:
     def get_fixtures_by_league(self, league_id: int) -> Optional[List[DBFixture]]:
         fixtures_statement = select(DBFixture).where(DBFixture.league == league_id)
         return self._notifier_db_manager.select_records(fixtures_statement)
+
+    def get_next_fixture(
+        self, team_id: int = None, league_id: int = None
+    ) -> Optional[List[DBFixture]]:
+        today = datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H:%M:%S")
+
+        statement = select(DBFixture).where(DBFixture.utc_date >= today)
+
+        if team_id:
+            statement = statement.where(
+                or_(DBFixture.home_team == team_id, DBFixture.away_team == team_id)
+            )
+
+        if league_id:
+            statement = statement.where(DBFixture.league == league_id)
+
+        statement = statement.order_by(asc(DBFixture.utc_date))
+
+        next_fixtures = self._notifier_db_manager.select_records(statement)
+
+        return next_fixtures[0] if len(next_fixtures) else next_fixtures
+
+    def get_last_fixture(
+        self, team_id: int = None, league_id: int = None
+    ) -> Optional[List[DBFixture]]:
+        today = datetime.strftime(datetime.utcnow(), "%Y-%m-%dT%H:%M:%S")
+
+        statement = select(DBFixture).where(DBFixture.utc_date <= today)
+
+        if team_id:
+            statement = statement.where(
+                or_(DBFixture.home_team == team_id, DBFixture.away_team == team_id)
+            )
+
+        if league_id:
+            statement = statement.where(DBFixture.league == league_id)
+
+        statement = statement.order_by(desc(DBFixture.utc_date))
+
+        next_fixtures = self._notifier_db_manager.select_records(statement)
+
+        return next_fixtures[0] if len(next_fixtures) else next_fixtures
 
     def get_head_to_head_fixtures(self, team_1: str, team_2: str):
         statement = (

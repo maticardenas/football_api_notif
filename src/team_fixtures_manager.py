@@ -18,6 +18,8 @@ from src.utils.fixtures_utils import (
     get_next_fixture,
     get_next_fixture_db,
     get_youtube_highlights_videos,
+    convert_db_fixture,
+    get_head_to_heads,
 )
 from src.utils.message_utils import (
     get_first_phrase_msg,
@@ -52,14 +54,31 @@ class TeamFixturesManager:
         )
 
     def get_next_team_fixture(self) -> Optional[Fixture]:
-        team_fixtures = self._fixtures_db_manager.get_fixtures_by_team(self._team_id)
+        next_db_fixture = self._fixtures_db_manager.get_next_fixture(
+            team_id=self._team_id
+        )
 
-        next_team_fixture = None
+        converted_fixture = None
 
-        if len(team_fixtures):
-            next_team_fixture = get_next_fixture_db(team_fixtures)
+        if next_db_fixture:
+            converted_fixture = convert_db_fixture(next_db_fixture)
+            converted_fixture.head_to_head = get_head_to_heads(
+                converted_fixture.home_team.id, converted_fixture.away_team.id
+            )
 
-        return next_team_fixture
+        return converted_fixture
+
+    def get_last_team_fixture(self) -> Optional[Fixture]:
+        last_db_fixture = self._fixtures_db_manager.get_last_fixture(
+            team_id=self._team_id
+        )
+
+        converted_fixture = None
+
+        if last_db_fixture:
+            converted_fixture = convert_db_fixture(last_db_fixture)
+
+        return converted_fixture
 
     def notify_next_fixture_db(self) -> None:
         next_team_fixture = self.get_next_team_fixture()
@@ -117,17 +136,6 @@ class TeamFixturesManager:
                     f"There is still no line up for the match of {next_team_fixture.home_team} vs {next_team_fixture.away_team}"
                 )
                 logger.info(str(next_team_fixture.remaining_time()))
-
-    def get_last_team_fixture(self) -> Optional[Fixture]:
-        logger.info(f"Getting last fixture for team {self._team_id}")
-        team_fixtures = self._fixtures_db_manager.get_fixtures_by_team(self._team_id)
-
-        last_team_fixture = None
-
-        if team_fixtures:
-            last_team_fixture = get_last_fixture_db(team_fixtures)
-
-        return last_team_fixture
 
     def notify_last_fixture_db(self) -> None:
         logger.info(f"Getting last fixture for team {self._team_id} from db")
