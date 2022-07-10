@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 from typing import List, Tuple
 
 from src.db.fixtures_db_manager import FixturesDBManager
@@ -9,6 +10,7 @@ from src.db.notif_sql_models import (
 )
 from src.emojis import Emojis
 from src.telegram_bot.bot_constants import MESSI_PHOTO
+from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import (
     convert_db_fixture,
     get_head_to_heads,
@@ -77,6 +79,26 @@ class NotifierBotCommandsHandler:
                 f"• {available_league}"
                 for available_league in self.available_command_league_names()
             ]
+        )
+
+    @staticmethod
+    def get_fixtures_text(
+        converted_fixtures: List[Fixture], played=False
+    ) -> List[str]:
+        text_limit = 3950
+        fixtures_text = ""
+        fitting_fixtures = []
+
+        for fixture in converted_fixtures:
+            fixture_text = fixture.one_line_telegram_repr(played)
+
+            if len(f"{fixtures_text}\n\n{fixture_text}") > text_limit:
+                break
+            else:
+                fitting_fixtures.append(fixture)
+
+        return "\n\n".join(
+            [fixture.one_line_telegram_repr(played) for fixture in fitting_fixtures]
         )
 
 
@@ -170,6 +192,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         )
 
         league_text = f" en {self._managed_league.name}" if self._managed_league else ""
+
         if len(tomorrow_games_fixtures):
             converted_fixtures = [
                 convert_db_fixture(fixture) for fixture in tomorrow_games_fixtures
@@ -193,24 +216,6 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
 
         return (text, photo)
 
-    def get_fixtures_text(
-        self, converted_fixtures: List[Fixture], played=False
-    ) -> List[str]:
-        text_limit = 3950
-        fixtures_text = ""
-        fitting_fixtures = []
-
-        for fixture in converted_fixtures:
-            fixture_text = fixture.one_line_telegram_repr(played)
-
-            if len(f"{fixtures_text}\n\n{fixture_text}") > text_limit:
-                break
-            else:
-                fitting_fixtures.append(fixture)
-
-        return "\n\n".join(
-            [fixture.one_line_telegram_repr(played) for fixture in fitting_fixtures]
-        )
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
@@ -335,3 +340,36 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
         return telegram_last_fixture_league_notification(
             converted_fixture, league.name, self._user
         )
+
+    def next_matches_league_notif(self) -> str:
+        league_name = self._command_args[0].lower()
+        league = self.get_managed_league(league_name)
+
+        next_league_db_fixture = self._fixtures_db_manager.get_next_fixture(
+            league_id=league.id
+        )
+
+        if next_league_db_fixture:
+            next_match_date = next_league_db_fixture.bsas_date[:10]
+            next_matches = self._fixtures_db_manager.get_fixtures_by_league(league.id, next_match_date)
+
+            converted_fixtures = [
+                convert_db_fixture(fixture) for fixture in
+                next_matches
+            ]
+
+            spanish_format_date = get_date_spanish_text_format(converted_fixtures[0].bsas_date)
+
+            match_date = (
+                "HOY!"
+                if converted_fixtures[0].bsas_date.date() == datetime.today().date()
+                else f"el {spanish_format_date}"
+            )
+
+            telegram_message = (
+                f"{Emojis.WAVING_HAND.value}Hola {self._user}! "
+                f"\n\nLos próximos partidos de <strong>{league.name}</strong> son {match_date}\n\n"
+                f"{self.get_fixtures_text(converted_fixtures)}"
+            )
+
+        return telegram_message

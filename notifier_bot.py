@@ -38,6 +38,7 @@ async def help(update: Update, context):
         f"• /next_match <team>: próximo partido del equipo.\n"
         f"• /last_match <team>: último partido jugado del equipo.\n"
         f"• /next_match_league <tournament>: próximo partido del torneo seleccionado.\n"
+        f"• /next_matches_league <tournament>: Partidos del día de los próximos partidos del torneo seleccionado.\n"
         f"• /last_match_league <tournament>: último partido jugado del torneo seleccionado.\n"
         f"• /available_teams: equipos disponibles para consultar.\n"
         f"• /available_leagues: torneos disponibles para consultar.\n"
@@ -154,6 +155,26 @@ async def next_match_league(update: Update, context):
             context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
+async def next_matches_league(update: Update, context):
+    logger.info(
+        f"'next_matches_league {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+    )
+    command_handler = NextAndLastMatchLeagueCommandHandler(
+        context.args, update.effective_user.first_name
+    )
+
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text = command_handler.next_matches_league_notif()
+        logger.info(f"Fixture - text: {text}")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode="HTML")
+
+
 async def last_match_league(update: Update, context):
     logger.info(
         f"'last_match_league {' '.join(context.args)}' command executed - by {update.effective_user.first_name}"
@@ -259,6 +280,7 @@ if __name__ == "__main__":
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
     next_match_league_handler = CommandHandler("next_match_league", next_match_league)
+    next_matches_league_handler = CommandHandler("next_matches_league", next_matches_league)
     last_match_league_handler = CommandHandler("last_match_league", last_match_league)
     today_matches_handler = CommandHandler("today_matches", today_matches)
     tomorrow_matches_handler = CommandHandler("tomorrow_matches", tomorrow_matches)
@@ -273,6 +295,7 @@ if __name__ == "__main__":
     application.add_handler(next_match_handler)
     application.add_handler(last_match_handler)
     application.add_handler(next_match_league_handler)
+    application.add_handler(next_matches_league_handler)
     application.add_handler(last_match_league_handler)
     application.add_handler(help_handler)
     application.add_handler(today_matches_handler)
