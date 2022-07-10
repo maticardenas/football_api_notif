@@ -84,7 +84,7 @@ class FixturesDBManager:
         if date:
             fixtures_statement = fixtures_statement.where(DBFixture.bsas_date.contains(date))
 
-        fixtures_statement - fixtures_statement.order_by(asc(DBFixture.bsas_date))
+        fixtures_statement = fixtures_statement.order_by(asc(DBFixture.bsas_date))
 
         return self._notifier_db_manager.select_records(fixtures_statement)
 
