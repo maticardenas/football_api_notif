@@ -75,7 +75,7 @@ def populate_league_fixtures() -> None:
     current_year = date.today().year
     today = datetime.today()
     yesterday_date = today + timedelta(days=-1)
-    tomorrow_date = today + timedelta(days=1)
+    tomorrow_date = today + timedelta(weeks=10)
     from_date = yesterday_date.strftime("%Y-%m-%d")
     to_date = tomorrow_date.strftime("%Y-%m-%d")
 
