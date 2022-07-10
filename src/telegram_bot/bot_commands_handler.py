@@ -1,9 +1,6 @@
 import random
-from datetime import date
 from typing import List, Tuple
 
-
-from config.config_utils import get_managed_teams_config
 from src.db.fixtures_db_manager import FixturesDBManager
 from src.db.notif_sql_models import (
     Fixture,
@@ -11,10 +8,16 @@ from src.db.notif_sql_models import (
     ManagedLeague as DBManagedLeague,
 )
 from src.emojis import Emojis
-from src.team_fixtures_manager import TeamFixturesManager
 from src.telegram_bot.bot_constants import MESSI_PHOTO
 from src.utils.fixtures_utils import (
     convert_db_fixture,
+    get_head_to_heads,
+)
+from src.utils.notification_text_utils import (
+    telegram_last_fixture_league_notification,
+    telegram_next_league_fixture_notification,
+    telegram_next_team_fixture_notification,
+    telegram_last_fixture_team_notification,
 )
 
 
@@ -237,15 +240,98 @@ class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
     def next_match_team_notif(self) -> Tuple[str, str]:
         team_name = self._command_args[0].lower()
         team = self.get_managed_team(team_name)
-        current_season = date.today().year
-        team_fixtures_manager = TeamFixturesManager(current_season, team.id)
 
-        return team_fixtures_manager.get_next_team_fixture_text(self._user)
+        next_team_db_fixture = self._fixtures_db_manager.get_next_fixture(
+            team_id=team.id
+        )
+
+        converted_fixture = None
+
+        if next_team_db_fixture:
+            converted_fixture = convert_db_fixture(next_team_db_fixture)
+            converted_fixture.head_to_head = get_head_to_heads(
+                converted_fixture.home_team.id, converted_fixture.away_team.id
+            )
+
+        return telegram_next_team_fixture_notification(
+            converted_fixture, team.name, self._user
+        )
 
     def last_match_team_notif(self) -> Tuple[str, str]:
         team_name = self._command_args[0].lower()
         team = self.get_managed_team(team_name)
-        current_season = date.today().year
-        team_fixtures_manager = TeamFixturesManager(current_season, team.id)
 
-        return team_fixtures_manager.get_last_team_fixture_text(self._user)
+        last_team_db_fixture = self._fixtures_db_manager.get_last_fixture(
+            team_id=team.id
+        )
+
+        converted_fixture = None
+
+        if last_team_db_fixture:
+            converted_fixture = convert_db_fixture(last_team_db_fixture)
+
+        return telegram_last_fixture_team_notification(
+            converted_fixture, team.name, self._user
+        )
+
+
+class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
+    def __init__(self, commands_args: List[str], user: str):
+        super().__init__()
+        self._command_args = commands_args
+        self._user = user
+
+    def validate_command_input(self) -> str:
+        response = ""
+
+        if len(self._command_args) < 1:
+            response = "Debés ingresar al menos un torneo"
+        elif len(self._command_args) > 1:
+            response = "Sólo puedes ingresar un torneo"
+        else:
+            league = self._command_args[0].lower()
+            if not self.is_available_league(league):
+                response = (
+                    f"Oops! '{league}' no está disponible :(\n\n"
+                    f"Los torneos disponibles son:\n\n"
+                    f"{self.available_leagues_text()}"
+                )
+
+        return response
+
+    def next_match_league_notif(self) -> Tuple[str, str]:
+        league_name = self._command_args[0].lower()
+        league = self.get_managed_league(league_name)
+
+        next_league_db_fixture = self._fixtures_db_manager.get_next_fixture(
+            league_id=league.id
+        )
+
+        converted_fixture = None
+
+        if next_league_db_fixture:
+            converted_fixture = convert_db_fixture(next_league_db_fixture)
+            converted_fixture.head_to_head = get_head_to_heads(
+                converted_fixture.home_team.id, converted_fixture.away_team.id
+            )
+
+        return telegram_next_league_fixture_notification(
+            converted_fixture, league.name, self._user
+        )
+
+    def last_match_league_notif(self) -> Tuple[str, str]:
+        league_name = self._command_args[0].lower()
+        league = self.get_managed_league(league_name)
+
+        next_league_db_fixture = self._fixtures_db_manager.get_last_fixture(
+            league_id=league.id
+        )
+
+        converted_fixture = None
+
+        if next_league_db_fixture:
+            converted_fixture = convert_db_fixture(next_league_db_fixture)
+
+        return telegram_last_fixture_league_notification(
+            converted_fixture, league.name, self._user
+        )

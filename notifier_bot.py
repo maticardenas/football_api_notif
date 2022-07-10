@@ -11,6 +11,7 @@ from src.telegram_bot.bot_commands_handler import (
     NextAndLastMatchCommandHandler,
     NotifierBotCommandsHandler,
     SurroundingMatchesHandler,
+    NextAndLastMatchLeagueCommandHandler,
 )
 from src.telegram_bot.bot_constants import MESSI_PHOTO
 
@@ -36,6 +37,8 @@ async def help(update: Update, context):
         f" {Emojis.JOYSTICK.value} Estos son mis comandos disponibles (por ahora):\n\n"
         f"• /next_match <team>: próximo partido del equipo.\n"
         f"• /last_match <team>: último partido jugado del equipo.\n"
+        f"• /next_match_league <tournament>: próximo partido del torneo seleccionado.\n"
+        f"• /last_match_league <tournament>: último partido jugado del torneo seleccionado.\n"
         f"• /available_teams: equipos disponibles para consultar.\n"
         f"• /available_leagues: torneos disponibles para consultar.\n"
         f"• /today_matches [opt]<league>: partidos de hoy (de los equipos disponibles).\n"
@@ -111,6 +114,61 @@ async def last_match(update: Update, context):
         )
     else:
         text, photo = command_handler.last_match_team_notif()
+        logger.info(f"Fixture - text: {text} - photo: {photo}")
+        if photo:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=photo,
+                caption=text,
+                parse_mode="HTML",
+            )
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+async def next_match_league(update: Update, context):
+    logger.info(
+        f"'next_match_league {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+    )
+    command_handler = NextAndLastMatchLeagueCommandHandler(
+        context.args, update.effective_user.first_name
+    )
+
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text, photo = command_handler.next_match_league_notif()
+        logger.info(f"Fixture - text: {text} - photo: {photo}")
+        if photo:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=photo,
+                caption=text,
+                parse_mode="HTML",
+            )
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+async def last_match_league(update: Update, context):
+    logger.info(
+        f"'last_match_league {' '.join(context.args)}' command executed - by {update.effective_user.first_name}"
+    )
+    command_handler = NextAndLastMatchLeagueCommandHandler(
+        context.args, update.effective_user.first_name
+    )
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text, photo = command_handler.last_match_league_notif()
         logger.info(f"Fixture - text: {text} - photo: {photo}")
         if photo:
             await context.bot.send_photo(
@@ -200,6 +258,8 @@ if __name__ == "__main__":
     start_handler = CommandHandler("start", start)
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
+    next_match_league_handler = CommandHandler("next_match_league", next_match_league)
+    last_match_league_handler = CommandHandler("last_match_league", last_match_league)
     today_matches_handler = CommandHandler("today_matches", today_matches)
     tomorrow_matches_handler = CommandHandler("tomorrow_matches", tomorrow_matches)
     last_played_matches_handler = CommandHandler(
@@ -212,6 +272,8 @@ if __name__ == "__main__":
     application.add_handler(start_handler)
     application.add_handler(next_match_handler)
     application.add_handler(last_match_handler)
+    application.add_handler(next_match_league_handler)
+    application.add_handler(last_match_league_handler)
     application.add_handler(help_handler)
     application.add_handler(today_matches_handler)
     application.add_handler(last_played_matches_handler)
