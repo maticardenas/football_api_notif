@@ -74,7 +74,8 @@ class FixturesDBManager:
                 DBFixture.home_team == team_id,
                 DBFixture.away_team == team_id,
             )
-        )
+        ).order_by(asc(DBFixture.bsas_date))
+
         return self._notifier_db_manager.select_records(fixtures_statement)
 
     def get_fixtures_by_league(self, league_id: int, date: str = "") -> Optional[List[DBFixture]]:
@@ -82,6 +83,8 @@ class FixturesDBManager:
 
         if date:
             fixtures_statement = fixtures_statement.where(DBFixture.bsas_date.contains(date))
+
+        fixtures_statement - fixtures_statement.order_by(asc(DBFixture.bsas_date))
 
         return self._notifier_db_manager.select_records(fixtures_statement)
 
