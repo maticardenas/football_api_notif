@@ -26,6 +26,12 @@ So far, it processes information about specific team's **fixtures**, informing p
 
 - `/last_match <team>` - Retrieves information about last match played by the specific team, including  scores, rival, date (in different timezones), league, roung and highlights
 
+- `/next_match_league <league>` - Retrieves information about next scheduled match for an specific tournament, including rival, date (in different timezones), league and round which is being played.
+
+- `/next_matches_league <league>` - Retrieves information about matches to be played on the day that the next match of a tournament is happening.
+
+- `/last_match_league <league>` - Retrieves information about last match played by the specific tournament, including  scores, rival, date (in different timezones), league, roung and highlights
+
 - `/today_matches` - Retrieves information about matches to be played on the current day.
 
 - `/tomorrow_matches` - Retrieves information about matches to be played on the following day.
