@@ -5,6 +5,11 @@
     "command": "river"
   },
   {
+    "id": "18695",
+    "name": "River Plate Reserva",
+    "command": "river_reserva"
+  },
+  {
     "id": "85",
     "name": "PSG",
     "command": "psg"
