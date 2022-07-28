@@ -30,9 +30,18 @@ class FixturesDBManager:
         team_statement = select(DBTeam).where(DBTeam.id == team_id)
         return self._notifier_db_manager.select_records(team_statement)
 
+    def get_all_leagues(self) -> Optional[List[DBLeague]]:
+        return self._notifier_db_manager.select_records(select(DBLeague).order_by(DBLeague.id))
+
     def get_league(self, league_id: int) -> Optional[DBLeague]:
         league_statement = select(DBLeague).where(DBLeague.id == league_id)
         return self._notifier_db_manager.select_records(league_statement)
+
+    def get_leagues_by_name(self, name: str) -> Optional[DBTeam]:
+        teams_statement = select(DBLeague).where(
+            func.lower(DBLeague.name).ilike(f"%{name.lower()}%")
+        )
+        return self._notifier_db_manager.select_records(teams_statement)
 
     def get_teams_by_name(self, name: str) -> Optional[DBTeam]:
         teams_statement = select(DBTeam).where(

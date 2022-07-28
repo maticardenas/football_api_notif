@@ -49,25 +49,23 @@ class NotifierBotCommandsHandler:
     def search_team(self, team_text: str) -> Optional[DBTeam]:
         return self._fixtures_db_manager.get_teams_by_name(team_text)
 
-    def is_available_team(self, team: str) -> bool:
-        return any(
-            managed_team
-            for managed_team in self._managed_teams
-            if managed_team.command == team
-        )
+    def search_league(self, league_text: str) -> Optional[DBTeam]:
+        return self._fixtures_db_manager.get_leagues_by_name(league_text)
 
-    def is_available_league(self, league: str) -> bool:
-        return any(
-            managed_league
-            for managed_league in self._managed_leagues
-            if managed_league.command == league
-        )
+    def is_available_team(self, team_id: int) -> bool:
+        team = self._fixtures_db_manager.get_team(team_id)
+
+        return True if len(team) else False
+
+    def is_available_league(self, league_id: int) -> bool:
+        league = self._fixtures_db_manager.get_league(league_id)
+        return True if len(league) else False
 
     def available_command_team_names(self) -> List[str]:
         return [managed_team.command for managed_team in self._managed_teams]
 
-    def available_command_league_names(self) -> List[str]:
-        return [managed_league.command for managed_league in self._managed_leagues]
+    def available_leagues(self) -> List[str]:
+        return self._fixtures_db_manager.get_all_leagues()
 
     def available_teams_text(self) -> str:
         return "\n".join(
@@ -78,12 +76,12 @@ class NotifierBotCommandsHandler:
         )
 
     def available_leagues_text(self) -> str:
-        return "\n".join(
-            [
-                f"• {available_league}"
-                for available_league in self.available_command_league_names()
-            ]
-        )
+        leagues = self.available_leagues()
+        leagues_texts = [
+            f"<strong>{league.id}</strong> - {league.name}"
+            for league in leagues
+        ]
+        return "\n".join(leagues_texts)
 
     @staticmethod
     def get_fixtures_text(converted_fixtures: List[Fixture], played=False) -> List[str]:
@@ -219,7 +217,7 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
         return (text, photo)
 
 
-class SearchTeamCommandHandler(NotifierBotCommandsHandler):
+class SearchTeamLeagueCommandHandler(NotifierBotCommandsHandler):
     def __init__(self, commands_args: List[str], user: str):
         super().__init__()
         self._command_args = commands_args
@@ -228,7 +226,11 @@ class SearchTeamCommandHandler(NotifierBotCommandsHandler):
     def validate_command_input(self) -> str:
         response = ""
         if len(self._command_args) < 1:
-            response = "Debés ingresar un texto para buscar el equipo"
+            response = "Debés ingresar un texto para la búsqueda"
+        else:
+            team = " ".join(self._command_args)
+            if len(team) < 4:
+                response = "El texto de búsqueda debe tener al menos <strong>4</strong> caracteres de longitud."
 
         return response
 
@@ -238,11 +240,26 @@ class SearchTeamCommandHandler(NotifierBotCommandsHandler):
         found_teams = self.search_team(team)
 
         if found_teams:
-            found_teams_texts = [f"{team.id} - {team.name}" for team in found_teams]
+            found_teams_texts = [f"<strong>{team.id}</strong> - {team.name}" for team in found_teams]
             response = "\n".join(found_teams_texts)
         else:
             response = (
                 f"Oops! No hay equipos disponibles con el criterio de busqueda '{team}'"
+            )
+
+        return response
+
+    def search_league_notif(self) -> str:
+        league = " ".join(self._command_args)
+
+        found_leagues = self.search_league(league)
+
+        if found_leagues:
+            found_teams_texts = [f"<strong>{league.id}</strong> - {league.name}" for league in found_leagues]
+            response = "\n".join(found_teams_texts)
+        else:
+            response = (
+                f"Oops! No hay torneos disponibles con el criterio de busqueda '{league}'"
             )
 
         return response
@@ -273,11 +290,11 @@ class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
         return response
 
     def next_match_team_notif(self) -> Tuple[str, str]:
-        team_name = self._command_args[0].lower()
-        team = self.get_managed_team(team_name)
+        team_id = self._command_args[0]
+        team = self._fixtures_db_manager.get_team(team_id)[0]
 
         next_team_db_fixture = self._fixtures_db_manager.get_next_fixture(
-            team_id=team.id
+            team_id=team_id
         )
 
         converted_fixture = None
@@ -290,14 +307,14 @@ class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
 
         return telegram_next_team_fixture_notification(
             converted_fixture, team.name, self._user
-        )
+        ) if converted_fixture else ("No se encontraron partidos.", None)
 
     def last_match_team_notif(self) -> Tuple[str, str]:
-        team_name = self._command_args[0].lower()
-        team = self.get_managed_team(team_name)
+        team_id = self._command_args[0]
+        team = self._fixtures_db_manager.get_team(team_id)[0]
 
         last_team_db_fixture = self._fixtures_db_manager.get_last_fixture(
-            team_id=team.id
+            team_id=team_id
         )
 
         converted_fixture = None
@@ -307,7 +324,7 @@ class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
 
         return telegram_last_fixture_team_notification(
             converted_fixture, team.name, self._user
-        )
+        ) if converted_fixture else ("No se encontraron partidos.", None)
 
 
 class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
@@ -324,7 +341,7 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
         elif len(self._command_args) > 1:
             response = "Sólo puedes ingresar un torneo"
         else:
-            league = self._command_args[0].lower()
+            league = self._command_args[0]
             if not self.is_available_league(league):
                 response = (
                     f"Oops! '{league}' no está disponible :(\n\n"
@@ -335,8 +352,8 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
         return response
 
     def next_match_league_notif(self) -> Tuple[str, str]:
-        league_name = self._command_args[0].lower()
-        league = self.get_managed_league(league_name)
+        league_id = self._command_args[0]
+        league = self._fixtures_db_manager.get_league(league_id)[0]
 
         next_league_db_fixture = self._fixtures_db_manager.get_next_fixture(
             league_id=league.id
@@ -352,11 +369,11 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
 
         return telegram_next_league_fixture_notification(
             converted_fixture, league.name, self._user
-        )
+        ) if converted_fixture else ("No se encontraron partidos.", None)
 
     def last_match_league_notif(self) -> Tuple[str, str]:
-        league_name = self._command_args[0].lower()
-        league = self.get_managed_league(league_name)
+        league_id = self._command_args[0]
+        league = self._fixtures_db_manager.get_league(league_id)[0]
 
         next_league_db_fixture = self._fixtures_db_manager.get_last_fixture(
             league_id=league.id
@@ -369,11 +386,11 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
 
         return telegram_last_fixture_league_notification(
             converted_fixture, league.name, self._user
-        )
+        ) if converted_fixture else ("No se encontraron partidos.", None)
 
     def next_matches_league_notif(self) -> str:
-        league_name = self._command_args[0].lower()
-        league = self.get_managed_league(league_name)
+        league_id = self._command_args[0]
+        league = self._fixtures_db_manager.get_league(league_id)[0]
 
         next_league_db_fixture = self._fixtures_db_manager.get_next_fixture(
             league_id=league.id
@@ -404,5 +421,7 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
                 f"\n\nLos próximos partidos de <strong>{league.name}</strong> son {match_date}\n\n"
                 f"{self.get_fixtures_text(converted_fixtures)}"
             )
+        else:
+            telegram_message = "No se encontraron partidos."
 
         return telegram_message
