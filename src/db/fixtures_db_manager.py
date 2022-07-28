@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from sqlalchemy import asc, desc
-from sqlmodel import select, or_
+from sqlmodel import select, or_, func
 
 from src.db.db_manager import NotifierDBManager
 from src.db.notif_sql_models import (
@@ -30,9 +30,24 @@ class FixturesDBManager:
         team_statement = select(DBTeam).where(DBTeam.id == team_id)
         return self._notifier_db_manager.select_records(team_statement)
 
+    def get_all_leagues(self) -> Optional[List[DBLeague]]:
+        return self._notifier_db_manager.select_records(select(DBLeague).order_by(DBLeague.id))
+
     def get_league(self, league_id: int) -> Optional[DBLeague]:
         league_statement = select(DBLeague).where(DBLeague.id == league_id)
         return self._notifier_db_manager.select_records(league_statement)
+
+    def get_leagues_by_name(self, name: str) -> Optional[DBTeam]:
+        teams_statement = select(DBLeague).where(
+            func.lower(DBLeague.name).ilike(f"%{name.lower()}%")
+        )
+        return self._notifier_db_manager.select_records(teams_statement)
+
+    def get_teams_by_name(self, name: str) -> Optional[DBTeam]:
+        teams_statement = select(DBTeam).where(
+            func.lower(DBTeam.name).ilike(f"%{name.lower()}%")
+        )
+        return self._notifier_db_manager.select_records(teams_statement)
 
     def get_games_in_surrounding_n_days(
         self, days: int, league: str = ""
@@ -69,20 +84,28 @@ class FixturesDBManager:
         return surrounding_fixtures
 
     def get_fixtures_by_team(self, team_id: int) -> Optional[List[DBFixture]]:
-        fixtures_statement = select(DBFixture).where(
-            or_(
-                DBFixture.home_team == team_id,
-                DBFixture.away_team == team_id,
+        fixtures_statement = (
+            select(DBFixture)
+            .where(
+                or_(
+                    DBFixture.home_team == team_id,
+                    DBFixture.away_team == team_id,
+                )
             )
-        ).order_by(asc(DBFixture.bsas_date))
+            .order_by(asc(DBFixture.bsas_date))
+        )
 
         return self._notifier_db_manager.select_records(fixtures_statement)
 
-    def get_fixtures_by_league(self, league_id: int, date: str = "") -> Optional[List[DBFixture]]:
+    def get_fixtures_by_league(
+        self, league_id: int, date: str = ""
+    ) -> Optional[List[DBFixture]]:
         fixtures_statement = select(DBFixture).where(DBFixture.league == league_id)
 
         if date:
-            fixtures_statement = fixtures_statement.where(DBFixture.bsas_date.contains(date))
+            fixtures_statement = fixtures_statement.where(
+                DBFixture.bsas_date.contains(date)
+            )
 
         fixtures_statement = fixtures_statement.order_by(asc(DBFixture.bsas_date))
 
