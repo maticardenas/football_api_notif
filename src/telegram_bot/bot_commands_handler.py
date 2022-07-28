@@ -29,6 +29,8 @@ class NotifierBotCommandsHandler:
         self._managed_teams: List[
             DBManagedTeam
         ] = self._fixtures_db_manager.get_managed_teams()
+        import pdb;
+        pdb.set_trace()
         self._managed_leagues: List[
             DBManagedLeague
         ] = self._fixtures_db_manager.get_managed_leagues()
@@ -215,7 +217,6 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
             photo = MESSI_PHOTO
 
         return (text, photo)
-
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):

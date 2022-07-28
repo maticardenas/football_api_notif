@@ -6,8 +6,8 @@ from config.config_entities import ManagedTeam
 from src.telegram_bot.bot_commands_handler import NotifierBotCommandsHandler
 
 
-@patch("src.telegram_bot.bot_commands_handler.get_managed_teams_config")
-def test_get_managed_team(mocked_get_managed_teams_config):
+@patch("src.db.fixtures_db_manager.FixturesDBManager.get_managed_teams")
+def test_get_managed_team(mocked_get_managed_teams):
     # given
     managed_team_river = ManagedTeam(
         "435",
@@ -19,7 +19,7 @@ def test_get_managed_team(mocked_get_managed_teams_config):
         "Paris Saint Germain",
         "psg",
     )
-    mocked_get_managed_teams_config.return_value = [
+    mocked_get_managed_teams.return_value = [
         managed_team_river,
         managed_team_psg,
     ]
@@ -32,8 +32,8 @@ def test_get_managed_team(mocked_get_managed_teams_config):
     assert managed_team == managed_team_psg
 
 
-@patch("src.telegram_bot.bot_commands_handler.get_managed_teams_config")
-def test_available_command_team_names(mocked_get_managed_teams_config):
+@patch("src.db.fixtures_db_manager.FixturesDBManager.get_managed_teams")
+def test_available_command_team_names(mocked_get_managed_teams):
     # given
     managed_team_river = ManagedTeam(
         "435",
@@ -45,7 +45,7 @@ def test_available_command_team_names(mocked_get_managed_teams_config):
         "Paris Saint Germain",
         "psg",
     )
-    mocked_get_managed_teams_config.return_value = [
+    mocked_get_managed_teams.return_value = [
         managed_team_river,
         managed_team_psg,
     ]
@@ -63,9 +63,9 @@ def test_available_command_team_names(mocked_get_managed_teams_config):
 @pytest.mark.parametrize(
     "team, is_available", [("river", True), ("psg", True), ("mancity", False)]
 )
-@patch("src.telegram_bot.bot_commands_handler.get_managed_teams_config")
+@patch("src.db.fixtures_db_manager.FixturesDBManager.get_managed_teams")
 def test_is_available_team(
-    mocked_get_managed_teams_config, team: str, is_available: bool
+    mocked_get_managed_teams, team: str, is_available: bool
 ):
     # given
     managed_team_river = ManagedTeam(
@@ -78,7 +78,7 @@ def test_is_available_team(
         "Paris Saint Germain",
         "psg",
     )
-    mocked_get_managed_teams_config.return_value = [
+    mocked_get_managed_teams.return_value = [
         managed_team_river,
         managed_team_psg,
     ]
