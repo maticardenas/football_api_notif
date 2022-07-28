@@ -8,7 +8,6 @@ from src.db.fixtures_db_manager import FixturesDBManager
 from src.entities import Fixture, FixtureForDB
 from src.notifier_logger import get_logger
 from src.utils.fixtures_utils import (
-    convert_fixture_response_to_db_fixture,
     convert_fixtures_response_to_db,
 )
 
@@ -81,7 +80,9 @@ def populate_league_fixtures() -> None:
 
     between_dates = (from_date, to_date)
 
-    for league in MANAGED_LEAGUES:
+    leagues = FIXTURES_DB_MANAGER.get_all_leagues()
+
+    for league in leagues:
         logger.info(f"Saving fixtures for league {league.name}")
 
         league_fixtures = fixtures_client.get_fixtures_by(
@@ -99,7 +100,6 @@ def populate_league_fixtures() -> None:
 
 def populate_data(is_initial=False) -> None:
     populate_managed_teams()
-    populate_managed_leagues()
     populate_team_fixtures(is_initial)
     populate_league_fixtures()
 
