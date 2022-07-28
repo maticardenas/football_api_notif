@@ -1,12 +1,13 @@
 import random
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from src.db.fixtures_db_manager import FixturesDBManager
 from src.db.notif_sql_models import (
     Fixture,
     ManagedTeam as DBManagedTeam,
     ManagedLeague as DBManagedLeague,
+    Team as DBTeam,
 )
 from src.emojis import Emojis
 from src.telegram_bot.bot_constants import MESSI_PHOTO
@@ -45,6 +46,9 @@ class NotifierBotCommandsHandler:
             None,
         )
 
+    def search_team(self, team_text: str) -> Optional[DBTeam]:
+        return self._fixtures_db_manager.get_teams_by_name(team_text)
+
     def is_available_team(self, team: str) -> bool:
         return any(
             managed_team
@@ -82,9 +86,7 @@ class NotifierBotCommandsHandler:
         )
 
     @staticmethod
-    def get_fixtures_text(
-        converted_fixtures: List[Fixture], played=False
-    ) -> List[str]:
+    def get_fixtures_text(converted_fixtures: List[Fixture], played=False) -> List[str]:
         text_limit = 3950
         fixtures_text = ""
         fitting_fixtures = []
@@ -216,6 +218,34 @@ class SurroundingMatchesHandler(NotifierBotCommandsHandler):
 
         return (text, photo)
 
+
+class SearchTeamCommandHandler(NotifierBotCommandsHandler):
+    def __init__(self, commands_args: List[str], user: str):
+        super().__init__()
+        self._command_args = commands_args
+        self._user = user
+
+    def validate_command_input(self) -> str:
+        response = ""
+        if len(self._command_args) < 1:
+            response = "Debés ingresar un texto para buscar el equipo"
+
+        return response
+
+    def search_team_notif(self) -> str:
+        team = " ".join(self._command_args)
+
+        found_teams = self.search_team(team)
+
+        if found_teams:
+            found_teams_texts = [f"{team.id} - {team.name}" for team in found_teams]
+            response = "\n".join(found_teams_texts)
+        else:
+            response = (
+                f"Oops! No hay equipos disponibles con el criterio de busqueda '{team}'"
+            )
+
+        return response
 
 
 class NextAndLastMatchCommandHandler(NotifierBotCommandsHandler):
@@ -351,14 +381,17 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
 
         if next_league_db_fixture:
             next_match_date = next_league_db_fixture.bsas_date[:10]
-            next_matches = self._fixtures_db_manager.get_fixtures_by_league(league.id, next_match_date)
+            next_matches = self._fixtures_db_manager.get_fixtures_by_league(
+                league.id, next_match_date
+            )
 
             converted_fixtures = [
-                convert_db_fixture(fixture) for fixture in
-                next_matches
+                convert_db_fixture(fixture) for fixture in next_matches
             ]
 
-            spanish_format_date = get_date_spanish_text_format(converted_fixtures[0].bsas_date)
+            spanish_format_date = get_date_spanish_text_format(
+                converted_fixtures[0].bsas_date
+            )
 
             match_date = (
                 "HOY!"

@@ -12,6 +12,7 @@ from src.telegram_bot.bot_commands_handler import (
     NotifierBotCommandsHandler,
     SurroundingMatchesHandler,
     NextAndLastMatchLeagueCommandHandler,
+    SearchTeamCommandHandler,
 )
 from src.telegram_bot.bot_constants import MESSI_PHOTO
 
@@ -71,6 +72,25 @@ async def available_leagues(update: Update, context):
         f"{notifier_commands_handler.available_leagues_text()}"
     )
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+async def search_team(update: Update, context):
+    logger.info(
+        f"'search_team {' '.join(context.args)}' command executed - by {update.effective_user.name}"
+    )
+    command_handler = SearchTeamCommandHandler(
+        context.args, update.effective_user.first_name
+    )
+    validated_input = command_handler.validate_command_input()
+
+    if validated_input:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=validated_input
+        )
+    else:
+        text = command_handler.next_match_team_notif()
+        logger.info(f"Search Team - text: {text}")
+        context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 async def next_match(update: Update, context):
@@ -172,7 +192,9 @@ async def next_matches_league(update: Update, context):
     else:
         text = command_handler.next_matches_league_notif()
         logger.info(f"Fixture - text: {text}")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode="HTML")
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=text, parse_mode="HTML"
+        )
 
 
 async def last_match_league(update: Update, context):
@@ -277,10 +299,13 @@ async def tomorrow_matches(update: Update, context):
 if __name__ == "__main__":
     application = ApplicationBuilder().token(NotifConfig.TELEGRAM_TOKEN).build()
     start_handler = CommandHandler("start", start)
+    search_team_handler = CommandHandler("search_team", search_team)
     next_match_handler = CommandHandler("next_match", next_match)
     last_match_handler = CommandHandler("last_match", last_match)
     next_match_league_handler = CommandHandler("next_match_league", next_match_league)
-    next_matches_league_handler = CommandHandler("next_matches_league", next_matches_league)
+    next_matches_league_handler = CommandHandler(
+        "next_matches_league", next_matches_league
+    )
     last_match_league_handler = CommandHandler("last_match_league", last_match_league)
     today_matches_handler = CommandHandler("today_matches", today_matches)
     tomorrow_matches_handler = CommandHandler("tomorrow_matches", tomorrow_matches)
@@ -303,5 +328,6 @@ if __name__ == "__main__":
     application.add_handler(available_teams_handler)
     application.add_handler(tomorrow_matches_handler)
     application.add_handler(available_leagues_handler)
+    application.add_handler(search_team_handler)
 
     application.run_polling()
