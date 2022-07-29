@@ -61,7 +61,9 @@ async def available_leagues(update: Update, context):
         f" {Emojis.TELEVISION.value} Estos son los torneos disponibles:\n\n"
         f"{notifier_commands_handler.available_leagues_text()}"
     )
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode="HTML")
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id, text=text, parse_mode="HTML"
+    )
 
 
 async def search_team(update: Update, context):
@@ -80,7 +82,9 @@ async def search_team(update: Update, context):
     else:
         text = command_handler.search_team_notif()
         logger.info(f"Search Team - text: {text}")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode="HTML")
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=text, parse_mode="HTML"
+        )
 
 
 async def search_league(update: Update, context):
@@ -99,7 +103,9 @@ async def search_league(update: Update, context):
     else:
         text = command_handler.search_league_notif()
         logger.info(f"Search League - text: {text}")
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode="HTML")
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, text=text, parse_mode="HTML"
+        )
 
 
 async def next_match(update: Update, context):
@@ -207,7 +213,6 @@ async def next_matches_league(update: Update, context):
             )
 
 
-
 async def last_match_league(update: Update, context):
     logger.info(
         f"'last_match_league {' '.join(context.args)}' command executed - by {update.effective_user.first_name}"
@@ -260,7 +265,6 @@ async def today_matches(update: Update, context):
             )
 
 
-
 async def last_played_matches(update: Update, context):
     logger.info(
         f"'last_played_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
@@ -286,7 +290,6 @@ async def last_played_matches(update: Update, context):
             )
 
 
-
 async def tomorrow_matches(update: Update, context):
     logger.info(
         f"'tomorrow_matches {' '.join(context.args)}' command executed - by {update.effective_user.name}"
@@ -310,7 +313,6 @@ async def tomorrow_matches(update: Update, context):
                 text=text,
                 parse_mode="HTML",
             )
-
 
 
 if __name__ == "__main__":

@@ -80,7 +80,7 @@ class NotifierBotCommandsHandler:
     def available_leagues_text(self) -> str:
         leagues = self.available_leagues()
         leagues_texts = [
-            f"<strong>{league.id}</strong> - {league.name}" for league in leagues
+            f"<strong>{league.id}</strong> - {league.name} ({league.country})" for league in leagues
         ]
         return "\n".join(leagues_texts)
 
@@ -462,7 +462,7 @@ class NextAndLastMatchLeagueCommandHandler(NotifierBotCommandsHandler):
 
             intro_text = (
                 f"{Emojis.WAVING_HAND.value}Hola {self._user}! "
-                f"\n\nLos próximos partidos de <strong>{league.name}</strong> son {match_date}\n\n"
+                f"\n\nLos próximos partidos de <strong>{league.name} ({league.country[:3].upper()})</strong> son {match_date}\n\n"
             )
 
             telegram_messages[0] = f"{intro_text}{telegram_messages[0]}"
