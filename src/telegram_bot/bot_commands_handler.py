@@ -105,7 +105,7 @@ class NotifierBotCommandsHandler:
         if current_fitting_fixtures:
             all_fitting_fixtures.append(current_fitting_fixtures)
 
-        logger.info(f"All fitting fixtures: {'-'.join(all_fitting_fixtures)}")
+        logger.info(f"All fitting fixtures: {all_fitting_fixtures}")
 
         return [
             "\n\n".join(
