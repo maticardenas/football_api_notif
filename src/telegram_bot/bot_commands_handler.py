@@ -10,6 +10,7 @@ from src.db.notif_sql_models import (
     Team as DBTeam,
 )
 from src.emojis import Emojis
+from src.notifier_logger import get_logger
 from src.telegram_bot.bot_constants import MESSI_PHOTO
 from src.utils.date_utils import get_date_spanish_text_format
 from src.utils.fixtures_utils import (
@@ -23,6 +24,7 @@ from src.utils.notification_text_utils import (
     telegram_last_fixture_team_notification,
 )
 
+logger = get_logger(__name__)
 
 class NotifierBotCommandsHandler:
     def __init__(self):
@@ -84,7 +86,7 @@ class NotifierBotCommandsHandler:
 
     @staticmethod
     def get_fixtures_text(converted_fixtures: List[Fixture], played=False) -> List[str]:
-        text_limit = 2500
+        text_limit = 3500
         fixtures_text = ""
         all_fitting_fixtures = []
         current_fitting_fixtures = []
@@ -94,12 +96,16 @@ class NotifierBotCommandsHandler:
 
             if len(f"{fixtures_text}\n\n{fixture_text}") > text_limit:
                 all_fitting_fixtures.append(current_fitting_fixtures)
+                fixtures_text = ""
                 current_fitting_fixtures = []
             else:
+                fixtures_text += "\n\n" + fixture_text
                 current_fitting_fixtures.append(fixture)
 
         if current_fitting_fixtures:
             all_fitting_fixtures.append(current_fitting_fixtures)
+
+        logger.info(f"All fitting fixtures: {'-'.join(all_fitting_fixtures)}")
 
         return [
             "\n\n".join(
