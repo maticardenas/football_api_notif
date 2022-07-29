@@ -84,7 +84,7 @@ class NotifierBotCommandsHandler:
 
     @staticmethod
     def get_fixtures_text(converted_fixtures: List[Fixture], played=False) -> List[str]:
-        text_limit = 3500
+        text_limit = 2500
         fixtures_text = ""
         all_fitting_fixtures = []
         current_fitting_fixtures = []
