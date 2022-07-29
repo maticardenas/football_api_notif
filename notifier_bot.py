@@ -199,11 +199,13 @@ async def next_matches_league(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        text = command_handler.next_matches_league_notif()
-        logger.info(f"Fixture - text: {text}")
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id, text=text, parse_mode="HTML"
-        )
+        texts = command_handler.next_matches_league_notif()
+        logger.info(f"Fixture - texts: {texts}")
+        for text in texts:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id, text=text, parse_mode="HTML"
+            )
+
 
 
 async def last_match_league(update: Update, context):
@@ -248,13 +250,15 @@ async def today_matches(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        text, photo = command_handler.today_games()
+        texts, photo = command_handler.today_games()
 
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=text,
-            parse_mode="HTML",
-        )
+        for text in texts:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=text,
+                parse_mode="HTML",
+            )
+
 
 
 async def last_played_matches(update: Update, context):
@@ -272,13 +276,15 @@ async def last_played_matches(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        text, photo = command_handler.yesterday_games()
+        texts, photo = command_handler.yesterday_games()
 
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=text,
-            parse_mode="HTML",
-        )
+        for text in texts:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=text,
+                parse_mode="HTML",
+            )
+
 
 
 async def tomorrow_matches(update: Update, context):
@@ -296,13 +302,15 @@ async def tomorrow_matches(update: Update, context):
             chat_id=update.effective_chat.id, text=validated_input
         )
     else:
-        text, photo = command_handler.tomorrow_games()
+        texts, photo = command_handler.tomorrow_games()
 
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=text,
-            parse_mode="HTML",
-        )
+        for text in texts:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=text,
+                parse_mode="HTML",
+            )
+
 
 
 if __name__ == "__main__":
